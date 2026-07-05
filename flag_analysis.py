@@ -3102,23 +3102,36 @@ def print_two_assignments_on_paths_report(paths, assignment_a, assignment_b, pat
 # ---------------------------
 # prove for eacg stage
 # ---------------------------
+def _data_qubit_preservation_eqs(state, groups, varenv, regmap):
+    """Return z3 equalities: output data Pauli == input symbolic Pauli."""
+    eqs = []
+    for idx in groups["data"]:
+        regname, j = regmap[idx]
+        prefix = f"{regname}{j}"
+        in_x = varenv[f"{prefix}_x"]
+        in_z = varenv[f"{prefix}_z"]
+        out_x = project_data_only(state.qubits[idx].x, varenv)
+        out_z = project_data_only(state.qubits[idx].z, varenv)
+        eqs.append(out_x == in_x)
+        eqs.append(out_z == in_z)
+    return eqs
+
+
 def prove_syndrome_extractions(qasm_path: str, stab_txt_path: str):
     state, qc, varenv = build_variable_state_from_qasm(qasm_path)
     groups = detect_qubit_groups(qc)
+    regmap = _regmap_indices(qc)
 
     # Detailed symbolic state dump suppressed
 
     data_exprs = data_qubits(state, groups["data"])  # list of (x,z) pairs for data qubits
-    
-    
+
     # Flip predicates (basis-aware)
     synX_exprs = ancillas_X(state, groups["ancX"])   # X-type syndromes (check .z)
     synZ_exprs = ancillas_Z(state, groups["ancZ"])   # Z-type syndromes (check .x)
     flgX_exprs = flags_X(state, groups["flagX"])     # flags measured in X (check .z)
     flgZ_exprs = flags_Z(state, groups["flagZ"])     # flags measured in Z (check .x)
 
-    
-    
     # Build an assignment:
     # - allow arbitrary data errors via named vars (you can set a subset True)
     # - force all anc/flag variables to False to model "no circuit faults"
@@ -3129,35 +3142,53 @@ def prove_syndrome_extractions(qasm_path: str, stab_txt_path: str):
         if name.startswith("ancX") or name.startswith("ancZ") or name.startswith("flagX") or name.startswith("flagZ"):
             asgmt[name] = False
 
-    # Example 1: single X error on q[3]  (Steane’s first X-stabilizer should click)
-
-    # (all other q*_x/z default to False)
-
     # Evaluate syndromes/flags
     synX_vals = [eval_under(e, asgmt, varenv) for e in synX_exprs]
     synZ_vals = [eval_under(e, asgmt, varenv) for e in synZ_exprs]
     flgX_vals = [eval_under(e, asgmt, varenv) for e in flgX_exprs]
     flgZ_vals = [eval_under(e, asgmt, varenv) for e in flgZ_exprs]
 
-    #print("AncX (X-type) syndromes:", synX_vals)
-    #print("AncZ (Z-type) syndromes:", synZ_vals)
-    #print("Flags X-basis:", flgX_vals)
-    #print("Flags Z-basis:", flgZ_vals)
-
     report = check_ancillas_match_symplectic_ordered(
-    qasm_path,
-    stab_txt_path,
-    order="X-then-Z"   # change to "Z-then-X" if your .txt lists Z-first
+        qasm_path,
+        stab_txt_path,
+        order="X-then-Z",   # change to "Z-then-X" if your .txt lists Z-first
     )
 
-    print("Result of ordered ancilla vs stabilizer check:") 
-    if  report["ok"]:
+    print("Result of ordered ancilla vs stabilizer check:")
+    if report["ok"]:
         print("Success : ancilla measurements match stabilizers in order.")
-        return True
     else:
-      for mi in report["mismatches"]:
-          print(f"  Mismatch at stabilizer index {mi}")
-      return False
+        for mi in report["mismatches"]:
+            print(f"  Mismatch at stabilizer index {mi}")
+        return False
+
+    data_eqs = _data_qubit_preservation_eqs(state, groups, varenv, regmap)
+    s = Solver()
+    s.add(Not(And(*data_eqs)))
+    print("Result of data-qubit preservation check:")
+    if s.check() == unsat:
+        print("UNSAT: output data qubits match input data qubits.")
+        return True
+
+    print("SAT: counterexample — some data qubit input != output.")
+    model = s.model()
+    print("Counterexample model (True vars):")
+    for d in model.decls():
+        if str(model[d]) == "True":
+            print(f"  {d.name()} = True")
+    data_mismatches = []
+    for idx in groups["data"]:
+        regname, j = regmap[idx]
+        prefix = f"{regname}{j}"
+        in_x = varenv[f"{prefix}_x"]
+        in_z = varenv[f"{prefix}_z"]
+        out_x = project_data_only(state.qubits[idx].x, varenv)
+        out_z = project_data_only(state.qubits[idx].z, varenv)
+        if not _equiv(out_x, in_x) or not _equiv(out_z, in_z):
+            data_mismatches.append(idx)
+    if data_mismatches:
+        print("  Data qubits with input != output at indices:", data_mismatches)
+    return False
 
 
 def find_bad_locations(qasm_path: str, stab_txt_path: str,num_gates: int):
