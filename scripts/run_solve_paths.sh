@@ -6,6 +6,7 @@ cd "$ROOT"
 # shellcheck source=parallel_limits.sh
 source "$ROOT/scripts/parallel_limits.sh"
 pl_init_dimacs_limits solve
+pl_init_tmpdir "$ROOT"
 
 PYTHON="$ROOT/venv/bin/python"
 CNF_DIR="${1:?usage: run_solve_paths.sh cnf_out/config_stem}"
@@ -41,7 +42,7 @@ if [[ -n "${DIMACS_VERBOSE:-}" ]]; then
   echo ""
 fi
 
-printf '%s\n' "${TAGS[@]}" | parallel -j "$PATH_JOBS" "${MEMFREE_SOLVER[@]}" --line-buffer --joblog "$CNF_DIR/solve.log" \
+printf '%s\n' "${TAGS[@]}" | parallel -j "$PATH_JOBS" --tmpdir "$PARALLEL_TMPDIR" "${MEMFREE_SOLVER[@]}" --line-buffer --joblog "$CNF_DIR/solve.log" \
   "$ROOT/scripts/run_one_path.sh" "$CNF_DIR" {} {#} "$TOTAL"
 
 SAT_COUNT="$("$PYTHON" -c "

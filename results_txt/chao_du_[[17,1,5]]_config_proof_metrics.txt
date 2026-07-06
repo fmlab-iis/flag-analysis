@@ -1,0 +1,32 @@
+================================================================================
+Max faults per path (t): 2
+Total number of paths: 21
+Per-path SAT metrics:
+  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
+        0 |    1 | raw_syndrome (raw)      | unsat   |        408 |  8.712108 |     114.844 |       1632 |        7064 |         44060 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |        520 | 16.492599 |     107.633 |       2080 |        8639 |         72373 |               1
+        2 |    2 | flag_syndrome (other)   | sat     |        448 |  0.618099 |     103.023 |       1792 |        8067 |         56295 |               1
+        3 |    1 | raw_syndrome (raw)      | unsat   |        520 | 1691.216180 |     153.117 |       2080 |        9248 |         75862 |               1
+        4 |    1 | raw_syndrome (raw)      | unsat   |        520 | 14.681010 |      93.520 |       2080 |        9207 |         75812 |               1
+        5 |    1 | raw_syndrome (raw)      | unsat   |        632 | 59.139768 |     101.172 |       2528 |       10778 |        117722 |               1
+        6 |    2 | flag_syndrome (other)   | sat     |        560 | 38.941745 |      98.922 |       2240 |       10179 |         93197 |               1
+        7 |    1 | raw_syndrome (raw)      | unsat   |        632 | 5874.767241 |     150.574 |       2528 |       11399 |        121280 |               1
+        8 |    2 | flag_syndrome (other)   | unsat   |        336 | 157.211369 |      76.586 |       1344 |        6378 |         58384 |               1
+        9 |    1 | raw_syndrome (raw)      | unsat   |        520 | 3293.997395 |     145.449 |       2080 |        9521 |         77648 |               1
+       10 |    1 | raw_syndrome (raw)      | unsat   |        632 | 3584.798400 |     171.672 |       2528 |       11102 |        119562 |               1
+       11 |    2 | flag_syndrome (other)   | unsat   |        560 | 37267.417013 |     171.148 |       2240 |       10498 |         95021 |               1
+       12 |    1 | raw_syndrome (raw)      | unsat   |        632 | 105028.496793 |     228.262 |       2528 |       11697 |        122996 |               1
+       13 |    1 | raw_syndrome (raw)      | unsat   |        408 | 23.244414 |      69.910 |       1632 |        7631 |         47374 |               1
+       14 |    1 | raw_syndrome (raw)      | unsat   |        520 | 6172.018615 |     145.043 |       2080 |        9218 |         75818 |               1
+       15 |    2 | flag_syndrome (other)   | unsat   |        448 | 13154.983573 |     136.812 |       1792 |        8642 |         59717 |               1
+       16 |    1 | raw_syndrome (raw)      | unsat   |        520 | 253984.073783 |     391.562 |       2080 |        9830 |         79325 |               1
+       17 |    1 | raw_syndrome (raw)      | unsat   |        296 | 196.780916 |     114.078 |       1184 |        5059 |         50913 |               1
+       18 |    1 | raw_syndrome (raw)      | unsat   |        408 | 301.671158 |     122.430 |       1632 |        7070 |         44078 |               1
+       19 |    2 | flag_syndrome (other)   | sat     |        336 |  0.514830 |      62.000 |       1344 |        6130 |         56872 |               1
+       20 |    1 | raw_syndrome (raw)      | unsat   |        408 | 13871.082674 |     190.168 |       1632 |        7681 |         47592 |               1
+Total runtime (sum of all paths): 444740.859683 s
+Total SAT paths: 3/21
+Max fault variables (across paths): 2528
+Max DIMACS variables (across paths): 11697
+Max peak RSS (across paths): 391.562 MB
+================================================================================

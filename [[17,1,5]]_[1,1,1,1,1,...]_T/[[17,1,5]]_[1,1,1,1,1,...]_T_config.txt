@@ -2,5 +2,3 @@ stab_txt_path = [[17,1,5]].txt
 log_txt_path = [[17,1,5]]_log.txt
 flag_syndrome = [[17,1,5]]_flag.qasm
 raw_syndrome = [[17,1,5]]_raw.qasm
-flag_syndrome_X = [[17,1,5]]_stab_x_flag.qasm
-flag_syndrome_Z = [[17,1,5]]_stab_z_flag.qasm

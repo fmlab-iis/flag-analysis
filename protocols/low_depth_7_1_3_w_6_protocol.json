@@ -29,39 +29,25 @@
                         "type": "not",
                         "operands": [
                             {
-                                "type": "equal",
-                                "left": "f_0",
-                                "right": false
+                                "type": "and",
+                                "operands": [
+                                    {
+                                        "type": "equal",
+                                        "left": "s_0",
+                                        "right": true
+                                    },
+                                    {
+                                        "type": "equal",
+                                        "left": "f_0",
+                                        "right": false
+                                    }
+                                ]
                             }
                         ]
                     },
                     "target": "IZZXXYY_not_f_zero"
-                },
-                {
-                    "condition": {
-                        "type": "and",
-                        "operands": [
-                            {
-                                "type": "equal",
-                                "left": "s_0",
-                                "right": false
-                            },
-                            {
-                                "type": "equal",
-                                "left": "f_0",
-                                "right": false
-                            }
-                        ]
-                    },
-                    "target": "IZZXXYY_all_zero"
                 }
             ]
-        },
-        "IZZXXYY_all_zero": {
-            "instructions": [
-                "Break"
-            ],
-            "branches": []
         },
         "IZZXXYY_not_f_zero": {
             "instructions": [

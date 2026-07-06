@@ -1,0 +1,22 @@
+================================================================================
+Low-weight verification (LUT s/f all false, exactly 1 fault)
+Property: low_weight_ok = commute(E) ∨ ∃ weight-1 W: commute(E·W)
+Counterexample UNSAT => pass; SAT => fail
+Per-path metrics:
+  path_idx | type | last_instr              | low_weight | runtime_s | peak_rss_mb | dimacs_vars | total_clauses | reason
+        0 |    0 | Break (other)           | skipped    |  0.000000 |       0.000 |           0 |             0 | break_path
+        1 |    1 | raw_syndrome (raw)      | unsat      |  0.004671 |      85.562 |           0 |             1 | 
+        2 |    1 | YIYXX_raw (raw)         | unsat      |  0.003939 |      85.562 |           0 |             1 | 
+        3 |    1 | XIXZZ_raw (raw)         | unsat      |  0.003946 |      85.562 |           0 |             1 | 
+        4 |    1 | raw_syndrome (raw)      | unsat      |  0.003516 |      85.562 |           0 |             1 | 
+        5 |    1 | YZIZY_raw (raw)         | unsat      |  0.007324 |      85.562 |           0 |             1 | 
+        6 |    1 | ZXIXZ_raw (raw)         | unsat      |  0.006839 |      85.562 |           0 |             1 | 
+        7 |    1 | raw_syndrome (raw)      | unsat      |  0.006839 |      85.562 |           0 |             1 | 
+        8 |    1 | YZIZY_raw (raw)         | unsat      |  0.007149 |      85.562 |           0 |             1 | 
+        9 |    1 | ZXIXZ_raw (raw)         | unsat      |  0.004232 |      85.562 |           0 |             1 | 
+       10 |    1 | raw_syndrome (raw)      | unsat      |  0.006724 |      85.562 |           0 |             1 | 
+       11 |    1 | ZIZYY_raw (raw)         | unsat      |  0.006785 |      85.562 |           0 |             1 | 
+       12 |    1 | XIXZZ_raw (raw)         | unsat      |  0.006794 |      85.562 |           0 |             1 | 
+Total low-weight runtime: 0.068758 s
+Low-weight SAT (fail) paths: 0/12
+================================================================================

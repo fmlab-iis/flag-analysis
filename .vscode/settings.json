@@ -1,0 +1,12 @@
+{
+  "cursorpyright.nodeEnvVars": {
+    "TMPDIR": "/home/bionicle8699/tmp",
+    "TMP": "/home/bionicle8699/tmp",
+    "TEMP": "/home/bionicle8699/tmp"
+  },
+  "terminal.integrated.env.linux": {
+    "TMPDIR": "/home/bionicle8699/tmp",
+    "TMP": "/home/bionicle8699/tmp",
+    "TEMP": "/home/bionicle8699/tmp"
+  }
+}

@@ -1,0 +1,24 @@
+================================================================================
+Syndrome extraction verification (no circuit faults)
+Property: ancillas match stabilizer(s); data qubits preserved
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli
+Pass => ok; fail => ancilla mismatch or data not preserved
+Per-circuit metrics:
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | reason
+  IXZZX_flag            | partial | pass    | True    | True |  0.037087 | 
+  IXZZX_raw             | partial | pass    | True    | True |  0.005437 | 
+  IYXXY_raw             | partial | pass    | True    | True |  0.006129 | 
+  XIXZZ_flag            | partial | pass    | True    | True |  0.006275 | 
+  XIXZZ_raw             | partial | pass    | True    | True |  0.005189 | 
+  XZZXI_flag            | partial | pass    | True    | True |  0.005968 | 
+  XZZXI_raw             | partial | pass    | True    | True |  0.005209 | 
+  YIYXX_raw             | partial | pass    | True    | True |  0.005379 | 
+  YXXYI_raw             | partial | pass    | True    | True |  0.005715 | 
+  YZIZY_raw             | partial | pass    | True    | True |  0.006252 | 
+  ZIZYY_raw             | partial | pass    | True    | True |  0.006489 | 
+  ZXIXZ_flag            | partial | pass    | True    | True |  0.006969 | 
+  ZXIXZ_raw             | partial | pass    | True    | True |  0.005906 | 
+  raw_syndrome          | full    | pass    | True    | True |  0.011675 | 
+Total runtime: 0.119679 s
+Failed circuits: 0/14
+================================================================================

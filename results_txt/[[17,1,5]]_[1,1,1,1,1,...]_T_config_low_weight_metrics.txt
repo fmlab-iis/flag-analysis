@@ -1,0 +1,13 @@
+================================================================================
+Low-weight verification (LUT s/f all false, exactly 1 fault)
+Property: low_weight_ok = commute(E) ∨ ∃ weight-1 W: commute(E·W)
+Counterexample UNSAT => pass; SAT => fail
+Per-path metrics:
+  path_idx | type | last_instr              | low_weight | runtime_s | peak_rss_mb | dimacs_vars | total_clauses | reason
+        0 |    0 | Break (other)           | skipped    |  0.000000 |       0.000 |           0 |             0 | break_path
+        1 |    2 | flag_syndrome (other)   | unsat      |  0.004318 |      68.000 |           0 |             1 | 
+        2 |    1 | raw_syndrome (raw)      | unsat      |  0.004055 |      68.000 |           0 |             1 | 
+        3 |    1 | raw_syndrome (raw)      | unsat      |  0.006910 |      68.000 |           0 |             1 | 
+Total low-weight runtime: 0.015282 s
+Low-weight SAT (fail) paths: 0/3
+================================================================================

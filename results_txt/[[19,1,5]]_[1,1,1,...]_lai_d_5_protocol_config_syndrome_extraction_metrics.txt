@@ -1,0 +1,12 @@
+================================================================================
+Syndrome extraction verification (no circuit faults)
+Property: ancillas match stabilizer(s); data qubits preserved
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli
+Pass => ok; fail => ancilla mismatch or data not preserved
+Per-circuit metrics:
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | reason
+  flag_syndrome         | full    | pass    | True    | True |  0.158819 | 
+  raw_syndrome          | full    | pass    | True    | True |  0.076020 | 
+Total runtime: 0.234839 s
+Failed circuits: 0/2
+================================================================================

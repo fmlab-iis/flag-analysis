@@ -11,6 +11,14 @@
 #
 # Legacy: PARALLEL_JOBS sets PATH_JOBS if PATH_JOBS is unset.
 
+# Use a project-local temp dir by default (/tmp is often on a full root filesystem).
+pl_init_tmpdir() {
+  local root="${1:-.}"
+  PARALLEL_TMPDIR="${PARALLEL_TMPDIR:-$root/.parallel_tmp}"
+  mkdir -p "$PARALLEL_TMPDIR"
+  export TMPDIR="$PARALLEL_TMPDIR"
+}
+
 pl_mem_available_kb() {
   if [[ -r /proc/meminfo ]]; then
     awk '/^MemAvailable:/ { print $2; exit }' /proc/meminfo

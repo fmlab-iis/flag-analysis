@@ -3,21 +3,23 @@ Max faults per path (t): 1
 Total number of paths: 13
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        1 |    1 | raw_syndrome (raw)      | unsat   |         40 |  0.039255 |      93.051 |        160 |         656 |          4754 |               1
-        2 |    1 | YIYXX_raw (raw)         | sat     |         36 |  0.006746 |      84.977 |        144 |         584 |          4354 |               1
-        3 |    1 | XIXZZ_raw (raw)         | unsat   |         36 |  0.014924 |      79.727 |        144 |         583 |          4320 |               1
-        4 |    1 | raw_syndrome (raw)      | unsat   |         34 |  0.031199 |      85.711 |        136 |         564 |          4056 |               1
-        5 |    1 | YZIZY_raw (raw)         | unsat   |         30 |  0.012140 |      69.641 |        120 |         494 |          3642 |               1
-        6 |    1 | ZXIXZ_raw (raw)         | unsat   |         30 |  0.013509 |      87.246 |        120 |         501 |          3616 |               1
-        7 |    1 | raw_syndrome (raw)      | unsat   |         28 |  0.022323 |      89.734 |        112 |         468 |          3384 |               1
-        8 |    1 | YZIZY_raw (raw)         | sat     |         24 |  0.006904 |      83.652 |         96 |         405 |          2946 |               1
-        9 |    1 | ZXIXZ_raw (raw)         | sat     |         24 |  0.007051 |      85.508 |         96 |         409 |          2945 |               1
-       10 |    1 | raw_syndrome (raw)      | unsat   |         22 |  0.008143 |      81.789 |         88 |         377 |          2624 |               1
-       11 |    1 | ZIZYY_raw (raw)         | sat     |         18 |  0.009159 |      77.414 |         72 |         316 |          2218 |               1
-       12 |    1 | XIXZZ_raw (raw)         | sat     |         18 |  0.006701 |      80.000 |         72 |         310 |          2188 |               1
-Total runtime (sum of all paths): 0.178054 s
-Total SAT paths: 5/12
+        0 |    0 | Break (other)           | unsat   |         24 |  0.008561 |      50.500 |         96 |         207 |          2187 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |         40 |  0.037223 |      49.625 |        160 |         656 |          4754 |               1
+        2 |    1 | YIYXX_raw (raw)         | sat     |         36 |  0.011631 |      56.457 |        144 |         584 |          4354 |               1
+        3 |    1 | XIXZZ_raw (raw)         | unsat   |         36 |  0.018685 |      52.652 |        144 |         583 |          4320 |               1
+        4 |    1 | raw_syndrome (raw)      | unsat   |         34 |  0.037840 |      50.656 |        136 |         566 |          4090 |               1
+        5 |    1 | YZIZY_raw (raw)         | unsat   |         30 |  0.024639 |      44.699 |        120 |         496 |          3668 |               1
+        6 |    1 | ZXIXZ_raw (raw)         | unsat   |         30 |  0.010128 |      43.945 |        120 |         502 |          3641 |               1
+        7 |    1 | raw_syndrome (raw)      | unsat   |         28 |  0.013846 |      48.648 |        112 |         468 |          3384 |               1
+        8 |    1 | YZIZY_raw (raw)         | sat     |         24 |  0.008822 |      53.395 |         96 |         405 |          2946 |               1
+        9 |    1 | ZXIXZ_raw (raw)         | sat     |         24 |  0.008753 |      50.973 |         96 |         408 |          2928 |               1
+       10 |    1 | raw_syndrome (raw)      | unsat   |         22 |  0.011094 |      42.777 |         88 |         377 |          2624 |               1
+       11 |    1 | ZIZYY_raw (raw)         | sat     |         18 |  0.008825 |      54.902 |         72 |         317 |          2235 |               1
+       12 |    1 | XIXZZ_raw (raw)         | sat     |         18 |  0.009878 |      46.773 |         72 |         310 |          2188 |               1
+Total runtime (sum of all paths): 0.209924 s
+Total SAT paths: 5/13
+Break-weight SAT (fail): 0/1
 Max fault variables (across paths): 160
 Max DIMACS variables (across paths): 656
-Max peak RSS (across paths): 93.051 MB
+Max peak RSS (across paths): 56.457 MB
 ================================================================================

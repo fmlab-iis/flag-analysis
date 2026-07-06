@@ -59,7 +59,7 @@
         },
         "IIIXXXX_path_s_one_f_zero": {
             "instructions": [
-                "raw_syndrome_z"
+                "raw_syndrome_x"
             ],
             "branches": [
                 {
@@ -70,7 +70,7 @@
         },
         "IIIXXXX_path_s_one_after_raw_x": {
             "instructions": [
-                "IIIXXXX_raw"
+                "IIIIZZZZ_raw"
             ],
             "branches": [
                 {
@@ -211,7 +211,7 @@
         },
         "IXXIIXX_path_s_one_f_zero": {
             "instructions": [
-                "raw_syndrome_z"
+                "raw_syndrome_x"
             ],
             "branches": [
                 {
@@ -222,7 +222,7 @@
         },
         "IXXIIXX_path_s_one_after_raw_x": {
             "instructions": [
-                "IXXIIXX_raw"
+                "IZZIIZZZ_raw"
             ],
             "branches": [
                 {
@@ -363,7 +363,7 @@
         },
         "XIXIXIX_path_s_one_f_zero": {
             "instructions": [
-                "raw_syndrome_z"
+                "raw_syndrome_x"
             ],
             "branches": [
                 {
@@ -374,7 +374,7 @@
         },
         "XIXIXIX_path_s_one_after_raw_x": {
             "instructions": [
-                "XIXIXIX_raw"
+                "ZIZIZIZI_raw"
             ],
             "branches": [
                 {
@@ -515,7 +515,7 @@
         },
         "IIIIZZZZ_path_s_one_f_zero": {
             "instructions": [
-                "raw_syndrome_x"
+                "raw_syndrome_z"
             ],
             "branches": [
                 {
@@ -526,7 +526,7 @@
         },
         "IIIIZZZZ_path_s_one_after_raw_x": {
             "instructions": [
-                "IIIIZZZZ_raw"
+                "IIIXXXX_raw"
             ],
             "branches": [
                 {
@@ -667,7 +667,7 @@
         },
         "IZZIIZZZ_path_s_one_f_zero": {
             "instructions": [
-                "raw_syndrome_x"
+                "raw_syndrome_z"
             ],
             "branches": [
                 {
@@ -678,7 +678,7 @@
         },
         "IZZIIZZZ_path_s_one_after_raw_x": {
             "instructions": [
-                "IZZIIZZZ_raw"
+                "IXXIIXX_raw"
             ],
             "branches": [
                 {
@@ -819,7 +819,7 @@
         },
         "ZIZIZIZI_path_s_one_f_zero": {
             "instructions": [
-                "raw_syndrome_x"
+                "raw_syndrome_z"
             ],
             "branches": [
                 {
@@ -830,7 +830,7 @@
         },
         "ZIZIZIZI_path_s_one_after_raw_x": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "XIXIXIX_raw"
             ],
             "branches": [
                 {

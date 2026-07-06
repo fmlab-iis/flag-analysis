@@ -93,7 +93,9 @@ def proof_protocol(protocol,
                   start_node: str,
                   init_state,
                   config: Dict,
-                  t: int):
+                  t: int,
+                  *,
+                  verify_uniqueness: bool = True):
 
     quiet = bool(config.get("__quiet__", False))
     all_paths = []
@@ -210,17 +212,37 @@ def proof_protocol(protocol,
             path_type, last_instr = classify_full_path(full_path)
 
             if path_type == 0:
-                # Type 0: Break path, skip verification.
+                if not verify_uniqueness:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "skipped",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
+
+                status, counterexample, query_stats = proof_path_break_weight(
+                    full_path,
+                    t,
+                    config["stab_txt_path"],
+                    query_tag=f"path_{path_idx}",
+                )
+                if not quiet:
+                    print(f"Path {path_idx}: Type 0 (break weight) -> {status.upper()}")
+                    if status == "sat" and counterexample is not None:
+                        print(f"  Counterexample: {counterexample}")
                 path_query_stats.append({
                     "path_index": path_idx,
                     "path_type": path_type,
                     "last_instr": last_instr,
-                    "status": "skipped",
+                    "status": status,
                     "gate_count": path_gate_count,
-                    "solver_runtime_seconds": 0.0,
-                    "peak_solver_rss_bytes": 0,
-                    "total_clauses": 0,
-                    "sat_query_count": 0,
+                    **query_stats,
                 })
                 return
 
@@ -243,6 +265,20 @@ def proof_protocol(protocol,
             ]
 
             if path_type == 2:
+                if not verify_uniqueness:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "collected",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
+
                 # Final data error formulas used to compute predicted syndrome.
                 E_x = [dq.x for dq in full_path[-1]["state"]["data"]]
                 E_z = [dq.z for dq in full_path[-1]["state"]["data"]]
@@ -283,6 +319,20 @@ def proof_protocol(protocol,
 
             # Type 1 verification: requires generalized syndrome selector from LUT.
             if instr and instr.startswith("LUT_"):
+                if not verify_uniqueness:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "collected",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
+
                 status, counterexample, query_stats = proof_path(
                     full_path,
                     t,
@@ -378,11 +428,150 @@ def proof_protocol(protocol,
         return base_dir / file_name
 
     report_lines: List[str] = []
+    if verify_uniqueness:
+        report_lines.append("=" * 80)
+        report_lines.append(f"Max faults per path (t): {t}")
+        report_lines.append(f"Total number of paths: {len(all_paths)}")
+        report_lines.append("Per-path SAT metrics:")
+        report_lines.append("  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count")
+        for row in sorted(path_query_stats, key=lambda r: r["path_index"]):
+            peak_rss_bytes = row.get("peak_solver_rss_bytes", 0) or 0
+            peak_rss_mb = peak_rss_bytes / (1024 * 1024)
+            report_lines.append(
+                "  "
+                f"{row['path_index']:>7} | "
+                f"{row['path_type']:>4} | "
+                f"{row.get('last_instr', ''):<23} | "
+                f"{row['status']:<7} | "
+                f"{row.get('gate_count', 0):>10} | "
+                f"{row.get('solver_runtime_seconds', 0.0):>9.6f} | "
+                f"{peak_rss_mb:>11.3f} | "
+                f"{row.get('num_fault_vars', 0):>10} | "
+                f"{row.get('total_dimacs_vars', 0):>11} | "
+                f"{row.get('total_clauses', 0):>13} | "
+                f"{row.get('sat_query_count', 0):>15}"
+            )
+        total_runtime_s = sum(
+            row.get("solver_runtime_seconds", 0.0) or 0.0
+            for row in path_query_stats
+        )
+        total_sat_paths = sum(
+            1 for row in path_query_stats if row.get("status") == "sat"
+        )
+        break_sat_paths = sum(
+            1 for row in path_query_stats
+            if row.get("path_type") == 0 and row.get("status") == "sat"
+        )
+        break_total = sum(1 for row in path_query_stats if row.get("path_type") == 0)
+        total_paths = len(path_query_stats)
+        max_fault_vars = max(
+            (row.get("num_fault_vars", 0) or 0 for row in path_query_stats),
+            default=0,
+        )
+        max_dimacs_vars = max(
+            (row.get("total_dimacs_vars", 0) or 0 for row in path_query_stats),
+            default=0,
+        )
+        max_peak_rss_bytes = max(
+            (row.get("peak_solver_rss_bytes", 0) or 0 for row in path_query_stats),
+            default=0,
+        )
+        max_peak_rss_mb = max_peak_rss_bytes / (1024 * 1024)
+        report_lines.append(f"Total runtime (sum of all paths): {total_runtime_s:.6f} s")
+        report_lines.append(f"Total SAT paths: {total_sat_paths}/{total_paths}")
+        if break_total:
+            report_lines.append(f"Break-weight SAT (fail): {break_sat_paths}/{break_total}")
+        report_lines.append(f"Max fault variables (across paths): {max_fault_vars}")
+        report_lines.append(f"Max DIMACS variables (across paths): {max_dimacs_vars}")
+        report_lines.append(f"Max peak RSS (across paths): {max_peak_rss_mb:.3f} MB")
+        report_lines.append("=" * 80)
+
+    if verify_uniqueness:
+        report_path = _resolve_metrics_report_path(config)
+        try:
+            report_path.parent.mkdir(parents=True, exist_ok=True)
+            report_path.write_text("\n".join(report_lines) + "\n")
+        except OSError as e:
+            print(f"Warning: failed to write metrics report: {e}")
+
+        if not quiet:
+            print("\n" + "\n".join(report_lines))
+            print(f"Metrics report saved to: {report_path}")
+
+    return all_paths, path_query_stats
+
+
+def proof_control_flow(protocol, start_node: str, init_state, config: Dict, t: int):
+    """Export control-flow CNFs then solve each path (type0 break, type1 pred_syn_diff, type2 skip)."""
+    from dimacs_export_protocol import export_control_flow_path_constraints, _resolve_control_flow_cnf_dir
+    from flag_analysis import uniqueness_solve_from_export
+
+    quiet = bool(config.get("__quiet__", False))
+    cnf_dir = config.get("control_flow_cnf_dir")
+
+    all_paths, path_query_stats = export_control_flow_path_constraints(
+        protocol, start_node, init_state, config, t, cnf_dir=cnf_dir,
+        protocol_path=config.get("protocol_path"),
+    )
+
+    out_dir = _resolve_control_flow_cnf_dir(config, cnf_dir)
+
+    solved_stats: List[Dict[str, Any]] = []
+    for row in path_query_stats:
+        if row.get("status") != "exported":
+            solved_stats.append(row)
+            continue
+        path_tag = row["path_tag"]
+        status, counterexample, stats = uniqueness_solve_from_export(
+            out_dir, path_tag, verbose=False,
+        )
+        solved_stats.append({
+            **row,
+            "status": status,
+            "solver_runtime_seconds": stats.get("solver_runtime_seconds", 0.0),
+            "peak_solver_rss_bytes": stats.get("peak_solver_rss_bytes", 0),
+            "total_clauses": stats.get("total_clauses", row.get("total_clauses", 0)),
+            "total_dimacs_vars": stats.get("total_dimacs_vars", row.get("total_dimacs_vars", 0)),
+            "sat_query_count": stats.get("sat_query_count", row.get("sat_query_count", 0)),
+            "num_fault_vars": stats.get("num_fault_vars", row.get("num_fault_vars", 0)),
+        })
+        if not quiet:
+            print(f"Control-flow path {row['path_index']}: {status.upper()}")
+
+    path_query_stats = solved_stats
+
+    def _resolve_control_flow_metrics_path(cfg: Dict[str, Any]) -> Path:
+        metrics_dir = cfg.get("metrics_dir")
+        if metrics_dir:
+            base_dir = Path(metrics_dir)
+        elif cfg.get("__config_dir__"):
+            base_dir = Path(cfg["__config_dir__"])
+        else:
+            stab_path = cfg.get("stab_txt_path")
+            base_dir = Path(stab_path).parent if stab_path else Path.cwd()
+        cfg_path = cfg.get("__config_path__")
+        stem = Path(cfg_path).stem if cfg_path else "control_flow"
+        return base_dir / f"{stem}_control_flow_proof_metrics.txt"
+
+    verified_total = sum(
+        1 for row in path_query_stats if row.get("status") in ("unsat", "sat", "unknown")
+        and row.get("status") != "skipped"
+    )
+    exportable = sum(1 for row in path_query_stats if row.get("status") != "skipped")
+
+    report_lines: List[str] = []
     report_lines.append("=" * 80)
+    report_lines.append(
+        "Verify pipeline: control_flow (type0 break-weight; type1 pred_syn_diff; type2 skipped)"
+    )
     report_lines.append(f"Max faults per path (t): {t}")
     report_lines.append(f"Total number of paths: {len(all_paths)}")
+    report_lines.append(f"Exported paths (type 0+1): {sum(1 for r in path_query_stats if r.get('status') not in ('skipped', 'not_verified', 'collected'))}")
     report_lines.append("Per-path SAT metrics:")
-    report_lines.append("  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count")
+    report_lines.append(
+        "  path_idx | type | last_instr              | status | gate_count | runtime_s | "
+        "peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count"
+    )
     for row in sorted(path_query_stats, key=lambda r: r["path_index"]):
         peak_rss_bytes = row.get("peak_solver_rss_bytes", 0) or 0
         peak_rss_mb = peak_rss_bytes / (1024 * 1024)
@@ -400,44 +589,26 @@ def proof_protocol(protocol,
             f"{row.get('total_clauses', 0):>13} | "
             f"{row.get('sat_query_count', 0):>15}"
         )
-    total_runtime_s = sum(
-        row.get("solver_runtime_seconds", 0.0) or 0.0
-        for row in path_query_stats
-    )
-    total_sat_paths = sum(
-        1 for row in path_query_stats if row.get("status") == "sat"
-    )
-    total_paths = len(path_query_stats)
-    max_fault_vars = max(
-        (row.get("num_fault_vars", 0) or 0 for row in path_query_stats),
-        default=0,
-    )
-    max_dimacs_vars = max(
-        (row.get("total_dimacs_vars", 0) or 0 for row in path_query_stats),
-        default=0,
-    )
-    max_peak_rss_bytes = max(
-        (row.get("peak_solver_rss_bytes", 0) or 0 for row in path_query_stats),
-        default=0,
-    )
-    max_peak_rss_mb = max_peak_rss_bytes / (1024 * 1024)
+    total_runtime_s = sum(row.get("solver_runtime_seconds", 0.0) or 0.0 for row in path_query_stats)
     report_lines.append(f"Total runtime (sum of all paths): {total_runtime_s:.6f} s")
-    report_lines.append(f"Total SAT paths: {total_sat_paths}/{total_paths}")
-    report_lines.append(f"Max fault variables (across paths): {max_fault_vars}")
-    report_lines.append(f"Max DIMACS variables (across paths): {max_dimacs_vars}")
-    report_lines.append(f"Max peak RSS (across paths): {max_peak_rss_mb:.3f} MB")
+    total_sat_paths = sum(
+        1 for row in path_query_stats
+        if row.get("status") == "sat" and row.get("status") != "skipped"
+    )
+    sat_denominator = sum(1 for row in path_query_stats if row.get("status") not in ("skipped",))
+    report_lines.append(f"Total SAT paths: {total_sat_paths}/{sat_denominator}")
     report_lines.append("=" * 80)
 
-    report_path = _resolve_metrics_report_path(config)
+    report_path = _resolve_control_flow_metrics_path(config)
     try:
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text("\n".join(report_lines) + "\n")
     except OSError as e:
-        print(f"Warning: failed to write metrics report: {e}")
+        print(f"Warning: failed to write control-flow metrics report: {e}")
 
     if not quiet:
-        print("\n" + "\n".join(report_lines))
-        print(f"Metrics report saved to: {report_path}")
+        print("\n".join(report_lines))
+        print(f"Control-flow metrics report saved to: {report_path}")
 
     return all_paths, path_query_stats
 
@@ -1084,6 +1255,63 @@ def _parse_solver_metrics(out_text: str, query_tag: str) -> Dict[str, Any]:
     }
 
 
+def proof_path_break_weight(
+    path: list,
+    t: int,
+    stab_txt_path: str,
+    query_tag: str = "break",
+):
+    """
+    Break-path weight bound: prove UNSAT of
+      path_conditions ∧ PbLe(fault_acts,t) ∧ ¬∃gsel: stab_equiv_weight(E) ≤ t
+    """
+    import tempfile
+    from flag_analysis import break_weight_export_dimacs, uniqueness_solve_from_export
+
+    faults = [info["act"] for step in path for info in step["site_info"]]
+    if not faults:
+        return "skipped", None, {
+            "solver_runtime_seconds": 0.0,
+            "peak_solver_rss_bytes": 0,
+            "total_clauses": 0,
+            "total_dimacs_vars": 0,
+            "sat_query_count": 0,
+            "num_fault_vars": 0,
+            "num_fault_sites": 0,
+        }
+
+    vars_list = [v for step in path for info in step["site_info"] for v in info["vars"].values()]
+    num_fault_vars = len({str(v) for v in vars_list})
+    num_fault_sites = len(faults)
+    all_condition = [s["condition"] for s in path if s["condition"] is not None]
+    at_most_t_faults = [PbLe([(f, 1) for f in faults], t)]
+
+    path_tag = query_tag if query_tag.startswith("path_") else f"{query_tag}_break"
+    with tempfile.TemporaryDirectory(prefix="break_weight_solve_") as td:
+        export_stats = break_weight_export_dimacs(
+            vars_list,
+            at_most_t_faults,
+            all_condition,
+            path[-1]["state"]["data"],
+            stab_txt_path,
+            t,
+            td,
+            path_tag,
+            gsel_prefix=f"{path_tag}_gsel",
+        )
+        status, counterexample, query_stats = uniqueness_solve_from_export(
+            td, path_tag, verbose=False,
+        )
+
+    query_stats["num_fault_vars"] = num_fault_vars
+    query_stats["num_fault_sites"] = num_fault_sites
+    if not query_stats.get("total_clauses"):
+        query_stats["total_clauses"] = export_stats.get("total_clauses", 0)
+    if not query_stats.get("total_dimacs_vars"):
+        query_stats["total_dimacs_vars"] = export_stats.get("total_dimacs_vars", 0)
+    return status, counterexample, query_stats
+
+
 def proof_path(path : list[dict], t : int , gen_syn : list ,all_condtion : list, stab_txt_path: str,  log_txt_path: str, verify_mode: str = "type1", query_tag: str = "uniq") :
     """
     Given a path (list of steps with conditions and states), build a z3 formula
@@ -1159,7 +1387,7 @@ def proof_path(path : list[dict], t : int , gen_syn : list ,all_condtion : list,
 
 
 def proof_path_unified(path: list, t: int, config: Dict, query_tag: str = "uniq"):
-    """Solve one path with unified gen_syn + pred_syn constraints."""
+    """Solve one path with unified all-measured gen_syn + logical-product witness."""
     from dimacs_export_protocol import build_unified_path_constraint
     from flag_analysis import uniqueness_solve_with_cryptominisat_unified
 
@@ -1175,8 +1403,7 @@ def proof_path_unified(path: list, t: int, config: Dict, query_tag: str = "uniq"
         out_cnf=f"{query_tag}.cnf",
         verbose=False,
         keep_cnf_files=False,
-        num_lut_syn_bits=constraint.num_lut_syn_bits,
-        num_pred_syn_bits=constraint.num_pred_syn_bits,
+        num_meas_syn_bits=constraint.num_meas_syn_bits,
     )
     query_stats = _parse_solver_metrics(out, query_tag)
     query_stats["num_fault_vars"] = constraint.num_fault_vars
@@ -1238,7 +1465,9 @@ def proof_protocol_unified(protocol, start_node: str, init_state, config: Dict, 
 
     report_lines: List[str] = []
     report_lines.append("=" * 80)
-    report_lines.append(f"Verify pipeline: unified (gen_syn + pred_syn, no syn_constraint)")
+    report_lines.append(
+        "Verify pipeline: unified (all measured gen_syn + logical-product witness)"
+    )
     report_lines.append(f"Max faults per path (t): {t}")
     report_lines.append(f"Total number of paths: {len(all_paths)}")
     report_lines.append("Per-path SAT metrics:")
@@ -1264,10 +1493,9 @@ def proof_protocol_unified(protocol, start_node: str, init_state, config: Dict, 
             f"{row.get('sat_query_count', 0):>15}"
         )
     total_runtime_s = sum(row.get("solver_runtime_seconds", 0.0) or 0.0 for row in path_query_stats)
-    total_sat_paths = sum(1 for row in path_query_stats if row.get("status") == "sat")
-    verified = [r for r in path_query_stats if r.get("status") in ("unsat", "sat", "unknown")]
     report_lines.append(f"Total runtime (sum of all paths): {total_runtime_s:.6f} s")
-    report_lines.append(f"Total SAT paths: {total_sat_paths}/{len(verified)}")
+    total_sat_paths = sum(1 for row in path_query_stats if row.get("status") == "sat")
+    report_lines.append(f"Total SAT paths: {total_sat_paths}/{len(all_paths)}")
     report_lines.append("=" * 80)
 
     report_path = _resolve_unified_metrics_path(config)
@@ -1280,5 +1508,109 @@ def proof_protocol_unified(protocol, start_node: str, init_state, config: Dict, 
     if not quiet:
         print("\n".join(report_lines))
         print(f"Unified metrics report saved to: {report_path}")
+
+    return all_paths, path_query_stats
+
+
+def proof_control_flow(protocol, start_node: str, init_state, config: Dict, t: int):
+    """Export control-flow CNFs then solve each path (type0 break, type1 pred_syn_diff, type2 skip)."""
+    from dimacs_export_protocol import export_control_flow_path_constraints, _resolve_control_flow_cnf_dir
+    from flag_analysis import uniqueness_solve_from_export
+
+    quiet = bool(config.get("__quiet__", False))
+    cnf_dir = config.get("control_flow_cnf_dir")
+
+    all_paths, path_query_stats = export_control_flow_path_constraints(
+        protocol, start_node, init_state, config, t, cnf_dir=cnf_dir,
+        protocol_path=config.get("protocol_path"),
+    )
+
+    out_dir = _resolve_control_flow_cnf_dir(config, cnf_dir)
+
+    solved_stats: List[Dict[str, Any]] = []
+    for row in path_query_stats:
+        if row.get("status") != "exported":
+            solved_stats.append(row)
+            continue
+        path_tag = row["path_tag"]
+        status, _counterexample, stats = uniqueness_solve_from_export(
+            out_dir, path_tag, verbose=False,
+        )
+        solved_stats.append({
+            **row,
+            "status": status,
+            "solver_runtime_seconds": stats.get("solver_runtime_seconds", 0.0),
+            "peak_solver_rss_bytes": stats.get("peak_solver_rss_bytes", 0),
+            "total_clauses": stats.get("total_clauses", row.get("total_clauses", 0)),
+            "total_dimacs_vars": stats.get("total_dimacs_vars", row.get("total_dimacs_vars", 0)),
+            "sat_query_count": stats.get("sat_query_count", row.get("sat_query_count", 0)),
+            "num_fault_vars": stats.get("num_fault_vars", row.get("num_fault_vars", 0)),
+        })
+        if not quiet:
+            print(f"Control-flow path {row['path_index']}: {status.upper()}")
+
+    path_query_stats = solved_stats
+
+    def _resolve_control_flow_metrics_path(cfg: Dict[str, Any]) -> Path:
+        metrics_dir = cfg.get("metrics_dir")
+        if metrics_dir:
+            base_dir = Path(metrics_dir)
+        elif cfg.get("__config_dir__"):
+            base_dir = Path(cfg["__config_dir__"])
+        else:
+            stab_path = cfg.get("stab_txt_path")
+            base_dir = Path(stab_path).parent if stab_path else Path.cwd()
+        cfg_path = cfg.get("__config_path__")
+        stem = Path(cfg_path).stem if cfg_path else "control_flow"
+        return base_dir / f"{stem}_control_flow_proof_metrics.txt"
+
+    report_lines: List[str] = []
+    report_lines.append("=" * 80)
+    report_lines.append(
+        "Verify pipeline: control_flow (type0 break-weight; type1 pred_syn_diff; type2 skipped)"
+    )
+    report_lines.append(f"Max faults per path (t): {t}")
+    report_lines.append(f"Total number of paths: {len(all_paths)}")
+    skipped = sum(1 for row in path_query_stats if row.get("status") == "skipped")
+    report_lines.append(f"Skipped type-2 paths: {skipped}")
+    report_lines.append("Per-path SAT metrics:")
+    report_lines.append(
+        "  path_idx | type | last_instr              | status | gate_count | runtime_s | "
+        "peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count"
+    )
+    for row in sorted(path_query_stats, key=lambda r: r["path_index"]):
+        peak_rss_bytes = row.get("peak_solver_rss_bytes", 0) or 0
+        peak_rss_mb = peak_rss_bytes / (1024 * 1024)
+        report_lines.append(
+            "  "
+            f"{row['path_index']:>7} | "
+            f"{row['path_type']:>4} | "
+            f"{row.get('last_instr', ''):<23} | "
+            f"{row['status']:<7} | "
+            f"{row.get('gate_count', 0):>10} | "
+            f"{row.get('solver_runtime_seconds', 0.0):>9.6f} | "
+            f"{peak_rss_mb:>11.3f} | "
+            f"{row.get('num_fault_vars', 0):>10} | "
+            f"{row.get('total_dimacs_vars', 0):>11} | "
+            f"{row.get('total_clauses', 0):>13} | "
+            f"{row.get('sat_query_count', 0):>15}"
+        )
+    total_runtime_s = sum(row.get("solver_runtime_seconds", 0.0) or 0.0 for row in path_query_stats)
+    report_lines.append(f"Total runtime (sum of all paths): {total_runtime_s:.6f} s")
+    total_sat_paths = sum(1 for row in path_query_stats if row.get("status") == "sat")
+    sat_denominator = sum(1 for row in path_query_stats if row.get("status") != "skipped")
+    report_lines.append(f"Total SAT paths: {total_sat_paths}/{sat_denominator}")
+    report_lines.append("=" * 80)
+
+    report_path = _resolve_control_flow_metrics_path(config)
+    try:
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text("\n".join(report_lines) + "\n")
+    except OSError as e:
+        print(f"Warning: failed to write control-flow metrics report: {e}")
+
+    if not quiet:
+        print("\n".join(report_lines))
+        print(f"Control-flow metrics report saved to: {report_path}")
 
     return all_paths, path_query_stats

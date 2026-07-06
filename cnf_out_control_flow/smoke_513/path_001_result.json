@@ -1,0 +1,18 @@
+{
+  "status": "sat",
+  "counterexample": {
+    "p1": {
+      "r_2_faulty_gate3_x0": true,
+      "r_2_faulty_gate3_z0": true
+    },
+    "p2": {
+      "r_3_faulty_gate5_z0": true
+    }
+  },
+  "solver_runtime_seconds": 0.00908633810468018,
+  "peak_solver_rss_bytes": 92274688,
+  "total_clauses": 4327,
+  "total_dimacs_vars": 573,
+  "sat_query_count": 1,
+  "num_fault_vars": 160
+}

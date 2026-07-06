@@ -1,0 +1,24 @@
+================================================================================
+Syndrome extraction verification (no circuit faults)
+Property: ancillas match stabilizer(s); data qubits preserved
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli
+Pass => ok; fail => ancilla mismatch or data not preserved
+Per-circuit metrics:
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | reason
+  IIIIZZZZ_flag         | partial | error   | False   | False |  0.019461 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
+  IIIIZZZZ_raw          | partial | error   | False   | False |  0.001758 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
+  IIIXXXX_flag          | partial | pass    | True    | True |  0.012572 | 
+  IIIXXXX_raw           | partial | pass    | True    | True |  0.005544 | 
+  IXXIIXX_flag          | partial | pass    | True    | True |  0.006614 | 
+  IXXIIXX_raw           | partial | pass    | True    | True |  0.005365 | 
+  IZZIIZZZ_flag         | partial | error   | False   | False |  0.001805 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
+  IZZIIZZZ_raw          | partial | error   | False   | False |  0.001557 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
+  XIXIXIX_flag          | partial | pass    | True    | True |  0.007042 | 
+  XIXIXIX_raw           | partial | pass    | True    | True |  0.006290 | 
+  ZIZIZIZI_flag         | partial | pass    | True    | True |  0.006957 | 
+  ZIZIZIZI_raw          | partial | pass    | True    | True |  0.006931 | 
+  raw_syndrome_x        | full    | fail    | False   | False |  0.004038 | ancilla mismatch at indices [0, 1, 2]
+  raw_syndrome_z        | full    | fail    | False   | False |  0.003646 | ancilla mismatch at indices [0, 1, 2]
+Total runtime: 0.089581 s
+Failed circuits: 6/14
+================================================================================

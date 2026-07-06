@@ -1,0 +1,30 @@
+================================================================================
+Low-weight verification (LUT s/f all false, exactly 1 fault)
+Property: low_weight_ok = commute(E) ∨ ∃ weight-1 W: commute(E·W)
+Counterexample UNSAT => pass; SAT => fail
+Per-path metrics:
+  path_idx | type | last_instr              | low_weight | runtime_s | peak_rss_mb | dimacs_vars | total_clauses | reason
+        0 |    1 | raw_syndrome (raw)      | unsat      |  0.004829 |      85.750 |           0 |             1 | 
+        1 |    1 | raw_syndrome (raw)      | unsat      |  0.004209 |      85.750 |           0 |             1 | 
+        2 |    2 | flag_syndrome (other)   | unsat      |  0.004656 |      85.750 |           0 |             1 | 
+        3 |    1 | raw_syndrome (raw)      | unsat      |  0.005531 |      85.750 |           0 |             1 | 
+        4 |    1 | raw_syndrome (raw)      | unsat      |  0.007984 |      85.750 |           0 |             1 | 
+        5 |    1 | raw_syndrome (raw)      | unsat      |  0.007009 |      85.750 |           0 |             1 | 
+        6 |    2 | flag_syndrome (other)   | unsat      |  0.007615 |      85.750 |           0 |             1 | 
+        7 |    1 | raw_syndrome (raw)      | unsat      |  0.007373 |      85.750 |           0 |             1 | 
+        8 |    2 | flag_syndrome (other)   | unsat      |  0.193150 |      89.750 |        2837 |         24129 | 
+        9 |    1 | raw_syndrome (raw)      | unsat      |  0.004167 |      89.750 |           0 |             1 | 
+       10 |    1 | raw_syndrome (raw)      | unsat      |  0.007861 |      89.750 |           0 |             1 | 
+       11 |    2 | flag_syndrome (other)   | unsat      |  0.356265 |     105.750 |        4638 |         39488 | 
+       12 |    1 | raw_syndrome (raw)      | unsat      |  0.396940 |     106.145 |        5212 |         44315 | 
+       13 |    1 | raw_syndrome (raw)      | unsat      |  0.007588 |     106.145 |           0 |             1 | 
+       14 |    1 | raw_syndrome (raw)      | unsat      |  0.007000 |     106.145 |           0 |             1 | 
+       15 |    2 | flag_syndrome (other)   | unsat      |  0.212133 |     106.145 |        3820 |         32206 | 
+       16 |    1 | raw_syndrome (raw)      | unsat      |  0.379164 |     106.145 |        4321 |         36644 | 
+       17 |    1 | raw_syndrome (raw)      | unsat      |  0.007872 |     106.145 |           0 |             1 | 
+       18 |    1 | raw_syndrome (raw)      | unsat      |  0.007339 |     106.145 |           0 |             1 | 
+       19 |    2 | flag_syndrome (other)   | unsat      |  0.003981 |     106.145 |           0 |             1 | 
+       20 |    1 | raw_syndrome (raw)      | unsat      |  0.006778 |     106.145 |           0 |             1 | 
+Total low-weight runtime: 1.639444 s
+Low-weight SAT (fail) paths: 0/21
+================================================================================

@@ -475,6 +475,9 @@ def apply_qasm_gate_into_state(state: CircuitXZ, name: str, qidxs: List[int]) ->
 
     elif name in ('cz'):
         apply_cz(state, qidxs[0], qidxs[1])
+    
+    elif name in ('cy'):
+        apply_cy(state, qidxs[0], qidxs[1])
 
     elif name in ('id', 'barrier', 'reset', 'measure'):
         # ignored here; measurement is read via final Z/X bits directly
@@ -1284,6 +1287,293 @@ def uniqueness_build_goal(vars, at_most_t_faults, condition, gen_syn_z3,
     return g
 
 
+def control_flow_build_goal(
+    vars,
+    at_most_t_faults,
+    condition,
+    data_qubits,
+    stab_txt_path: str,
+):
+    """
+    Control-flow type-1 goal: SAT counterexample has pred_syn(E1) != pred_syn(E2).
+    UNSAT = pred_syn consistent across fault assignments on the path.
+    """
+    E_x = [dq.x for dq in data_qubits]
+    E_z = [dq.z for dq in data_qubits]
+
+    ren_1 = make_renamer_from_symbols(vars, "_p1")
+    ren_2 = make_renamer_from_symbols(vars, "_p2")
+
+    condition_1 = primed_copy(condition, ren_1)
+    condition_2 = primed_copy(condition, ren_2)
+
+    E_x_1 = primed_copy(E_x, ren_1)
+    E_z_1 = primed_copy(E_z, ren_1)
+    E_x_2 = primed_copy(E_x, ren_2)
+    E_z_2 = primed_copy(E_z, ren_2)
+
+    at_most_t_faults_1 = primed_copy(at_most_t_faults, ren_1)
+    at_most_t_faults_2 = primed_copy(at_most_t_faults, ren_2)
+
+    stab_gens = load_symplectic_txt(stab_txt_path)
+    pred_syn_1 = stabilizer_syndrome_from_data(E_x_1, E_z_1, stab_gens)
+    pred_syn_2 = stabilizer_syndrome_from_data(E_x_2, E_z_2, stab_gens)
+    if pred_syn_1:
+        pred_syn_diff = Or(*[a != b for a, b in zip(pred_syn_1, pred_syn_2)])
+    else:
+        pred_syn_diff = BoolVal(False)
+
+    g = Goal()
+    g.add(And(*condition_1))
+    g.add(And(*condition_2))
+    g.add(at_most_t_faults_1)
+    g.add(at_most_t_faults_2)
+    g.add(pred_syn_diff)
+    return g
+
+
+def control_flow_export_dimacs(
+    vars,
+    at_most_t_faults,
+    condition,
+    data_qubits,
+    stab_txt_path: str,
+    cnf_dir,
+    path_tag: str,
+    use_card2bv: bool = True,
+):
+    """Export control-flow type-1 pred_syn_diff constraints to DIMACS."""
+    cnf_dir = Path(cnf_dir)
+    cnf_dir.mkdir(parents=True, exist_ok=True)
+
+    g = control_flow_build_goal(
+        vars, at_most_t_faults, condition, data_qubits, stab_txt_path,
+    )
+
+    old_cwd = os.getcwd()
+    os.chdir(cnf_dir)
+    temp_files = []
+    cnf_files = []
+    solve_vmap = {}
+    merged_cnf = None
+    try:
+        cnf_files, var_maps = build_dimacs(g, use_card2bv)
+        if not cnf_files:
+            raise RuntimeError(f"No CNF subgoals produced for {path_tag}")
+
+        solve_cnf = cnf_files[0]
+        solve_vmap = var_maps[0]
+        if len(cnf_files) > 1:
+            merged_cnf = f"{path_tag}_merged.cnf"
+            solve_vmap = merge_dimacs_cnfs(cnf_files, merged_cnf)
+            solve_cnf = merged_cnf
+
+        final_cnf = cnf_dir / f"{path_tag}.cnf"
+        solve_path = Path(solve_cnf)
+        if not solve_path.is_absolute():
+            solve_path = cnf_dir / solve_path
+        if solve_path.resolve() != final_cnf.resolve():
+            shutil.copy2(solve_path, final_cnf)
+
+        temp_files = list(cnf_files)
+        if merged_cnf and merged_cnf not in temp_files:
+            temp_files.append(merged_cnf)
+    finally:
+        os.chdir(old_cwd)
+        for p in temp_files:
+            try:
+                fp = cnf_dir / p if not os.path.isabs(p) else Path(p)
+                if fp.exists() and fp.name != f"{path_tag}.cnf":
+                    fp.unlink()
+            except OSError:
+                pass
+
+    final_cnf = cnf_dir / f"{path_tag}.cnf"
+    total_clauses, total_dimacs_vars = _count_cnf_stats(str(final_cnf))
+
+    var_map_path = cnf_dir / f"{path_tag}_var_map.json"
+    var_map_path.write_text(
+        json.dumps({str(k): _z3_bool_name(v) for k, v in solve_vmap.items()}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    fault_var_names = sorted({_z3_bool_name(v) for v in vars})
+    meta = {
+        "path_tag": path_tag,
+        "witness_mode": "control_flow_type1",
+        "verify_pipeline": "control_flow",
+        "fault_var_names": fault_var_names,
+        "gen_syn_var_names": [],
+        "num_fault_vars": len(fault_var_names),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "stab_txt_path": str(stab_txt_path),
+        "num_subgoals": len(cnf_files),
+    }
+    meta_path = cnf_dir / f"{path_tag}_meta.json"
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+
+    return {
+        "path_tag": path_tag,
+        "cnf_path": str(final_cnf),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "num_fault_vars": len(fault_var_names),
+        "sat_query_count": len(cnf_files),
+    }
+
+
+def break_weight_build_goal(
+    at_most_t_faults,
+    condition,
+    data_qubits,
+    stab_txt_path: str,
+    t: int,
+    gsel_prefix: str = "bw_gsel",
+):
+    """
+    Break-path counterexample goal (prove UNSAT):
+      path_conditions ∧ PbLe(fault_acts, t)
+      ∧ ∀ gsel : stab_equiv_weight(E, gsel) > t
+
+    The universal quantifier over gsel is expanded to 2^m disjunctive clauses
+    so the goal is quantifier-free and CNF-exportable.
+    """
+    E_x = [dq.x for dq in data_qubits]
+    E_z = [dq.z for dq in data_qubits]
+    Epx, Epz, gsel = build_stab_equiv_errors(E_x, E_z, stab_txt_path, prefix=gsel_prefix)
+
+    from itertools import product
+
+    forall_constraints = []
+    for bits in product((False, True), repeat=len(gsel)):
+        subs = [(gsel[j], BoolVal(bits[j])) for j in range(len(gsel))]
+        b_fixed = [
+            Or(simplify(substitute(Epx[i], subs)), simplify(substitute(Epz[i], subs)))
+            for i in range(len(Epx))
+        ]
+        # Require weight > t for EVERY stabilizer coset (min weight > t).
+        # Do NOT use Or(Not(pattern_match(gsel)), ...): with free gsel that
+        # encodes Exists gsel instead of ForAll gsel.
+        forall_constraints.append(PbGe([(bi, 1) for bi in b_fixed], t + 1))
+
+    g = Goal()
+    if condition:
+        g.add(And(*condition))
+    if at_most_t_faults:
+        constraints = at_most_t_faults if isinstance(at_most_t_faults, list) else [at_most_t_faults]
+        for c in constraints:
+            g.add(c)
+    for c in forall_constraints:
+        g.add(c)
+    return g, gsel
+
+
+def break_weight_export_dimacs(
+    vars,
+    at_most_t_faults,
+    condition,
+    data_qubits,
+    stab_txt_path: str,
+    t: int,
+    cnf_dir,
+    path_tag: str,
+    gsel_prefix: Optional[str] = None,
+    use_card2bv: bool = True,
+):
+    """Build Break-path goal, convert to DIMACS, write path_tag.cnf + sidecars."""
+    cnf_dir = Path(cnf_dir)
+    cnf_dir.mkdir(parents=True, exist_ok=True)
+    prefix = gsel_prefix or f"{path_tag}_gsel"
+
+    g, gsel = break_weight_build_goal(
+        at_most_t_faults, condition, data_qubits, stab_txt_path, t, gsel_prefix=prefix,
+    )
+
+    old_cwd = os.getcwd()
+    os.chdir(cnf_dir)
+    temp_files = []
+    cnf_files = []
+    solve_vmap = {}
+    merged_cnf = None
+    try:
+        cnf_files, var_maps = build_dimacs(g, use_card2bv)
+        if not cnf_files:
+            raise RuntimeError(f"No CNF subgoals produced for {path_tag}")
+
+        solve_cnf = cnf_files[0]
+        solve_vmap = var_maps[0]
+        if len(cnf_files) > 1:
+            merged_cnf = f"{path_tag}_merged.cnf"
+            solve_vmap = merge_dimacs_cnfs(cnf_files, merged_cnf)
+            solve_cnf = merged_cnf
+
+        final_cnf = cnf_dir / f"{path_tag}.cnf"
+        solve_path = Path(solve_cnf)
+        if not solve_path.is_absolute():
+            solve_path = cnf_dir / solve_path
+        if solve_path.resolve() != final_cnf.resolve():
+            shutil.copy2(solve_path, final_cnf)
+
+        temp_files = list(cnf_files)
+        if merged_cnf and merged_cnf not in temp_files:
+            temp_files.append(merged_cnf)
+    finally:
+        os.chdir(old_cwd)
+        for p in temp_files:
+            try:
+                fp = cnf_dir / p if not os.path.isabs(p) else Path(p)
+                if fp.exists() and fp.name != f"{path_tag}.cnf":
+                    fp.unlink()
+            except OSError:
+                pass
+
+    final_cnf = cnf_dir / f"{path_tag}.cnf"
+    total_clauses, total_dimacs_vars = _count_cnf_stats(str(final_cnf))
+
+    var_map_path = cnf_dir / f"{path_tag}_var_map.json"
+    var_map_path.write_text(
+        json.dumps({str(k): _z3_bool_name(v) for k, v in solve_vmap.items()}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    fault_var_names = sorted({_z3_bool_name(v) for v in vars})
+    gsel_var_names = [_z3_bool_name(v) for v in gsel]
+    meta = {
+        "path_tag": path_tag,
+        "witness_mode": "break",
+        "fault_var_names": fault_var_names,
+        "gsel_var_names": gsel_var_names,
+        "gen_syn_var_names": [],
+        "num_fault_vars": len(fault_var_names),
+        "t": t,
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "stab_txt_path": str(stab_txt_path),
+        "num_subgoals": len(cnf_files),
+    }
+    meta_path = cnf_dir / f"{path_tag}_meta.json"
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+
+    return {
+        "path_tag": path_tag,
+        "cnf_path": str(final_cnf),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "num_fault_vars": len(fault_var_names),
+        "sat_query_count": len(cnf_files),
+    }
+
+
+def _break_weight_counterexample_from_lits(lits, var_map):
+    """Extract true fault + gsel vars from a SAT model for witness_mode break."""
+    assign = model_to_z3_assignment(lits, var_map)
+    user_true = {k: v for k, v in assign.items() if v and is_user_var(k)}
+    gsel = {k: v for k, v in user_true.items() if "_gsel" in k}
+    faults = {k: v for k, v in user_true.items() if k not in gsel}
+    return {"faults": faults, "gsel": gsel, "assignment": user_true}
+
+
 def uniqueness_build_goal_unified(
     vars,
     at_most_t_faults,
@@ -1294,8 +1584,9 @@ def uniqueness_build_goal_unified(
     log_txt_path,
 ):
     """
-    Unified uniqueness goal: same_syn on extended gen_syn (LUT + pred_syn),
-    E1 != E2, E1·E2 not in stabilizer, E1/E2 not in stabilizer.
+    Unified uniqueness goal: same_syn on all measured gen_syn bits,
+    E1 != E2, and E1·E2 is a nontrivial logical operator (commutes with all
+    stabilizers and anticommutes with at least one logical).
     No syn_constraint in path conditions (caller responsibility).
     """
     E_x = [dq.x for dq in data_qubits]
@@ -1325,14 +1616,8 @@ def uniqueness_build_goal_unified(
     E_1_add_E_2_X = [Xor(ex1, ex2) for ex1, ex2 in zip(E_x_1, E_x_2)]
     E_1_add_E_2_Z = [Xor(ez1, ez2) for ez1, ez2 in zip(E_z_1, E_z_2)]
 
-    condition_pauli_not_in_stab = pauli_not_in_stabilizer(
+    condition_E_product_logical = pauli_is_nontrivial_logical_operator(
         E_1_add_E_2_X, E_1_add_E_2_Z, stab_txt_path, log_txt_path
-    )
-    condition_E_1_not_in_stab = pauli_not_in_stabilizer(
-        E_x_1, E_z_1, stab_txt_path, log_txt_path
-    )
-    condition_E_2_not_in_stab = pauli_not_in_stabilizer(
-        E_x_2, E_z_2, stab_txt_path, log_txt_path
     )
 
     same_syn = And(*[x == y for x, y in zip(gen_syn_z3_1, gen_syn_z3_2)])
@@ -1344,9 +1629,7 @@ def uniqueness_build_goal_unified(
     g.add(at_most_t_faults_1)
     g.add(at_most_t_faults_2)
     g.add(condition_E_1_neq_E_2_formula)
-    g.add(condition_pauli_not_in_stab)
-    g.add(condition_E_1_not_in_stab)
-    g.add(condition_E_2_not_in_stab)
+    g.add(condition_E_product_logical)
     return g
 
 
@@ -1361,8 +1644,7 @@ def uniqueness_export_dimacs_unified(
     cnf_dir,
     path_tag: str,
     use_card2bv: bool = True,
-    num_lut_syn_bits: int = 0,
-    num_pred_syn_bits: int = 0,
+    num_meas_syn_bits: int = 0,
 ):
     """Export unified uniqueness constraints to DIMACS (no solver)."""
     cnf_dir = Path(cnf_dir)
@@ -1428,8 +1710,7 @@ def uniqueness_export_dimacs_unified(
         "verify_pipeline": "unified",
         "fault_var_names": fault_var_names,
         "gen_syn_var_names": gen_syn_var_names,
-        "num_lut_syn_bits": num_lut_syn_bits,
-        "num_pred_syn_bits": num_pred_syn_bits,
+        "num_meas_syn_bits": num_meas_syn_bits,
         "num_fault_vars": len(fault_var_names),
         "total_clauses": total_clauses,
         "total_dimacs_vars": total_dimacs_vars,
@@ -1466,8 +1747,7 @@ def uniqueness_solve_with_cryptominisat_unified(
     keep_cnf_files: bool = True,
     verbose: bool = True,
     cms_retries: int = 8,
-    num_lut_syn_bits: int = 0,
-    num_pred_syn_bits: int = 0,
+    num_meas_syn_bits: int = 0,
 ):
     """Inline unified uniqueness solve via export-to-temp + CryptoMiniSat."""
     import tempfile
@@ -1485,8 +1765,7 @@ def uniqueness_solve_with_cryptominisat_unified(
             td,
             path_tag,
             use_card2bv=use_card2bv,
-            num_lut_syn_bits=num_lut_syn_bits,
-            num_pred_syn_bits=num_pred_syn_bits,
+            num_meas_syn_bits=num_meas_syn_bits,
         )
         st, counterexample, stats = uniqueness_solve_from_export(
             td,
@@ -1728,6 +2007,7 @@ def uniqueness_solve_from_export(
     cnf_path, var_map, meta = _load_export_sidecars(cnf_dir, path_tag)
     cms_exec = resolve_cryptominisat_binary(cms_bin)
 
+    witness_mode = meta.get("witness_mode", "type1")
     gen_syn_z3 = [Bool(n) for n in meta.get("gen_syn_var_names", [])]
     fault_vars = [Bool(n) for n in meta.get("fault_var_names", [])]
 
@@ -1751,8 +2031,13 @@ def uniqueness_solve_from_export(
         if st == "unknown":
             continue
         if st == "sat" and lits:
+            if witness_mode == "break":
+                counterexample = _break_weight_counterexample_from_lits(lits, var_map)
+                break
             p1, p2 = pretty_print_true_z3_vars(lits, var_map, do_print=False)
-            if _verify_witness_same_syn(gen_syn_z3, p1, p2, fault_vars):
+            if witness_mode == "control_flow_type1" or _verify_witness_same_syn(
+                gen_syn_z3, p1, p2, fault_vars,
+            ):
                 counterexample = {"p1": p1, "p2": p2}
                 break
             st = "unknown"
@@ -2299,15 +2584,17 @@ def _counterexample(a, b):
 
 
 def check_ancillas_match_symplectic_ordered(qasm_path: str,
-                                            stab_txt_path: str,
-                                            order: str = "X-then-Z"):
+                                            stab_txt_path: str | None = None,
+                                            order: str = "X-then-Z",
+                                            *,
+                                            generators: list | None = None):
     """
     Pairwise, ordered equivalence:
       ancilla[i]  ≡  anticommute_formula_from_txt_line[i]
 
     - Ancilla formulas are taken from the circuit and projected to data-only
       (anc/flag vars set False; data vars symbolic).
-    - Stabilizer formulas come from the txt (file order preserved).
+    - Stabilizer formulas come from `generators` or the txt (file order preserved).
     - `order` tells how to concatenate ancillas from QASM registers:
          "X-then-Z" (default) means ancX first, then ancZ (both in QASM order).
          "Z-then-X" means ancZ first, then ancX.
@@ -2325,25 +2612,32 @@ def check_ancillas_match_symplectic_ordered(qasm_path: str,
     
     ancillas = (ancX + ancZ) if order == "X-then-Z" else (ancZ + ancX)
 
-    # Stabilizer anticommute formulas from txt (exact line order)
-    gens = load_symplectic_txt(stab_txt_path)
+    # Stabilizer anticommute formulas (exact generator order)
+    if generators is not None:
+        gens = generators
+    elif stab_txt_path is not None:
+        gens = load_symplectic_txt(stab_txt_path)
+    else:
+        raise ValueError("check_ancillas_match_symplectic_ordered requires stab_txt_path or generators")
     stabs = [anticomm_formula(Sx, Sz, varenv) for (Sx, Sz) in gens]
 
-    print(f"Total ancillas considered: {len(ancillas)}")
-    for i, (a, s) in enumerate(zip(ancillas, stabs)):
-        print(f"Ancilla formula [{i}]:", a)
-        print(f"Expected formula (stab.txt) [{i}]:", s)
-    if len(ancillas) > len(stabs):
-        for i in range(len(stabs), len(ancillas)):
-            print(f"Ancilla formula [{i}]:", ancillas[i])
-            print(f"Expected formula (stab.txt) [{i}]: (missing — stab.txt has fewer rows)")
-    elif len(stabs) > len(ancillas):
-        for i in range(len(ancillas), len(stabs)):
-            print(f"Ancilla formula [{i}]: (missing — circuit has fewer ancillas)")
-            print(f"Expected formula (stab.txt) [{i}]:", stabs[i])
+    if not _QUIET:
+        print(f"Total ancillas considered: {len(ancillas)}")
+        for i, (a, s) in enumerate(zip(ancillas, stabs)):
+            print(f"Ancilla formula [{i}]:", a)
+            print(f"Expected formula (stab.txt) [{i}]:", s)
+        if len(ancillas) > len(stabs):
+            for i in range(len(stabs), len(ancillas)):
+                print(f"Ancilla formula [{i}]:", ancillas[i])
+                print(f"Expected formula (stab.txt) [{i}]: (missing — stab.txt has fewer rows)")
+        elif len(stabs) > len(ancillas):
+            for i in range(len(ancillas), len(stabs)):
+                print(f"Ancilla formula [{i}]: (missing — circuit has fewer ancillas)")
+                print(f"Expected formula (stab.txt) [{i}]:", stabs[i])
 
     if len(ancillas) != len(stabs):
-        print(f"[COUNT MISMATCH] ancillas={len(ancillas)} vs stabs={len(stabs)}")
+        if not _QUIET:
+            print(f"[COUNT MISMATCH] ancillas={len(ancillas)} vs stabs={len(stabs)}")
         return {"ok": False, "mismatches": list(range(min(len(ancillas), len(stabs))))}
 
     # Combine all equivalence checks into a single AND condition
@@ -2461,6 +2755,51 @@ def error_not_in_stabilizer(E_x, E_z, stab_txt_path: str, *, prefix: str = "gsel
     #   s.add(And(*condition_not_in_stab_1))
     # still works.
     return [not_in_stab], gsel
+
+
+def _pauli_anticommutes_with_generator(E_x, E_z, P_x, P_z):
+    """True iff Pauli (E_x, E_z) anticommutes with generator (P_x, P_z)."""
+    terms = []
+    n = len(E_x)
+    for j in range(n):
+        if P_x[j]:
+            terms.append(E_z[j])
+        if P_z[j]:
+            terms.append(E_x[j])
+    if not terms:
+        return BoolVal(False)
+    return xor_list(terms)
+
+
+def pauli_commutes_with_all_stabilizers(E_x, E_z, stab_txt_path: str):
+    """True iff E commutes with every stabilizer generator."""
+    gens = load_symplectic_txt(stab_txt_path)
+    if not gens:
+        return BoolVal(True)
+    return And(*[
+        Not(_pauli_anticommutes_with_generator(E_x, E_z, P_x, P_z))
+        for P_x, P_z in gens
+    ])
+
+
+def pauli_anticommutes_with_some_logical(E_x, E_z, log_txt_path: str):
+    """True iff E anticommutes with at least one logical operator."""
+    log_op = load_symplectic_txt(log_txt_path)
+    if not log_op:
+        return BoolVal(False)
+    return Or(*[
+        _pauli_anticommutes_with_generator(E_x, E_z, P_x, P_z)
+        for P_x, P_z in log_op
+    ])
+
+
+def pauli_is_nontrivial_logical_operator(E_x, E_z, stab_txt_path: str, log_txt_path: str):
+    """True iff E commutes with all stabilizers and anticommutes with some logical."""
+    return And(
+        pauli_commutes_with_all_stabilizers(E_x, E_z, stab_txt_path),
+        pauli_anticommutes_with_some_logical(E_x, E_z, log_txt_path),
+    )
+
 
 def pauli_not_in_stabilizer(E_x, E_z, stab_txt_path: str,log_txt_path: str):
     gens = load_symplectic_txt(stab_txt_path)
@@ -3117,77 +3456,80 @@ def _data_qubit_preservation_eqs(state, groups, varenv, regmap):
     return eqs
 
 
-def prove_syndrome_extractions(qasm_path: str, stab_txt_path: str):
-    state, qc, varenv = build_variable_state_from_qasm(qasm_path)
-    groups = detect_qubit_groups(qc)
-    regmap = _regmap_indices(qc)
+def verify_syndrome_extraction(
+    qasm_path: str,
+    stab_txt_path: str | None = None,
+    *,
+    order: str = "X-then-Z",
+    generators: list | None = None,
+) -> Dict:
+    """
+    Check that a QASM circuit is a valid syndrome extractor (no faults):
+      1) measured ancillas match stabilizer rows (ordered)
+      2) data qubits are unchanged (input Pauli == output Pauli)
 
-    # Detailed symbolic state dump suppressed
-
-    data_exprs = data_qubits(state, groups["data"])  # list of (x,z) pairs for data qubits
-
-    # Flip predicates (basis-aware)
-    synX_exprs = ancillas_X(state, groups["ancX"])   # X-type syndromes (check .z)
-    synZ_exprs = ancillas_Z(state, groups["ancZ"])   # Z-type syndromes (check .x)
-    flgX_exprs = flags_X(state, groups["flagX"])     # flags measured in X (check .z)
-    flgZ_exprs = flags_Z(state, groups["flagZ"])     # flags measured in Z (check .x)
-
-    # Build an assignment:
-    # - allow arbitrary data errors via named vars (you can set a subset True)
-    # - force all anc/flag variables to False to model "no circuit faults"
-    asgmt = {}
-
-    # Force all anc/flag vars False:
-    for name in varenv:
-        if name.startswith("ancX") or name.startswith("ancZ") or name.startswith("flagX") or name.startswith("flagZ"):
-            asgmt[name] = False
-
-    # Evaluate syndromes/flags
-    synX_vals = [eval_under(e, asgmt, varenv) for e in synX_exprs]
-    synZ_vals = [eval_under(e, asgmt, varenv) for e in synZ_exprs]
-    flgX_vals = [eval_under(e, asgmt, varenv) for e in flgX_exprs]
-    flgZ_vals = [eval_under(e, asgmt, varenv) for e in flgZ_exprs]
-
+    Use full stab.txt via stab_txt_path, or pass explicit generators for partial extraction.
+    """
     report = check_ancillas_match_symplectic_ordered(
         qasm_path,
         stab_txt_path,
-        order="X-then-Z",   # change to "Z-then-X" if your .txt lists Z-first
+        order=order,
+        generators=generators,
     )
+    ancilla_ok = bool(report["ok"])
+    mismatches = list(report.get("mismatches", []))
+
+    data_preserved = False
+    data_mismatches: List[int] = []
+    if ancilla_ok:
+        state, qc, varenv = build_variable_state_from_qasm(qasm_path)
+        groups = detect_qubit_groups(qc)
+        regmap = _regmap_indices(qc)
+        data_eqs = _data_qubit_preservation_eqs(state, groups, varenv, regmap)
+        s = Solver()
+        s.add(Not(And(*data_eqs)))
+        if s.check() == unsat:
+            data_preserved = True
+        else:
+            for idx in groups["data"]:
+                regname, j = regmap[idx]
+                prefix = f"{regname}{j}"
+                in_x = varenv[f"{prefix}_x"]
+                in_z = varenv[f"{prefix}_z"]
+                out_x = project_data_only(state.qubits[idx].x, varenv)
+                out_z = project_data_only(state.qubits[idx].z, varenv)
+                if not _equiv(out_x, in_x) or not _equiv(out_z, in_z):
+                    data_mismatches.append(idx)
+
+    ok = ancilla_ok and data_preserved
+    return {
+        "ok": ok,
+        "ancilla_ok": ancilla_ok,
+        "data_preserved": data_preserved,
+        "mismatches": mismatches,
+        "data_mismatches": data_mismatches,
+    }
+
+
+def prove_syndrome_extractions(qasm_path: str, stab_txt_path: str):
+    result = verify_syndrome_extraction(qasm_path, stab_txt_path, order="X-then-Z")
 
     print("Result of ordered ancilla vs stabilizer check:")
-    if report["ok"]:
+    if result["ancilla_ok"]:
         print("Success : ancilla measurements match stabilizers in order.")
     else:
-        for mi in report["mismatches"]:
+        for mi in result["mismatches"]:
             print(f"  Mismatch at stabilizer index {mi}")
         return False
 
-    data_eqs = _data_qubit_preservation_eqs(state, groups, varenv, regmap)
-    s = Solver()
-    s.add(Not(And(*data_eqs)))
     print("Result of data-qubit preservation check:")
-    if s.check() == unsat:
+    if result["data_preserved"]:
         print("UNSAT: output data qubits match input data qubits.")
         return True
 
     print("SAT: counterexample — some data qubit input != output.")
-    model = s.model()
-    print("Counterexample model (True vars):")
-    for d in model.decls():
-        if str(model[d]) == "True":
-            print(f"  {d.name()} = True")
-    data_mismatches = []
-    for idx in groups["data"]:
-        regname, j = regmap[idx]
-        prefix = f"{regname}{j}"
-        in_x = varenv[f"{prefix}_x"]
-        in_z = varenv[f"{prefix}_z"]
-        out_x = project_data_only(state.qubits[idx].x, varenv)
-        out_z = project_data_only(state.qubits[idx].z, varenv)
-        if not _equiv(out_x, in_x) or not _equiv(out_z, in_z):
-            data_mismatches.append(idx)
-    if data_mismatches:
-        print("  Data qubits with input != output at indices:", data_mismatches)
+    if result["data_mismatches"]:
+        print("  Data qubits with input != output at indices:", result["data_mismatches"])
     return False
 
 

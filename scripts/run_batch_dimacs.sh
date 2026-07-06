@@ -6,6 +6,7 @@ cd "$ROOT"
 # shellcheck source=parallel_limits.sh
 source "$ROOT/scripts/parallel_limits.sh"
 pl_init_dimacs_limits batch
+pl_init_tmpdir "$ROOT"
 
 mkdir -p results_txt cnf_out
 
@@ -29,7 +30,7 @@ filter_jobs | awk -F '\t' 'NF >= 2 { printf "  %d. t=%s  %s\n", ++n, ($3 == "" ?
 echo ""
 
 export BATCH_JOBS
-filter_jobs | parallel -j "$BATCH_JOBS" "${MEMFREE_EXPORT[@]}" --colsep '\t' --line-buffer --joblog run_dimacs.log \
+filter_jobs | parallel -j "$BATCH_JOBS" --tmpdir "$PARALLEL_TMPDIR" "${MEMFREE_EXPORT[@]}" --colsep '\t' --line-buffer --joblog run_dimacs.log \
   "$ROOT/scripts/run_one_job_dimacs.sh" {1} {2} {3} {#} "$TOTAL"
 
 echo ""

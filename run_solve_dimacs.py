@@ -33,13 +33,29 @@ def _write_path_report(
     total: int,
     row: Dict[str, Any],
     counterexample: Optional[Dict],
+    *,
+    verify_pipeline: Optional[str] = None,
 ) -> None:
     peak_mb = (row.get("peak_solver_rss_bytes", 0) or 0) / (1024 * 1024)
     status = row.get("status", "unknown")
+    path_type = row.get("path_type", "?")
+    pipeline = verify_pipeline or ""
+    unified = pipeline == "unified"
+    control_flow = pipeline == "control_flow"
     if status == "unsat":
-        result_line = "result: uniqueness holds (no counterexample)"
+        if path_type == 0 and not unified:
+            result_line = "result: break weight bound holds (no counterexample)"
+        elif control_flow and path_type == 1:
+            result_line = "result: pred_syn consistent (no counterexample)"
+        else:
+            result_line = "result: uniqueness holds (no counterexample)"
     elif status == "sat":
-        result_line = "result: counterexample found (uniqueness FAIL)"
+        if path_type == 0 and not unified:
+            result_line = "result: break weight counterexample found (FAIL)"
+        elif control_flow and path_type == 1:
+            result_line = "result: pred_syn mismatch found (FAIL)"
+        else:
+            result_line = "result: counterexample found (uniqueness FAIL)"
     else:
         result_line = f"result: {status}"
 
@@ -52,8 +68,12 @@ def _write_path_report(
         f"  {result_line}",
     ]
     if counterexample:
-        lines.append(f"  p1: {counterexample.get('p1', {})}")
-        lines.append(f"  p2: {counterexample.get('p2', {})}")
+        if path_type == 0 and not unified:
+            lines.append(f"  faults: {counterexample.get('faults', {})}")
+            lines.append(f"  gsel: {counterexample.get('gsel', {})}")
+        else:
+            lines.append(f"  p1: {counterexample.get('p1', {})}")
+            lines.append(f"  p2: {counterexample.get('p2', {})}")
 
     report_path = cnf_dir / f"{path_tag}_report.txt"
     report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -103,7 +123,10 @@ def parse_one_path(
             json.dumps({"status": status, "counterexample": counterexample, **stats}, indent=2) + "\n",
             encoding="utf-8",
         )
-        _write_path_report(cnf_dir, path_tag, path_index, total, row, counterexample)
+        _write_path_report(
+            cnf_dir, path_tag, path_index, total, row, counterexample,
+            verify_pipeline=manifest.get("verify_pipeline"),
+        )
 
         solved = len(list(cnf_dir.glob("path_*_result.json")))
         progress = {
@@ -146,9 +169,16 @@ def summarize(cnf_dir: Path, metrics_dir: Optional[Path]) -> int:
         })
 
     report = format_proof_metrics_report(rows, t, manifest.get("total_paths", len(rows)))
-    if manifest.get("verify_pipeline") == "unified":
+    pipeline = manifest.get("verify_pipeline")
+    if pipeline == "unified":
         report = (
-            "Verify pipeline: unified (gen_syn + pred_syn, no syn_constraint)\n" + report
+            "Verify pipeline: unified (all measured gen_syn + logical-product witness)\n"
+            + report
+        )
+    elif pipeline == "control_flow":
+        report = (
+            "Verify pipeline: control_flow (type0 break-weight; type1 pred_syn_diff; type2 skipped)\n"
+            + report
         )
     protocol_report = cnf_dir / "protocol_report.txt"
     protocol_report.write_text(report, encoding="utf-8")
@@ -156,7 +186,12 @@ def summarize(cnf_dir: Path, metrics_dir: Optional[Path]) -> int:
     if metrics_dir is None:
         metrics_dir = Path("results_txt")
     metrics_dir.mkdir(parents=True, exist_ok=True)
-    metrics_suffix = "_unified_proof_metrics" if manifest.get("verify_pipeline") == "unified" else "_proof_metrics"
+    if pipeline == "unified":
+        metrics_suffix = "_unified_proof_metrics"
+    elif pipeline == "control_flow":
+        metrics_suffix = "_control_flow_proof_metrics"
+    else:
+        metrics_suffix = "_proof_metrics"
     metrics_path = metrics_dir / f"{config_stem}{metrics_suffix}.txt"
     metrics_path.write_text(report, encoding="utf-8")
 

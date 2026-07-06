@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 1 (unified): export path constraints with gen_syn + pred_syn to DIMACS."""
+"""Phase 1 (unified): export path constraints with all measured gen_syn to DIMACS."""
 
 import argparse
 import sys

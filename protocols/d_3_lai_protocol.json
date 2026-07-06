@@ -50,7 +50,9 @@
             ]
         },
         "f_0_s_0_all_zero": {
-            "instructions": [],
+            "instructions": [
+                "Break"
+            ],
             "branches": []
         },
         "not_f_0_s_0_all_zero": {

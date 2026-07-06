@@ -1,0 +1,32 @@
+Verify pipeline: unified (all measured gen_syn + logical-product witness)
+================================================================================
+Max faults per path (t): 1
+Total number of paths: 19
+Per-path SAT metrics:
+  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
+        0 |    1 | IIIIZZZZ_raw (raw)      | unsat   |         22 |  0.006791 |      88.859 |         88 |         344 |          2438 |               1
+        1 |    1 | ZIZIZIZI_raw (raw)      | unsat   |         18 |  0.012647 |      69.723 |         72 |         274 |          1974 |               1
+        2 |    1 | XIXIXIX_raw (raw)       | unsat   |         18 |  0.009963 |      69.160 |         72 |         274 |          1976 |               1
+        3 |    1 | IZZIIZZZ_raw (raw)      | unsat   |         28 |  0.008508 |      73.438 |        112 |         435 |          3215 |               1
+        4 |    1 | ZIZIZIZI_raw (raw)      | unsat   |         24 |  0.007296 |      55.980 |         96 |         372 |          2704 |               1
+        5 |    1 | XIXIXIX_raw (raw)       | unsat   |         24 |  0.008374 |      47.855 |         96 |         376 |          2714 |               1
+        6 |    1 | ZIZIZIZI_raw (raw)      | unsat   |         34 |  0.015927 |      60.668 |        136 |         531 |          3876 |               1
+        7 |    1 | IZZIIZZZ_raw (raw)      | unsat   |         30 |  0.007946 |      54.582 |        120 |         464 |          3432 |               1
+        8 |    1 | IXXIIXX_raw (raw)       | unsat   |         30 |  0.007085 |      53.285 |        120 |         465 |          3427 |               1
+        9 |    1 | IIIXXXX_raw (raw)       | unsat   |         40 |  0.022604 |      53.609 |        160 |         632 |          4592 |               1
+       10 |    1 | XIXIXIX_raw (raw)       | unsat   |         36 |  0.008454 |      57.121 |        144 |         554 |          4130 |               1
+       11 |    1 | ZIZIZIZI_raw (raw)      | unsat   |         36 |  0.011858 |      51.043 |        144 |         558 |          4140 |               1
+       12 |    1 | IXXIIXX_raw (raw)       | unsat   |         46 |  0.016493 |      51.469 |        184 |         719 |          5282 |               1
+       13 |    1 | XIXIXIX_raw (raw)       | unsat   |         42 |  0.008567 |      57.543 |        168 |         658 |          4772 |               1
+       14 |    1 | ZIZIZIZI_raw (raw)      | unsat   |         42 |  0.008750 |      57.008 |        168 |         659 |          4803 |               1
+       15 |    1 | XIXIXIX_raw (raw)       | unsat   |         52 |  0.024168 |      51.066 |        208 |         803 |          6033 |               1
+       16 |    1 | IXXIIXX_raw (raw)       | unsat   |         48 |  0.009041 |      59.344 |        192 |         733 |          5540 |               1
+       17 |    1 | IZZIIZZZ_raw (raw)      | unsat   |         48 |  0.009439 |      66.566 |        192 |         738 |          5567 |               1
+       18 |    0 | Break (other)           | unsat   |         36 |  0.033198 |      48.262 |        144 |         561 |          4141 |               1
+Total runtime (sum of all paths): 0.237109 s
+Total SAT paths: 0/19
+Break-weight SAT (fail): 0/1
+Max fault variables (across paths): 208
+Max DIMACS variables (across paths): 803
+Max peak RSS (across paths): 88.859 MB
+================================================================================

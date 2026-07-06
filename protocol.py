@@ -317,7 +317,7 @@ def build_protocol_d_3_lai() -> Protocol:
 
     f_0_s_0_all_zero = Node(
         node_id="f_0_s_0_all_zero",
-        instructions=[], branches=[]
+        instructions=["Break"], branches=[]
     )
     protocol.add_node(f_0_s_0_all_zero)
 
@@ -637,7 +637,7 @@ def build_origin_5_1_3_protocol() -> Protocol:
         condition_s_i_zero = Condition(cond_type = "equal", left=f"s_{i}", right=False)
         condition_f_i_zero = Condition(cond_type = "equal", left=f"f_{i}", right=False)
         condition_i_all_zero = Condition("and", operands=[condition_s_i_zero, condition_f_i_zero])
-        current_node.instructions.append(f"{stab_gen[i]}")
+        current_node.instructions.append(f"{stab_gen[i]}_flag")
         current_node.branches = [
             Branch(target=f"{stab}_s_f_all_zero", condition= condition_i_all_zero),
             Branch(target=f"{stab}_s_f_not_all_zero", condition = Condition("not", operand=condition_i_all_zero))
@@ -700,26 +700,17 @@ def build_low_depth_7_1_3_w_6_protocol():
     )
 
     condition_s_i_one = Condition(cond_type = "equal", left=f"s_0", right=True)
-    condition_s_i_zero = Condition(cond_type = "equal", left=f"s_0", right=False)
     condition_f_i_zero = Condition(cond_type = "equal", left=f"f_0", right= False)
 
-    condition_not_s_one_f_zero = Condition("and", operands=[condition_s_i_one, condition_f_i_zero])
+    condition_s_one_f_zero = Condition("and", operands=[condition_s_i_one, condition_f_i_zero])
 
 
     root_node.instructions.append(f"{stab_gen[0]}")
     root_node.branches = [
-        Branch(target=f"{stab_gen[0]}_s_one_f_zero", condition= Condition("and", operands=[condition_s_i_one, condition_f_i_zero])),
-        Branch(target=f"{stab_gen[0]}_not_f_zero", condition = Condition("not", operand= condition_f_i_zero)),
-        Branch(target=f"{stab_gen[0]}_all_zero" , condition = Condition("and", operands=[condition_s_i_zero, condition_f_i_zero]))
+        Branch(target=f"{stab_gen[0]}_s_one_f_zero", condition=condition_s_one_f_zero),
+        Branch(target=f"{stab_gen[0]}_not_f_zero", condition=Condition("not", operand=condition_s_one_f_zero)),
     ]
     protocol.add_node(root_node)
-
-    node = Node(
-        node_id=f"{stab_gen[0]}_all_zero",
-        instructions=["Break"],
-        branches=[]
-    )
-    protocol.add_node(node)
 
     node =  Node(
                         node_id= f"{stab_gen[0]}_not_f_zero",

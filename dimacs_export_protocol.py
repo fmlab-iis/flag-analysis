@@ -10,6 +10,8 @@ from typing import Any, Dict, List, Optional, Tuple
 from z3 import And, BoolVal, PbLe
 
 from flag_analysis import (
+    break_weight_export_dimacs,
+    control_flow_export_dimacs,
     data_only_groups_from_state_dict,
     detect_qubit_groups,
     get_gate_only_indices,
@@ -40,8 +42,7 @@ class PathConstraint:
     witness_mode: str
     num_fault_vars: int
     num_fault_sites: int
-    num_lut_syn_bits: int = 0
-    num_pred_syn_bits: int = 0
+    num_meas_syn_bits: int = 0
 
 
 def build_path_constraint(
@@ -124,6 +125,43 @@ def find_lut_instr_in_path(full_path: List[dict]) -> Optional[str]:
     return None
 
 
+def _flatten_register_qubits(regs: list) -> List[Any]:
+    flat: List[Any] = []
+    for g in regs:
+        if isinstance(g, list):
+            flat.extend(g)
+        else:
+            flat.append(g)
+    return flat
+
+
+def _measured_bits_from_step_state(state: Dict[str, Any]) -> List[Any]:
+    """One round: ancX.z + ancZ.x + flagX.z + flagZ.x."""
+    ancX = _flatten_register_qubits(state.get("ancX", []))
+    ancZ = _flatten_register_qubits(state.get("ancZ", []))
+    flagX = _flatten_register_qubits(state.get("flagX", []))
+    flagZ = _flatten_register_qubits(state.get("flagZ", []))
+    return (
+        [q.z for q in ancX]
+        + [q.x for q in ancZ]
+        + [q.z for q in flagX]
+        + [q.x for q in flagZ]
+    )
+
+
+def _all_measured_outcomes_z3(path: List[dict]) -> List[Any]:
+    """Concatenate measured bits from every path step (all rounds, no LUT)."""
+    bits: List[Any] = []
+    for step in path:
+        state = step.get("state")
+        if state is None:
+            continue
+        bits.extend(_measured_bits_from_step_state(state))
+    if not bits:
+        raise ValueError("no measured outcomes on path")
+    return bits
+
+
 def _lut_gen_syn_z3(path: List[dict], lut_pairs: list) -> List[Any]:
     gen_syn_z3: List[Any] = []
     for kind, idx in lut_pairs:
@@ -148,22 +186,13 @@ def build_unified_path_constraint(
     path: List[dict],
     t: int,
     config: Dict[str, Any],
-    lut_pairs: Optional[list] = None,
 ) -> PathConstraint:
     """
-    Unified path constraint: gen_syn_z3 = LUT bits + pred_syn, branch conditions only.
-    Raises ValueError if ancilla syndrome cannot be resolved on the path.
+    Unified path constraint: gen_syn_z3 = all measured outcomes on every round.
+    Branch conditions only (no syn_constraint, no LUT, no pred_syn).
+    Raises ValueError if the path has no measured bits.
     """
-    if lut_pairs is None:
-        lut_instr = find_lut_instr_in_path(path)
-        lut_pairs = parse_lut_instr(lut_instr) if lut_instr else []
-
-    lut_bits = _lut_gen_syn_z3(path, lut_pairs)
-    E_x = [dq.x for dq in path[-1]["state"]["data"]]
-    E_z = [dq.z for dq in path[-1]["state"]["data"]]
-    gens, _syn_measured = last_ancilla_formulas(path, config)
-    pred_syn = stabilizer_syndrome_from_data(E_x, E_z, gens)
-    gen_syn_z3 = lut_bits + pred_syn
+    gen_syn_z3 = _all_measured_outcomes_z3(path)
 
     all_condition = [s["condition"] for s in path if s["condition"] is not None]
     stab_txt_path = config["stab_txt_path"]
@@ -184,8 +213,7 @@ def build_unified_path_constraint(
         witness_mode="unified",
         num_fault_vars=len({str(v) for v in vars}),
         num_fault_sites=len(faults),
-        num_lut_syn_bits=len(lut_bits),
-        num_pred_syn_bits=len(pred_syn),
+        num_meas_syn_bits=len(gen_syn_z3),
     )
     return constraint
 
@@ -231,12 +259,18 @@ def format_proof_metrics_report(
         )
     total_runtime_s = sum(row.get("solver_runtime_seconds", 0.0) or 0.0 for row in path_query_stats)
     total_sat_paths = sum(1 for row in path_query_stats if row.get("status") == "sat")
-    verified = [r for r in path_query_stats if r.get("status") in ("unsat", "sat", "unknown")]
+    break_sat_paths = sum(
+        1 for row in path_query_stats
+        if row.get("path_type") == 0 and row.get("status") == "sat"
+    )
+    break_total = sum(1 for row in path_query_stats if row.get("path_type") == 0)
     max_fault_vars = max((row.get("num_fault_vars", 0) or 0 for row in path_query_stats), default=0)
     max_dimacs_vars = max((row.get("total_dimacs_vars", 0) or 0 for row in path_query_stats), default=0)
     max_peak_rss_bytes = max((row.get("peak_solver_rss_bytes", 0) or 0 for row in path_query_stats), default=0)
     lines.append(f"Total runtime (sum of all paths): {total_runtime_s:.6f} s")
-    lines.append(f"Total SAT paths: {total_sat_paths}/{len(verified)}")
+    lines.append(f"Total SAT paths: {total_sat_paths}/{total_paths}")
+    if break_total:
+        lines.append(f"Break-weight SAT (fail): {break_sat_paths}/{break_total}")
     lines.append(f"Max fault variables (across paths): {max_fault_vars}")
     lines.append(f"Max DIMACS variables (across paths): {max_dimacs_vars}")
     lines.append(f"Max peak RSS (across paths): {max_peak_rss_bytes / (1024 * 1024):.3f} MB")
@@ -313,17 +347,65 @@ def export_path_constraints(
             path_type, last_instr = classify_full_path(full_path)
 
             if path_type == 0:
+                faults = [info["act"] for step in full_path for info in step["site_info"]]
+                if not faults:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "not_verified",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
+
+                all_condition = [s["condition"] for s in full_path if s["condition"] is not None]
+                vars_list = [
+                    v for step in full_path for info in step["site_info"]
+                    for v in info["vars"].values()
+                ]
+                at_most_t_faults = [PbLe([(f, 1) for f in faults], t)]
+                path_tag = f"path_{path_idx:03d}"
+                export_stats = break_weight_export_dimacs(
+                    vars_list,
+                    at_most_t_faults,
+                    all_condition,
+                    full_path[-1]["state"]["data"],
+                    config["stab_txt_path"],
+                    t,
+                    out_dir,
+                    path_tag,
+                    gsel_prefix=f"{path_tag}_gsel",
+                )
                 path_query_stats.append({
                     "path_index": path_idx,
                     "path_type": path_type,
                     "last_instr": last_instr,
-                    "status": "skipped",
+                    "status": "exported",
                     "gate_count": path_gate_count,
                     "solver_runtime_seconds": 0.0,
                     "peak_solver_rss_bytes": 0,
-                    "total_clauses": 0,
-                    "sat_query_count": 0,
+                    "num_fault_vars": export_stats["num_fault_vars"],
+                    "total_dimacs_vars": export_stats["total_dimacs_vars"],
+                    "total_clauses": export_stats["total_clauses"],
+                    "sat_query_count": export_stats["sat_query_count"],
+                    "path_tag": path_tag,
                 })
+                exported_paths.append({
+                    "path_index": path_idx,
+                    "path_tag": path_tag,
+                    "path_type": path_type,
+                    "last_instr": last_instr,
+                    "gate_count": path_gate_count,
+                })
+                if not quiet:
+                    print(
+                        f"Exported path {path_idx}: type {path_type} (break weight) -> "
+                        f"{path_tag}.cnf ({export_stats['total_clauses']} clauses)"
+                    )
                 return
 
             lut_instr = None
@@ -456,9 +538,11 @@ def export_unified_path_constraints(
     t: int,
     cnf_dir: Optional[str] = None,
     protocol_path: Optional[str] = None,
+    *,
+    collect_only: bool = False,
 ) -> Tuple[List[List[Dict]], List[Dict[str, Any]]]:
     """
-    Unified export: every non-Break path uses gen_syn + pred_syn, no syn_constraint.
+    Unified export: all path types use all-round measured gen_syn + logical-product witness.
     Does not call the SAT solver (phase 2 handles that).
     """
     quiet = bool(config.get("__quiet__", False))
@@ -467,7 +551,8 @@ def export_unified_path_constraints(
     exported_paths: List[Dict[str, Any]] = []
 
     out_dir = _resolve_unified_cnf_dir(config, cnf_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+    if not collect_only:
+        out_dir.mkdir(parents=True, exist_ok=True)
 
     def dfs(round_idx: int, node_id: str, cur_state, cur_groups, cur_path: List[Dict]):
         node = protocol[node_id]
@@ -516,12 +601,27 @@ def export_unified_path_constraints(
             path_gate_count = _count_path_gates_excluding_barrier(full_path, config)
             path_type, last_instr = classify_full_path(full_path)
 
-            if path_type == 0:
+            faults = [info["act"] for step in full_path for info in step["site_info"]]
+            if not faults:
                 path_query_stats.append({
                     "path_index": path_idx,
                     "path_type": path_type,
                     "last_instr": last_instr,
-                    "status": "skipped",
+                    "status": "not_verified",
+                    "gate_count": path_gate_count,
+                    "solver_runtime_seconds": 0.0,
+                    "peak_solver_rss_bytes": 0,
+                    "total_clauses": 0,
+                    "sat_query_count": 0,
+                })
+                return
+
+            if collect_only:
+                path_query_stats.append({
+                    "path_index": path_idx,
+                    "path_type": path_type,
+                    "last_instr": last_instr,
+                    "status": "collected",
                     "gate_count": path_gate_count,
                     "solver_runtime_seconds": 0.0,
                     "peak_solver_rss_bytes": 0,
@@ -558,8 +658,7 @@ def export_unified_path_constraints(
                 constraint.log_txt_path,
                 out_dir,
                 path_tag,
-                num_lut_syn_bits=constraint.num_lut_syn_bits,
-                num_pred_syn_bits=constraint.num_pred_syn_bits,
+                num_meas_syn_bits=constraint.num_meas_syn_bits,
             )
 
             row = {
@@ -575,8 +674,7 @@ def export_unified_path_constraints(
                 "total_clauses": export_stats["total_clauses"],
                 "sat_query_count": export_stats["sat_query_count"],
                 "path_tag": path_tag,
-                "num_lut_syn_bits": constraint.num_lut_syn_bits,
-                "num_pred_syn_bits": constraint.num_pred_syn_bits,
+                "num_meas_syn_bits": constraint.num_meas_syn_bits,
             }
             path_query_stats.append(row)
             exported_paths.append({
@@ -589,9 +687,9 @@ def export_unified_path_constraints(
 
             if not quiet:
                 print(
-                    f"Exported unified path {path_idx}: {path_tag}.cnf "
+                    f"Exported unified path {path_idx}: type {path_type} -> {path_tag}.cnf "
                     f"({export_stats['total_clauses']} clauses, "
-                    f"gen_syn={constraint.num_lut_syn_bits}+{constraint.num_pred_syn_bits})"
+                    f"gen_syn={constraint.num_meas_syn_bits} measured bits)"
                 )
             return
 
@@ -631,3 +729,229 @@ def export_unified_path_constraints(
         print(f"Exported {len(exported_paths)} unified DIMACS file(s) to {out_dir}")
 
     return all_paths, path_query_stats
+
+
+def _resolve_control_flow_cnf_dir(config: Dict[str, Any], cnf_dir: Optional[str]) -> Path:
+    if cnf_dir:
+        return Path(cnf_dir).resolve()
+    cfg_path = config.get("__config_path__")
+    stem = Path(cfg_path).stem if cfg_path else "export"
+    return (Path("cnf_out_control_flow") / stem).resolve()
+
+
+def export_control_flow_path_constraints(
+    protocol,
+    start_node: str,
+    init_state,
+    config: Dict,
+    t: int,
+    cnf_dir: Optional[str] = None,
+    protocol_path: Optional[str] = None,
+    *,
+    collect_only: bool = False,
+) -> Tuple[List[List[Dict]], List[Dict[str, Any]]]:
+    """
+    Control-flow export: type 0 break-weight, type 1 pred_syn_diff, type 2 skipped.
+    Does not call the SAT solver (phase 2 handles that).
+    """
+    quiet = bool(config.get("__quiet__", False))
+    all_paths: List[List[Dict]] = []
+    path_query_stats: List[Dict[str, Any]] = []
+    exported_paths: List[Dict[str, Any]] = []
+
+    out_dir = _resolve_control_flow_cnf_dir(config, cnf_dir)
+    if not collect_only:
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+    def dfs(round_idx: int, node_id: str, cur_state, cur_groups, cur_path: List[Dict]):
+        node = protocol[node_id]
+        instr = node.instructions[0] if node.instructions else None
+        state_after = cur_state
+        site_info = []
+        groups = cur_groups
+
+        if instr is not None and node.branches:
+            if instr not in config:
+                raise KeyError(f"Instruction '{instr}' not found in config")
+            qasm_path = config[instr]
+            qc = load_qasm(qasm_path)
+            gate_list = get_gate_only_indices(qc)
+            groups = detect_qubit_groups(qc)
+            state_after, site_info = symbolic_execution_of_state(
+                qasm_path, cur_state, round_idx, fault_gate=gate_list, track_steps=False,
+            )
+
+        if groups is not None:
+            state_dict = state_to_raw_expr_dict(state_after, groups)
+        elif instr is None or instr == "Break" or (instr and instr.startswith("LUT_")):
+            state_dict = state_to_raw_expr_dict(state_after, groups)
+        else:
+            state_dict = state_to_raw_expr_dict(state_after, groups)
+
+        if f"{instr}_flag_group" in config:
+            with open(config[f"{instr}_flag_group"], "r", encoding="utf-8") as f:
+                flag_group = json.load(f)
+            state_dict["flagX"] = [[state_dict.copy()["flagX"][i] for i in g] for g in flag_group["flagX"]]
+            state_dict["flagZ"] = [[state_dict.copy()["flagZ"][i] for i in g] for g in flag_group["flagZ"]]
+
+        if not node.branches:
+            step = {
+                "round": round_idx,
+                "node": node_id,
+                "next": None,
+                "instruction": instr,
+                "condition": None,
+                "state": state_dict,
+                "site_info": site_info,
+            }
+            full_path = cur_path + [step]
+            all_paths.append(full_path)
+            path_idx = len(all_paths) - 1
+            path_gate_count = _count_path_gates_excluding_barrier(full_path, config)
+            path_type, last_instr = classify_full_path(full_path)
+
+            if path_type == 2:
+                path_query_stats.append({
+                    "path_index": path_idx,
+                    "path_type": path_type,
+                    "last_instr": last_instr,
+                    "status": "skipped",
+                    "gate_count": path_gate_count,
+                    "solver_runtime_seconds": 0.0,
+                    "peak_solver_rss_bytes": 0,
+                    "total_clauses": 0,
+                    "sat_query_count": 0,
+                })
+                return
+
+            faults = [info["act"] for step in full_path for info in step["site_info"]]
+            if not faults:
+                path_query_stats.append({
+                    "path_index": path_idx,
+                    "path_type": path_type,
+                    "last_instr": last_instr,
+                    "status": "not_verified",
+                    "gate_count": path_gate_count,
+                    "solver_runtime_seconds": 0.0,
+                    "peak_solver_rss_bytes": 0,
+                    "total_clauses": 0,
+                    "sat_query_count": 0,
+                })
+                return
+
+            if collect_only:
+                path_query_stats.append({
+                    "path_index": path_idx,
+                    "path_type": path_type,
+                    "last_instr": last_instr,
+                    "status": "collected",
+                    "gate_count": path_gate_count,
+                    "solver_runtime_seconds": 0.0,
+                    "peak_solver_rss_bytes": 0,
+                    "total_clauses": 0,
+                    "sat_query_count": 0,
+                })
+                return
+
+            all_condition = [s["condition"] for s in full_path if s["condition"] is not None]
+            vars_list = [
+                v for step in full_path for info in step["site_info"]
+                for v in info["vars"].values()
+            ]
+            at_most_t_faults = [PbLe([(f, 1) for f in faults], t)]
+            path_tag = f"path_{path_idx:03d}"
+
+            if path_type == 0:
+                export_stats = break_weight_export_dimacs(
+                    vars_list,
+                    at_most_t_faults,
+                    all_condition,
+                    full_path[-1]["state"]["data"],
+                    config["stab_txt_path"],
+                    t,
+                    out_dir,
+                    path_tag,
+                    gsel_prefix=f"{path_tag}_gsel",
+                )
+                if not quiet:
+                    print(
+                        f"Exported control-flow path {path_idx}: type 0 (break weight) -> "
+                        f"{path_tag}.cnf ({export_stats['total_clauses']} clauses)"
+                    )
+            else:
+                export_stats = control_flow_export_dimacs(
+                    vars_list,
+                    at_most_t_faults,
+                    all_condition,
+                    full_path[-1]["state"]["data"],
+                    config["stab_txt_path"],
+                    out_dir,
+                    path_tag,
+                )
+                if not quiet:
+                    print(
+                        f"Exported control-flow path {path_idx}: type 1 (pred_syn_diff) -> "
+                        f"{path_tag}.cnf ({export_stats['total_clauses']} clauses)"
+                    )
+
+            row = {
+                "path_index": path_idx,
+                "path_type": path_type,
+                "last_instr": last_instr,
+                "status": "exported",
+                "gate_count": path_gate_count,
+                "solver_runtime_seconds": 0.0,
+                "peak_solver_rss_bytes": 0,
+                "num_fault_vars": export_stats["num_fault_vars"],
+                "total_dimacs_vars": export_stats["total_dimacs_vars"],
+                "total_clauses": export_stats["total_clauses"],
+                "sat_query_count": export_stats["sat_query_count"],
+                "path_tag": path_tag,
+            }
+            path_query_stats.append(row)
+            exported_paths.append({
+                "path_index": path_idx,
+                "path_tag": path_tag,
+                "path_type": path_type,
+                "last_instr": last_instr,
+                "gate_count": path_gate_count,
+            })
+            return
+
+        for br in node.branches:
+            cond_dict = br.condition.to_dict() if br.condition is not None else None
+            full_state = [s["state"] for s in cur_path] + [state_dict]
+            z3_condition = condition_to_z3(cond_dict, full_state, groups)
+            step = {
+                "round": round_idx,
+                "node": node_id,
+                "next": br.target,
+                "instruction": instr,
+                "condition": z3_condition,
+                "state": state_dict,
+                "site_info": site_info,
+            }
+            next_groups = data_only_groups_from_state_dict(state_dict)
+            dfs(round_idx + 1, br.target, state_after, next_groups, cur_path + [step])
+
+    dfs(0, start_node, init_state, None, [])
+
+    cfg_path = config.get("__config_path__")
+    config_stem = Path(cfg_path).stem if cfg_path else out_dir.name
+    manifest = {
+        "config_stem": config_stem,
+        "protocol": protocol_path or config.get("protocol_path", ""),
+        "t": t,
+        "cnf_dir": str(out_dir),
+        "verify_pipeline": "control_flow",
+        "total_paths": len(all_paths),
+        "exported_paths": len(exported_paths),
+        "paths": exported_paths,
+    }
+    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    if not quiet:
+        print(f"Exported {len(exported_paths)} control-flow DIMACS file(s) to {out_dir}")
+
+    return all_paths, path_query_stats
+
