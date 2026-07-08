@@ -3,7 +3,7 @@ dimacs_bridge.py
 
 A small, practical bridge for:
   Z3 Bool formula  ->  CNF (Tseitin via Z3)  ->  DIMACS CNF
-  CryptoMiniSat model (DIMACS ints)          ->  assignment on *your original Z3 vars*
+  CryptoMiniSat / MiniSat model (DIMACS ints) ->  assignment on *your original Z3 vars*
 
 Key idea:
   DIMACS export introduces auxiliary variables (Tseitin). That's fine.
@@ -18,7 +18,7 @@ This file provides:
 
 from __future__ import annotations
 from typing import Dict, List, Tuple, Set, Iterable, Optional
-import os, re, shutil, subprocess, sys, time
+import os, re, shutil, subprocess, sys, tempfile, time
 
 
 from z3 import (
@@ -336,45 +336,127 @@ def build_dimacs(goal: Goal, use_card2bv: bool):
     return dimacs_files, var_maps
 
 
-def resolve_cryptominisat_binary(cms_bin: str = "cryptominisat5") -> str:
-    """Resolve CryptoMiniSat binary path or raise a helpful error."""
-    cms_exec = cms_bin
-    if os.path.sep not in cms_exec:
-        found = shutil.which(cms_exec)
-        if found is None and cms_exec == "cryptominisat5":
-            for cand in ("/opt/homebrew/bin/cryptominisat5", "/usr/local/bin/cryptominisat5"):
+def default_sat_solver_bin() -> str:
+    """External SAT solver for exported CNFs (override with DIMACS_SOLVER_BIN)."""
+    return os.environ.get("DIMACS_SOLVER_BIN", "minisat")
+
+
+def resolve_sat_solver_binary(solver_bin: Optional[str] = None) -> str:
+    """Resolve MiniSat, CryptoMiniSat, or another DIMACS solver on PATH."""
+    name = solver_bin or default_sat_solver_bin()
+    if os.path.sep in name:
+        if not (os.path.exists(name) and os.access(name, os.X_OK)):
+            raise FileNotFoundError(f"SAT solver binary path is not executable: {name}")
+        return name
+
+    found = shutil.which(name)
+    if found is None:
+        fallbacks: Tuple[str, ...] = ()
+        if name in ("minisat", "minisat2"):
+            fallbacks = (
+                "minisat",
+                "minisat2",
+                "/usr/bin/minisat",
+                "/usr/local/bin/minisat",
+                "/opt/homebrew/bin/minisat",
+                "cryptominisat5",
+                "/usr/local/bin/cryptominisat5",
+                "/opt/homebrew/bin/cryptominisat5",
+            )
+        elif name in ("cryptominisat5", "cryptominisat"):
+            fallbacks = (
+                "cryptominisat5",
+                "/opt/homebrew/bin/cryptominisat5",
+                "/usr/local/bin/cryptominisat5",
+            )
+        for cand in fallbacks:
+            if os.path.sep in cand:
                 if os.path.exists(cand) and os.access(cand, os.X_OK):
                     found = cand
                     break
-        if found is None:
-            raise FileNotFoundError(
-                "CryptoMiniSat binary not found: 'cryptominisat5'.\n"
-                "Install it on macOS with: brew install cryptominisat\n"
-                "Then restart your terminal/Jupyter so PATH updates, and verify with: which cryptominisat5\n"
-                "Or pass cms_bin='/opt/homebrew/bin/cryptominisat5' (Apple Silicon) or '/usr/local/bin/cryptominisat5' (Intel)."
-            )
-        return found
-    if not (os.path.exists(cms_exec) and os.access(cms_exec, os.X_OK)):
-        raise FileNotFoundError(f"CryptoMiniSat binary path is not executable: {cms_exec}")
-    return cms_exec
+            else:
+                found = shutil.which(cand)
+                if found:
+                    break
+
+    if found is None:
+        raise FileNotFoundError(
+            f"SAT solver binary not found: '{name}'.\n"
+            "Install MiniSat: sudo apt-get install minisat  (or brew install minisat)\n"
+            "Or CryptoMiniSat: sudo apt-get install cryptominisat\n"
+            "Override with DIMACS_SOLVER_BIN=minisat or DIMACS_SOLVER_BIN=cryptominisat5"
+        )
+    return found
 
 
-import subprocess, re
-from typing import Optional, List, Tuple
+def resolve_cryptominisat_binary(cms_bin: str = "cryptominisat5") -> str:
+    """Backward-compatible alias for resolve_sat_solver_binary."""
+    return resolve_sat_solver_binary(cms_bin)
 
-def run_cryptominisat(
-    cnf_path: str,
-    cms_exec: str,
+
+def default_syndrome_sat_solver_bin() -> str:
+    """External SAT solver for syndrome-extraction checks (override with SYNDROME_SAT_SOLVER_BIN)."""
+    return os.environ.get("SYNDROME_SAT_SOLVER_BIN", "cryptominisat5")
+
+
+def z3_expr_is_unsat(
+    expr: BoolRef,
+    *,
+    solver_bin: Optional[str] = None,
     timeout_s: Optional[float] = None,
-    cms_extra_args: Optional[list] = None,
+    use_card2bv: bool = False,
+) -> bool:
+    """Return True iff expr is UNSAT, via Z3 CNF export + external SAT solver."""
+    expr = simplify(expr)
+    if is_false(expr):
+        return True
+    if is_true(expr):
+        return False
+
+    goal = Goal()
+    goal.add(expr)
+    cnf_files, _var_maps = build_dimacs(goal, use_card2bv=use_card2bv)
+    if not cnf_files:
+        return False
+
+    solve_cnf = cnf_files[0]
+    cleanup = list(cnf_files)
+    if len(cnf_files) > 1:
+        merged_fd, merged_path = tempfile.mkstemp(suffix=".cnf", prefix="syndrome_")
+        os.close(merged_fd)
+        merge_dimacs_cnfs(cnf_files, merged_path)
+        solve_cnf = merged_path
+        cleanup.append(merged_path)
+
+    solver_exec = resolve_sat_solver_binary(solver_bin or default_syndrome_sat_solver_bin())
+    try:
+        status, _, _, _, _ = run_dimacs_solver(
+            solve_cnf, solver_exec, timeout_s=timeout_s,
+        )
+    finally:
+        for path in cleanup:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+    return status == "unsat"
+
+
+def run_dimacs_solver(
+    cnf_path: str,
+    solver_exec: str,
+    timeout_s: Optional[float] = None,
+    extra_args: Optional[list] = None,
 ) -> Tuple[str, Optional[List[int]], str, float, Optional[int]]:
     """
-    Returns (status, model_lits, out_str) with out_str CLEAN:
+    Run an external DIMACS solver (MiniSat, CryptoMiniSat, etc.).
+
+    Returns (status, model_lits, out_str, elapsed_s, peak_rss_bytes) with out_str CLEAN:
       - only 's ...' and 'v ...' lines (drops all 'c ...' stats)
     """
-    cmd = [cms_exec]
-    if cms_extra_args:
-        cmd += list(map(str, cms_extra_args))
+    cmd = [solver_exec]
+    if extra_args:
+        cmd += list(map(str, extra_args))
     cmd.append(cnf_path)
 
     timed_cmd = cmd
@@ -435,11 +517,16 @@ def run_cryptominisat(
                     model_lits.append(int(tok))
 
     status = "unknown"
-    if any("UNSAT" in ln for ln in kept_lines):
-        status = "unsat"
+    for ln in kept_lines:
+        if ln.startswith("s ") and "UNSAT" in ln:
+            status = "unsat"
+            break
+        if ln.startswith("s ") and "SAT" in ln:
+            status = "sat"
+            break
+
+    if status == "unsat":
         model_lits = []
-    elif any("SAT" in ln for ln in kept_lines):
-        status = "sat"
 
     clean_out = "\n".join(kept_lines) + ("\n" if kept_lines else "")
     summary_lines = [f"[stats] solver_wall_time_seconds={elapsed_s:.6f}"]
@@ -447,6 +534,18 @@ def run_cryptominisat(
         summary_lines.append(f"[stats] solver_peak_rss_bytes={peak_rss_bytes}")
     clean_out += "\n".join(summary_lines) + "\n"
     return status, (model_lits if model_lits else None), clean_out, elapsed_s, peak_rss_bytes
+
+
+def run_cryptominisat(
+    cnf_path: str,
+    cms_exec: str,
+    timeout_s: Optional[float] = None,
+    cms_extra_args: Optional[list] = None,
+) -> Tuple[str, Optional[List[int]], str, float, Optional[int]]:
+    """Backward-compatible alias for run_dimacs_solver."""
+    return run_dimacs_solver(
+        cnf_path, cms_exec, timeout_s=timeout_s, extra_args=cms_extra_args,
+    )
 
 
 def _parse_z3_dimacs_varmap(dimacs_text: str) -> Dict[int, str]:

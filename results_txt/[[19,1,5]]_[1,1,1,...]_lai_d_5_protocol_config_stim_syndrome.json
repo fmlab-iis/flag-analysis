@@ -1,0 +1,49 @@
+{
+  "verify_pipeline": "stim_syndrome",
+  "config": "/home/bionicle8699/flag_verification/flag-analysis/[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config.txt",
+  "config_stem": "[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config",
+  "stab_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]].txt",
+  "log_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_T_log_op.txt",
+  "circuits_total": 2,
+  "pass_count": 2,
+  "fail_count": 0,
+  "error_count": 0,
+  "job_status": "PASS",
+  "wall_time_seconds": 0.22094070201274008,
+  "total_runtime_s": 0.2184197490569204,
+  "peak_rss_bytes": 242466816,
+  "peak_rss_mb": 231.234375,
+  "state_check": false,
+  "circuits": [
+    {
+      "config_key": "flag_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_flag_syndrome.qasm",
+      "circuit_name": "[[19,1,5]]_[1,1,1,...]_flag_syndrome.qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXXXX__________________________________________": true,
+        "+ZZZZZZZZZZZZZZZZZZZ__________________________________________": true
+      },
+      "rank_before": 60,
+      "rank_after": 60,
+      "runtime_s": 0.16067052108701319,
+      "peak_rss_bytes": 242466816
+    },
+    {
+      "config_key": "raw_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/[[19,1,5]]_[1,1,1,...]_T/raw_[[19,1,5]]_[1,1,1,...]_flag_syndrome.qasm",
+      "circuit_name": "raw_[[19,1,5]]_[1,1,1,...]_flag_syndrome.qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXXXX__________________": true,
+        "+ZZZZZZZZZZZZZZZZZZZ__________________": true
+      },
+      "rank_before": 36,
+      "rank_after": 36,
+      "runtime_s": 0.057749227969907224,
+      "peak_rss_bytes": 234524672
+    }
+  ]
+}

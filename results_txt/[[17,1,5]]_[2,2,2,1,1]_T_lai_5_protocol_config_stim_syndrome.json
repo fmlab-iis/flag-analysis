@@ -1,0 +1,115 @@
+{
+  "verify_pipeline": "stim_syndrome",
+  "config": "/home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config.txt",
+  "config_stem": "[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config",
+  "stab_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T.txt",
+  "log_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_log.txt",
+  "circuits_total": 2,
+  "pass_count": 1,
+  "fail_count": 1,
+  "error_count": 0,
+  "job_status": "FAIL",
+  "wall_time_seconds": 0.2521320820087567,
+  "total_runtime_s": 0.24763057299423963,
+  "peak_rss_bytes": 247300096,
+  "peak_rss_mb": 235.84375,
+  "state_check": false,
+  "circuits": [
+    {
+      "config_key": "flag_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_flag.qasm",
+      "circuit_name": "[[17,1,5]]_[2,2,2,1,1]_T_flag.qasm",
+      "status": "FAIL",
+      "stabilizer_span_ok": false,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXX______________________________": true,
+        "+ZZZZZZZZZZZZZZZZZ______________________________": true
+      },
+      "rank_before": 46,
+      "rank_after": 46,
+      "generator_failures": [
+        {
+          "index": 22,
+          "label": "anc/flag wire 23",
+          "before": "+_______________________X_______________________",
+          "after": "+_______X___X___XX______X_____________________XX",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 23,
+          "label": "anc/flag wire 24",
+          "before": "+________________________X______________________",
+          "after": "+__XX_XX__XX__XX_________X____________________X_",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 30,
+          "label": "anc/flag wire 31",
+          "before": "+_______________________________Z_______________",
+          "after": "+_______Z___Z___ZZ______________Z______ZZ_______",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 31,
+          "label": "anc/flag wire 32",
+          "before": "+________________________________Z______________",
+          "after": "+__ZZ_ZZ__ZZ__ZZ_________________Z_____Z________",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 37,
+          "label": "anc/flag wire 38",
+          "before": "+______________________________________X________",
+          "after": "+_______________________________XX_____X________",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 38,
+          "label": "anc/flag wire 39",
+          "before": "+_______________________________________X_______",
+          "after": "+_______________________________X_______X_______",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 44,
+          "label": "anc/flag wire 45",
+          "before": "+_____________________________________________Z_",
+          "after": "+_______________________ZZ____________________Z_",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 45,
+          "label": "anc/flag wire 46",
+          "before": "+______________________________________________Z",
+          "after": "+_______________________Z______________________Z",
+          "in_g_before": false,
+          "in_g_after": false
+        }
+      ],
+      "runtime_s": 0.19504598900675774,
+      "peak_rss_bytes": 246415360
+    },
+    {
+      "config_key": "raw_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/raw_[[17,1,5]]_[2,2,2,1,1]_T_flag.qasm",
+      "circuit_name": "raw_[[17,1,5]]_[2,2,2,1,1]_T_flag.qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXX________________": true,
+        "+ZZZZZZZZZZZZZZZZZ________________": true
+      },
+      "rank_before": 32,
+      "rank_after": 32,
+      "runtime_s": 0.05258458398748189,
+      "peak_rss_bytes": 247300096
+    }
+  ]
+}

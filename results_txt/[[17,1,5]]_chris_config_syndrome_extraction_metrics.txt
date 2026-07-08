@@ -1,12 +1,14 @@
 ================================================================================
 Syndrome extraction verification (no circuit faults)
 Property: ancillas match stabilizer(s); data qubits preserved
-Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli
+Solver: Z3 export + cryptominisat5 (SYNDROME_SAT_SOLVER_BIN)
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli; raw_syndrome_x/z vs X/Z rows of stab.txt
 Pass => ok; fail => ancilla mismatch or data not preserved
 Per-circuit metrics:
-  circuit_key           | mode    | status  | ancilla | data | runtime_s | reason
-  flag_syndrome         | full    | pass    | True    | True |  0.144967 | 
-  raw_syndrome          | full    | pass    | True    | True |  0.059139 | 
-Total runtime: 0.204106 s
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | peak_rss_mb | reason
+  flag_syndrome         | full    | pass    | True    | True |  0.153071 |      96.953 | 
+  raw_syndrome          | full    | pass    | True    | True |  0.069400 |      97.148 | 
+Total runtime: 0.222471 s
+Max peak RSS (across circuits): 97.148 MB
 Failed circuits: 0/2
 ================================================================================

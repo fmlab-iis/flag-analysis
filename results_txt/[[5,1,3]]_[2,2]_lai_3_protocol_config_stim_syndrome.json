@@ -1,0 +1,85 @@
+{
+  "verify_pipeline": "stim_syndrome",
+  "config": "/home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[2,2]/[[5,1,3]]_[2,2]_lai_3_protocol_config.txt",
+  "config_stem": "[[5,1,3]]_[2,2]_lai_3_protocol_config",
+  "stab_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[2,2]/[[5,1,3]]_[2,2].txt",
+  "log_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[2,2]/[[5,1,3]]_log_op.txt",
+  "circuits_total": 2,
+  "pass_count": 0,
+  "fail_count": 2,
+  "error_count": 0,
+  "job_status": "FAIL",
+  "wall_time_seconds": 0.1103120930492878,
+  "total_runtime_s": 0.10815638699568808,
+  "peak_rss_bytes": 212480000,
+  "peak_rss_mb": 202.63671875,
+  "state_check": false,
+  "circuits": [
+    {
+      "config_key": "flag_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[2,2]/[[5,1,3]]_flag_[2,2].qasm",
+      "circuit_name": "[[5,1,3]]_flag_[2,2].qasm",
+      "status": "FAIL",
+      "stabilizer_span_ok": false,
+      "logical_results": {
+        "+XXXXX______": true,
+        "+ZZZZZ______": true
+      },
+      "rank_before": 10,
+      "rank_after": 10,
+      "generator_failures": [
+        {
+          "index": 4,
+          "label": "anc/flag wire 5",
+          "before": "+_____X_____",
+          "after": "+XZZX_XZ____",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 5,
+          "label": "anc/flag wire 6",
+          "before": "+______X____",
+          "after": "+X_XZZZX____",
+          "in_g_before": false,
+          "in_g_after": false
+        }
+      ],
+      "runtime_s": 0.0771792009472847,
+      "peak_rss_bytes": 211070976
+    },
+    {
+      "config_key": "raw_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[2,2]/[[5,1,3]]_raw_[2,2].qasm",
+      "circuit_name": "[[5,1,3]]_raw_[2,2].qasm",
+      "status": "FAIL",
+      "stabilizer_span_ok": false,
+      "logical_results": {
+        "+XXXXX____": true,
+        "+ZZZZZ____": true
+      },
+      "rank_before": 8,
+      "rank_after": 8,
+      "generator_failures": [
+        {
+          "index": 4,
+          "label": "anc/flag wire 5",
+          "before": "+_____X___",
+          "after": "+XZZX_XZ__",
+          "in_g_before": false,
+          "in_g_after": false
+        },
+        {
+          "index": 5,
+          "label": "anc/flag wire 6",
+          "before": "+______X__",
+          "after": "+X_XZZZX__",
+          "in_g_before": false,
+          "in_g_after": false
+        }
+      ],
+      "runtime_s": 0.030977186048403382,
+      "peak_rss_bytes": 212480000
+    }
+  ]
+}

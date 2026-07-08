@@ -1,0 +1,34 @@
+Verify pipeline: control_flow (type0 break-weight; type1 same gen_syn + pred_syn_diff; type2 skipped)
+================================================================================
+Max faults per path (t): 1
+Total number of paths: 13
+Per-path SAT metrics:
+  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
+        0 |    0 | Break (other)           | unsat   |         24 |  0.010152 |      60.328 |         96 |         207 |          2187 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |         40 |  0.023670 |      67.074 |        160 |         615 |          4551 |               1
+        2 |    1 | YIYXX_raw (raw)         | sat     |         36 |  0.007634 |      52.969 |        144 |         548 |          4159 |               1
+        3 |    1 | XIXZZ_raw (raw)         | sat     |         36 |  0.008984 |      68.438 |        144 |         549 |          4154 |               1
+        4 |    1 | raw_syndrome (raw)      | unsat   |         34 |  0.018300 |      63.531 |        136 |         525 |          3878 |               1
+        5 |    1 | YZIZY_raw (raw)         | unsat   |         30 |  0.007755 |      58.855 |        120 |         461 |          3479 |               1
+        6 |    1 | ZXIXZ_raw (raw)         | sat     |         30 |  0.007262 |      67.930 |        120 |         465 |          3474 |               1
+        7 |    1 | raw_syndrome (raw)      | unsat   |         28 |  0.014125 |      66.656 |        112 |         429 |          3189 |               1
+        8 |    1 | YZIZY_raw (raw)         | sat     |         24 |  0.006862 |      72.953 |         96 |         368 |          2768 |               1
+        9 |    1 | ZXIXZ_raw (raw)         | sat     |         24 |  0.007172 |      56.852 |         96 |         369 |          2729 |               1
+       10 |    1 | raw_syndrome (raw)      | unsat   |         22 |  0.011274 |      77.664 |         88 |         338 |          2429 |               1
+       11 |    1 | ZIZYY_raw (raw)         | sat     |         18 |  0.010399 |      65.957 |         72 |         282 |          2039 |               1
+       12 |    1 | XIXZZ_raw (raw)         | sat     |         18 |  0.006625 |      72.000 |         72 |         275 |          2005 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 0.140212 s
+  SAT solver calls (sum sat_query_count): 13
+  Paths with SAT result: 7/13
+  DIMACS variables (min / max): 207 / 615
+  Clauses (min / max): 2005 / 4551
+Total runtime (sum of all paths): 0.140212 s
+Failed paths (SAT): 7/13
+Total SAT paths: 7/13
+Break-weight SAT (fail): 0/1
+pred_syn fail (type 1): 7/12
+Max fault variables (across paths): 160
+Max DIMACS variables (across paths): 615
+Max peak RSS (across paths): 77.664 MB
+================================================================================

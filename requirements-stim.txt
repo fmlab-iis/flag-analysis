@@ -1,0 +1,6 @@
+# Optional deps for stim_syndrome batch verification (not required for DIMACS pipeline).
+# Install: pip install -r requirements-stim.txt
+stim
+cirq
+stimcirq
+ply

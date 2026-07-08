@@ -70,7 +70,7 @@
         },
         "IIIXXXX_path_s_one_after_raw_x": {
             "instructions": [
-                "IIIIZZZZ_raw"
+                "IIIZZZZ_raw"
             ],
             "branches": [
                 {
@@ -98,7 +98,7 @@
         },
         "IIIXXXX_path_not_f_after_raw": {
             "instructions": [
-                "IIIIZZZZ_raw"
+                "IIIZZZZ_raw"
             ],
             "branches": [
                 {
@@ -121,7 +121,7 @@
         },
         "IIIXXXX_path_not_f_s1_false": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
@@ -222,7 +222,7 @@
         },
         "IXXIIXX_path_s_one_after_raw_x": {
             "instructions": [
-                "IZZIIZZZ_raw"
+                "IZZIIZZ_raw"
             ],
             "branches": [
                 {
@@ -250,7 +250,7 @@
         },
         "IXXIIXX_path_not_f_after_raw": {
             "instructions": [
-                "IZZIIZZZ_raw"
+                "IZZIIZZ_raw"
             ],
             "branches": [
                 {
@@ -273,7 +273,7 @@
         },
         "IXXIIXX_path_not_f_s2_false": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
@@ -374,7 +374,7 @@
         },
         "XIXIXIX_path_s_one_after_raw_x": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
@@ -402,7 +402,7 @@
         },
         "XIXIXIX_path_not_f_after_raw": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
@@ -425,7 +425,7 @@
         },
         "XIXIXIX_path_not_f_s3_false": {
             "instructions": [
-                "IZZIIZZZ_raw"
+                "IZZIIZZ_raw"
             ],
             "branches": [
                 {
@@ -459,7 +459,7 @@
         },
         "XIXIXIX_path_all_zero": {
             "instructions": [
-                "IIIIZZZZ_flag"
+                "IIIZZZZ_flag"
             ],
             "branches": [
                 {
@@ -478,7 +478,7 @@
                             }
                         ]
                     },
-                    "target": "IIIIZZZZ_path_s_one_f_zero"
+                    "target": "IIIZZZZ_path_s_one_f_zero"
                 },
                 {
                     "condition": {
@@ -491,7 +491,7 @@
                             }
                         ]
                     },
-                    "target": "IIIIZZZZ_path_not_f_zero"
+                    "target": "IIIZZZZ_path_not_f_zero"
                 },
                 {
                     "condition": {
@@ -509,50 +509,50 @@
                             }
                         ]
                     },
-                    "target": "IIIIZZZZ_path_all_zero"
+                    "target": "IIIZZZZ_path_all_zero"
                 }
             ]
         },
-        "IIIIZZZZ_path_s_one_f_zero": {
+        "IIIZZZZ_path_s_one_f_zero": {
             "instructions": [
                 "raw_syndrome_z"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IIIIZZZZ_path_s_one_after_raw_x"
+                    "target": "IIIZZZZ_path_s_one_after_raw_x"
                 }
             ]
         },
-        "IIIIZZZZ_path_s_one_after_raw_x": {
+        "IIIZZZZ_path_s_one_after_raw_x": {
             "instructions": [
                 "IIIXXXX_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IIIIZZZZ_path_s_one_ter"
+                    "target": "IIIZZZZ_path_s_one_ter"
                 }
             ]
         },
-        "IIIIZZZZ_path_s_one_ter": {
+        "IIIZZZZ_path_s_one_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_s_5"
             ],
             "branches": []
         },
-        "IIIIZZZZ_path_not_f_zero": {
+        "IIIZZZZ_path_not_f_zero": {
             "instructions": [
-                "IIIIZZZZ_raw"
+                "IIIZZZZ_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IIIIZZZZ_path_not_f_after_raw"
+                    "target": "IIIZZZZ_path_not_f_after_raw"
                 }
             ]
         },
-        "IIIIZZZZ_path_not_f_after_raw": {
+        "IIIZZZZ_path_not_f_after_raw": {
             "instructions": [
                 "IIIXXXX_raw"
             ],
@@ -563,7 +563,7 @@
                         "left": "s_4",
                         "right": false
                     },
-                    "target": "IIIIZZZZ_path_not_f_s4_false"
+                    "target": "IIIZZZZ_path_not_f_s4_false"
                 },
                 {
                     "condition": {
@@ -571,47 +571,47 @@
                         "left": "s_4",
                         "right": true
                     },
-                    "target": "IIIIZZZZ_path_not_f_s4_true"
+                    "target": "IIIZZZZ_path_not_f_s4_true"
                 }
             ]
         },
-        "IIIIZZZZ_path_not_f_s4_false": {
+        "IIIZZZZ_path_not_f_s4_false": {
             "instructions": [
                 "XIXIXIX_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IIIIZZZZ_path_not_f_s4_false_ter"
+                    "target": "IIIZZZZ_path_not_f_s4_false_ter"
                 }
             ]
         },
-        "IIIIZZZZ_path_not_f_s4_false_ter": {
+        "IIIZZZZ_path_not_f_s4_false_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_s_5_s_6"
             ],
             "branches": []
         },
-        "IIIIZZZZ_path_not_f_s4_true": {
+        "IIIZZZZ_path_not_f_s4_true": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IIIIZZZZ_path_not_f_s4_true_ter"
+                    "target": "IIIZZZZ_path_not_f_s4_true_ter"
                 }
             ]
         },
-        "IIIIZZZZ_path_not_f_s4_true_ter": {
+        "IIIZZZZ_path_not_f_s4_true_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_s_5_s_6"
             ],
             "branches": []
         },
-        "IIIIZZZZ_path_all_zero": {
+        "IIIZZZZ_path_all_zero": {
             "instructions": [
-                "IZZIIZZZ_flag"
+                "IZZIIZZ_flag"
             ],
             "branches": [
                 {
@@ -630,7 +630,7 @@
                             }
                         ]
                     },
-                    "target": "IZZIIZZZ_path_s_one_f_zero"
+                    "target": "IZZIIZZ_path_s_one_f_zero"
                 },
                 {
                     "condition": {
@@ -643,7 +643,7 @@
                             }
                         ]
                     },
-                    "target": "IZZIIZZZ_path_not_f_zero"
+                    "target": "IZZIIZZ_path_not_f_zero"
                 },
                 {
                     "condition": {
@@ -661,50 +661,50 @@
                             }
                         ]
                     },
-                    "target": "IZZIIZZZ_path_all_zero"
+                    "target": "IZZIIZZ_path_all_zero"
                 }
             ]
         },
-        "IZZIIZZZ_path_s_one_f_zero": {
+        "IZZIIZZ_path_s_one_f_zero": {
             "instructions": [
                 "raw_syndrome_z"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IZZIIZZZ_path_s_one_after_raw_x"
+                    "target": "IZZIIZZ_path_s_one_after_raw_x"
                 }
             ]
         },
-        "IZZIIZZZ_path_s_one_after_raw_x": {
+        "IZZIIZZ_path_s_one_after_raw_x": {
             "instructions": [
                 "IXXIIXX_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IZZIIZZZ_path_s_one_ter"
+                    "target": "IZZIIZZ_path_s_one_ter"
                 }
             ]
         },
-        "IZZIIZZZ_path_s_one_ter": {
+        "IZZIIZZ_path_s_one_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_f_4_s_5_s_6"
             ],
             "branches": []
         },
-        "IZZIIZZZ_path_not_f_zero": {
+        "IZZIIZZ_path_not_f_zero": {
             "instructions": [
-                "IZZIIZZZ_raw"
+                "IZZIIZZ_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IZZIIZZZ_path_not_f_after_raw"
+                    "target": "IZZIIZZ_path_not_f_after_raw"
                 }
             ]
         },
-        "IZZIIZZZ_path_not_f_after_raw": {
+        "IZZIIZZ_path_not_f_after_raw": {
             "instructions": [
                 "IXXIIXX_raw"
             ],
@@ -715,7 +715,7 @@
                         "left": "s_5",
                         "right": false
                     },
-                    "target": "IZZIIZZZ_path_not_f_s5_false"
+                    "target": "IZZIIZZ_path_not_f_s5_false"
                 },
                 {
                     "condition": {
@@ -723,47 +723,47 @@
                         "left": "s_5",
                         "right": true
                     },
-                    "target": "IZZIIZZZ_path_not_f_s5_true"
+                    "target": "IZZIIZZ_path_not_f_s5_true"
                 }
             ]
         },
-        "IZZIIZZZ_path_not_f_s5_false": {
+        "IZZIIZZ_path_not_f_s5_false": {
             "instructions": [
                 "XIXIXIX_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IZZIIZZZ_path_not_f_s5_false_ter"
+                    "target": "IZZIIZZ_path_not_f_s5_false_ter"
                 }
             ]
         },
-        "IZZIIZZZ_path_not_f_s5_false_ter": {
+        "IZZIIZZ_path_not_f_s5_false_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_f_4_s_5_s_6_s_7"
             ],
             "branches": []
         },
-        "IZZIIZZZ_path_not_f_s5_true": {
+        "IZZIIZZ_path_not_f_s5_true": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "IZZIIZZZ_path_not_f_s5_true_ter"
+                    "target": "IZZIIZZ_path_not_f_s5_true_ter"
                 }
             ]
         },
-        "IZZIIZZZ_path_not_f_s5_true_ter": {
+        "IZZIIZZ_path_not_f_s5_true_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_f_4_s_5_s_6_s_7"
             ],
             "branches": []
         },
-        "IZZIIZZZ_path_all_zero": {
+        "IZZIIZZ_path_all_zero": {
             "instructions": [
-                "ZIZIZIZI_flag"
+                "ZIZIZIZ_flag"
             ],
             "branches": [
                 {
@@ -782,7 +782,7 @@
                             }
                         ]
                     },
-                    "target": "ZIZIZIZI_path_s_one_f_zero"
+                    "target": "ZIZIZIZ_path_s_one_f_zero"
                 },
                 {
                     "condition": {
@@ -795,7 +795,7 @@
                             }
                         ]
                     },
-                    "target": "ZIZIZIZI_path_not_f_zero"
+                    "target": "ZIZIZIZ_path_not_f_zero"
                 },
                 {
                     "condition": {
@@ -813,50 +813,50 @@
                             }
                         ]
                     },
-                    "target": "ZIZIZIZI_path_all_zero"
+                    "target": "ZIZIZIZ_path_all_zero"
                 }
             ]
         },
-        "ZIZIZIZI_path_s_one_f_zero": {
+        "ZIZIZIZ_path_s_one_f_zero": {
             "instructions": [
                 "raw_syndrome_z"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "ZIZIZIZI_path_s_one_after_raw_x"
+                    "target": "ZIZIZIZ_path_s_one_after_raw_x"
                 }
             ]
         },
-        "ZIZIZIZI_path_s_one_after_raw_x": {
+        "ZIZIZIZ_path_s_one_after_raw_x": {
             "instructions": [
                 "XIXIXIX_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "ZIZIZIZI_path_s_one_ter"
+                    "target": "ZIZIZIZ_path_s_one_ter"
                 }
             ]
         },
-        "ZIZIZIZI_path_s_one_ter": {
+        "ZIZIZIZ_path_s_one_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_f_4_s_5_f_5_s_6_s_7"
             ],
             "branches": []
         },
-        "ZIZIZIZI_path_not_f_zero": {
+        "ZIZIZIZ_path_not_f_zero": {
             "instructions": [
-                "ZIZIZIZI_raw"
+                "ZIZIZIZ_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "ZIZIZIZI_path_not_f_after_raw"
+                    "target": "ZIZIZIZ_path_not_f_after_raw"
                 }
             ]
         },
-        "ZIZIZIZI_path_not_f_after_raw": {
+        "ZIZIZIZ_path_not_f_after_raw": {
             "instructions": [
                 "XIXIXIX_raw"
             ],
@@ -867,7 +867,7 @@
                         "left": "s_6",
                         "right": false
                     },
-                    "target": "ZIZIZIZI_path_not_f_s6_false"
+                    "target": "ZIZIZIZ_path_not_f_s6_false"
                 },
                 {
                     "condition": {
@@ -875,54 +875,54 @@
                         "left": "s_6",
                         "right": true
                     },
-                    "target": "ZIZIZIZI_path_not_f_s6_true"
+                    "target": "ZIZIZIZ_path_not_f_s6_true"
                 }
             ]
         },
-        "ZIZIZIZI_path_not_f_s6_false": {
+        "ZIZIZIZ_path_not_f_s6_false": {
             "instructions": [
                 "IXXIIXX_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "ZIZIZIZI_path_not_f_s6_false_ter"
+                    "target": "ZIZIZIZ_path_not_f_s6_false_ter"
                 }
             ]
         },
-        "ZIZIZIZI_path_not_f_s6_false_ter": {
+        "ZIZIZIZ_path_not_f_s6_false_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_f_4_s_5_f_5_s_6_s_7_s_8"
             ],
             "branches": []
         },
-        "ZIZIZIZI_path_not_f_s6_true": {
+        "ZIZIZIZ_path_not_f_s6_true": {
             "instructions": [
-                "IZZIIZZZ_raw"
+                "IZZIIZZ_raw"
             ],
             "branches": [
                 {
                     "condition": null,
-                    "target": "ZIZIZIZI_path_not_f_s6_true_ter"
+                    "target": "ZIZIZIZ_path_not_f_s6_true_ter"
                 }
             ]
         },
-        "ZIZIZIZI_path_not_f_s6_true_ter": {
+        "ZIZIZIZ_path_not_f_s6_true_ter": {
             "instructions": [
                 "LUT_s_0_f_0_s_1_f_1_s_2_f_2_s_3_f_3_s_4_f_4_s_5_f_5_s_6_s_7_s_8"
             ],
             "branches": []
         },
-        "ZIZIZIZI_path_all_zero": {
+        "ZIZIZIZ_path_all_zero": {
             "instructions": [],
             "branches": [
                 {
                     "condition": null,
-                    "target": "ZIZIZIZI_path_all_zero_break"
+                    "target": "ZIZIZIZ_path_all_zero_break"
                 }
             ]
         },
-        "ZIZIZIZI_path_all_zero_break": {
+        "ZIZIZIZ_path_all_zero_break": {
             "instructions": [
                 "Break"
             ],

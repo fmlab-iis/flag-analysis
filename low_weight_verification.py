@@ -12,8 +12,9 @@ from z3 import And, BoolVal, Goal, Not, Or, PbEq, Xor
 from dimacs_bridge import (
     build_dimacs,
     merge_dimacs_cnfs,
-    resolve_cryptominisat_binary,
-    run_cryptominisat,
+    default_sat_solver_bin,
+    resolve_sat_solver_binary,
+    run_dimacs_solver,
 )
 from dimacs_export_protocol import (
     _lut_gen_syn_z3,
@@ -126,8 +127,8 @@ def _solve_goal(goal: Goal, query_tag: str = "low_weight") -> Dict[str, Any]:
     except (OSError, ValueError):
         pass
 
-    cms_exec = resolve_cryptominisat_binary("cryptominisat5")
-    status, _lits, _out, elapsed_s, peak_rss = run_cryptominisat(solve_cnf, cms_exec)
+    solver_exec = resolve_sat_solver_binary(default_sat_solver_bin())
+    status, _lits, _out, elapsed_s, peak_rss = run_dimacs_solver(solve_cnf, solver_exec)
 
     for p in renamed:
         try:

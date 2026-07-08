@@ -3,7 +3,7 @@
     "nodes": {
         "root": {
             "instructions": [
-                "IZZXXYY"
+                "IZZXXYY_flag"
             ],
             "branches": [
                 {
@@ -68,7 +68,7 @@
         },
         "IZZXXYY_s_one_f_zero": {
             "instructions": [
-                "XIXYZYZ"
+                "XIXYZYZ_flag"
             ],
             "branches": [
                 {
@@ -133,7 +133,7 @@
         },
         "XIXYZYZ_s_one_f_zero": {
             "instructions": [
-                "ZXYYXZI"
+                "ZXYYXZI_flag"
             ],
             "branches": [
                 {

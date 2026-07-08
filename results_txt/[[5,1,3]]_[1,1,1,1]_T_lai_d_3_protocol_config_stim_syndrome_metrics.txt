@@ -1,0 +1,16 @@
+verify_pipeline: stim_syndrome
+config: /home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[1,1,1,1]_T/[[5,1,3]]_[1,1,1,1]_T_lai_d_3_protocol_config.txt
+stab_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[1,1,1,1]_T/[[5,1,3]]_[1,1,1,1]_T.txt
+log_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_[1,1,1,1]_T/[[5,1,3]]_log_op.txt
+circuits_total: 2
+pass: 2  fail: 0  error: 0
+wall_time_seconds: 0.084
+total_runtime_s: 0.081821
+peak_rss_mb: 223.512
+job_status: PASS
+
+  status | config_key                     | circuit                         | runtime_s | peak_rss_mb
+  PASS  | flag_syndrome                  | [[5,1,3]]_[1,1,1,1]_T.qasm      |  0.052948 |     222.156
+  PASS  | raw_syndrome                   | raw_[[5,1,3]]_[1,1,1,1]_T.qasm  |  0.028873 |     223.512
+
+Overall: PASS

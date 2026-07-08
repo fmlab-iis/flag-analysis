@@ -1,0 +1,19 @@
+{
+  "config_stem": "[[5,1,3]]_[2,2]_T_lai_3_protocol_config",
+  "cnf_dir": "/home/bionicle8699/flag_verification/flag-analysis/cnf_out_unified/[[5,1,3]]_[2,2]_T_lai_3_protocol_config",
+  "t": 1,
+  "wall_time_seconds": null,
+  "path_count": 2,
+  "total_solver_runtime_s": 0.05713781004305929,
+  "total_sat_query_count": 2,
+  "sat_path_count": 1,
+  "min_dimacs_vars": 376,
+  "max_dimacs_vars": 624,
+  "min_clauses": 2724,
+  "max_clauses": 4620,
+  "fail_path_count": 1,
+  "unsat_path_count": 1,
+  "sat_path_count_result": 1,
+  "unknown_path_count": 0,
+  "exported_paths": 2
+}

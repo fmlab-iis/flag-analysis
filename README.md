@@ -97,7 +97,7 @@ bash scripts/setup_server.sh
 source venv/bin/activate
 ```
 
-This installs Python dependencies from `requirements.txt` and the system package `cryptominisat` (provides `cryptominisat5`, required for SAT solving).
+This installs Python dependencies from `requirements.txt` and system SAT solvers (`minisat` by default; optional `cryptominisat` for `cryptominisat5`). Override with `DIMACS_SOLVER_BIN=cryptominisat5` if needed.
 
 ### Run verification
 
@@ -113,3 +113,28 @@ python run_proof_protocol.py \
 - `1` — at least one path is SAT (counterexample) or a runtime error occurred
 
 **Metrics:** written to `{config_stem}_proof_metrics.txt` next to the config file (e.g. `[[5,1,3]]_[2,2]_T_fix_lai_3_protocol_config_proof_metrics.txt`).
+
+### Flag-raised batch (Step 3)
+
+Verify that high-weight errors at any gate position raise at least one flag, for every `flag_syndrome` and `*_flag` QASM in each `jobs.txt` config (default: all gates may fault, not only `find_bad_locations`):
+
+```bash
+PARALLEL_JOBS=2 PARALLEL_TMPDIR=$HOME/tmp bash scripts/run_batch_flag.sh
+```
+
+**Parameters:**
+- `t` (jobs.txt column 3, or `--t`): used when column 4 / `--w` omitted
+- `w` (jobs.txt column 4, `--w`, or `flag_w=` in config): **max fault sites** for the flag check (`AtMost`). Default: `t`
+- Flag must raise when stabilizer error **weight > w** (checked as `PbGe(..., w+1)`)
+
+Example `jobs.txt` line: `protocol.json\tconfig.txt\t1\t1` (d=3, one fault site, weight > 1)
+
+**Metrics:** `results_txt/{config_stem}_flag_raised_metrics.txt` — `Failed circuits: X/Y` must be `0/Y` to pass.
+
+Regenerate the paper table (same 18-column layout as control-flow / FTEC):
+
+```bash
+python scripts/generate_flag_metrics_table.py
+```
+
+Output: `results_txt/flag_raised_metrics_table.tex`

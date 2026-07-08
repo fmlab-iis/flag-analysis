@@ -691,7 +691,7 @@ def build_origin_5_1_3_protocol() -> Protocol:
 
 def build_low_depth_7_1_3_w_6_protocol():
     protocol = Protocol(start_node="root")
-    stab_gen = ["IZZXXYY", "XIXYZYZ", "ZXYYXZI"]
+    stab_gen = ["IZZXXYY_flag", "XIXYZYZ_flag", "ZXYYXZI_flag"]
     # Root node with unconditional branch to flag_measure
     root_node = Node(
         node_id="root",
@@ -792,7 +792,7 @@ def build_low_depth_7_1_3_w_6_protocol():
 
 def build_low_depth_7_1_3_w_6_second_protocol():
     protocol = Protocol(start_node="root")
-    stab_gen = ["IIIXXXX", "IXXIIXX", "XIXIXIX", "IIIIZZZZ", "IZZIIZZZ", "ZIZIZIZI"]
+    stab_gen = ["IIIXXXX", "IXXIIXX", "XIXIXIX", "IIIZZZZ", "IZZIIZZ", "ZIZIZIZ"]
     half = len(stab_gen) // 2
 
     def paired_raw_stab(i: int) -> str:

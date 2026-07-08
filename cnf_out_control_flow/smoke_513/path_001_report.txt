@@ -1,8 +1,0 @@
-Path 1 / 13
-  type: 1  last_instr: raw_syndrome (raw)
-  status: SAT
-  runtime: 0.009086 s  peak RSS: 88.000 MB
-  dimacs_vars: 573  clauses: 4327
-  result: pred_syn mismatch found (FAIL)
-  p1: {'r_2_faulty_gate3_x0': True, 'r_2_faulty_gate3_z0': True}
-  p2: {'r_3_faulty_gate5_z0': True}

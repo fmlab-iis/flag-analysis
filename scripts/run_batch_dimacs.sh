@@ -10,6 +10,8 @@ pl_init_tmpdir "$ROOT"
 
 mkdir -p results_txt cnf_out
 
+PYTHON="$ROOT/venv/bin/python"
+
 filter_jobs() {
   grep -vE '^\s*$|^\s*#' "$ROOT/jobs.txt"
 }
@@ -34,6 +36,9 @@ filter_jobs | parallel -j "$BATCH_JOBS" --tmpdir "$PARALLEL_TMPDIR" "${MEMFREE_E
   "$ROOT/scripts/run_one_job_dimacs.sh" {1} {2} {3} {#} "$TOTAL"
 
 echo ""
+"$PYTHON" summarize_jobs_dimacs.py --root "$ROOT" --jobs-file "$ROOT/jobs.txt"
+
+echo ""
 echo "========== Summary =========="
 awk -v total="$TOTAL" '
   NR == 1 { next }
@@ -48,6 +53,7 @@ awk -v total="$TOTAL" '
     print ""
     print "  CNF:     cnf_out/"
     print "  Metrics: results_txt/"
+    print "  Job summary: results_txt/jobs_dimacs_summary.txt"
     print "  Log:     run_dimacs.log"
   }
 ' run_dimacs.log

@@ -10,9 +10,9 @@ IXXIIXX_raw = [[7,1,3]_IXXIIXX_raw.qasm
 XIXIXIX_flag = [[7,1,3]_XIXIXIX_flag.qasm
 XIXIXIX_raw = [[7,1,3]_XIXIXIX_raw.qasm
 
-IIIIZZZZ_flag = [[7,1,3]_IIIIZZZZ_flag.qasm
-IIIIZZZZ_raw = [[7,1,3]_IIIIZZZZ_raw.qasm
-IZZIIZZZ_flag = [[7,1,3]_IZZIIZZZ_flag.qasm
-IZZIIZZZ_raw = [[7,1,3]_IZZIIZZZ_raw.qasm
-ZIZIZIZI_flag = [[7,1,3]_ZIZIZIZI_flag.qasm
-ZIZIZIZI_raw = [[7,1,3]_ZIZIZIZI_raw.qasm
+IIIZZZZ_flag = [[7,1,3]_IIIZZZZ_flag.qasm
+IIIZZZZ_raw = [[7,1,3]_IIIZZZZ_raw.qasm
+IZZIIZZ_flag = [[7,1,3]_IZZIIZZ_flag.qasm
+IZZIIZZ_raw = [[7,1,3]_IZZIIZZ_raw.qasm
+ZIZIZIZ_flag = [[7,1,3]_ZIZIZIZ_flag.qasm
+ZIZIZIZ_raw = [[7,1,3]_ZIZIZIZ_raw.qasm

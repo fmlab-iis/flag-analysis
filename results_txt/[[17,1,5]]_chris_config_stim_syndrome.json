@@ -1,0 +1,49 @@
+{
+  "verify_pipeline": "stim_syndrome",
+  "config": "/home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[1,1,1,1,...]/[[17,1,5]]_chris_config.txt",
+  "config_stem": "[[17,1,5]]_chris_config",
+  "stab_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/chris_[[17,1,5]]/chris_[[17,1,5]].txt",
+  "log_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/chris_[[17,1,5]]/chris_[[17,1,5]]_log_op.txt",
+  "circuits_total": 2,
+  "pass_count": 2,
+  "fail_count": 0,
+  "error_count": 0,
+  "job_status": "PASS",
+  "wall_time_seconds": 0.1499879730399698,
+  "total_runtime_s": 0.1476640240289271,
+  "peak_rss_bytes": 243535872,
+  "peak_rss_mb": 232.25390625,
+  "state_check": false,
+  "circuits": [
+    {
+      "config_key": "flag_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/chris_[[17,1,5]]/chris_[[17,1,5]]_[1,1,1,1,.....].qasm",
+      "circuit_name": "chris_[[17,1,5]]_[1,1,1,1,.....].qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXX______________________________________": true,
+        "+ZZZZZZZZZZZZZZZZZ______________________________________": true
+      },
+      "rank_before": 54,
+      "rank_after": 54,
+      "runtime_s": 0.09583734499756247,
+      "peak_rss_bytes": 243535872
+    },
+    {
+      "config_key": "raw_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/chris_[[17,1,5]]/raw_chris_[[17,1,5]]_[1,1,1,1,.....].qasm",
+      "circuit_name": "raw_chris_[[17,1,5]]_[1,1,1,1,.....].qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXX________________": true,
+        "+ZZZZZZZZZZZZZZZZZ________________": true
+      },
+      "rank_before": 32,
+      "rank_after": 32,
+      "runtime_s": 0.05182667903136462,
+      "peak_rss_bytes": 233881600
+    }
+  ]
+}

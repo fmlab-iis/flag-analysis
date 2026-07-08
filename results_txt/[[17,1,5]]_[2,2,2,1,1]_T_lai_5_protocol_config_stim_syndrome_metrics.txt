@@ -1,0 +1,19 @@
+verify_pipeline: stim_syndrome
+config: /home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config.txt
+stab_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T.txt
+log_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_log.txt
+circuits_total: 2
+pass: 1  fail: 1  error: 0
+wall_time_seconds: 0.252
+total_runtime_s: 0.247631
+peak_rss_mb: 235.844
+job_status: FAIL
+
+  status | config_key                     | circuit                         | runtime_s | peak_rss_mb
+  FAIL  | flag_syndrome                  | [[17,1,5]]_[2,2,2,1,1]_T_flag.qasm |  0.195046 |     235.000
+         [22] anc/flag wire 23: +_______________________X_______________________ -> +_______X___X___XX______X_____________________XX
+         [23] anc/flag wire 24: +________________________X______________________ -> +__XX_XX__XX__XX_________X____________________X_
+         [30] anc/flag wire 31: +_______________________________Z_______________ -> +_______Z___Z___ZZ______________Z______ZZ_______
+  PASS  | raw_syndrome                   | raw_[[17,1,5]]_[2,2,2,1,1]_T_flag.qasm |  0.052585 |     235.844
+
+Overall: FAIL

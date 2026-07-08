@@ -1,0 +1,19 @@
+{
+  "config_stem": "chao_du_[[17,1,5]]_config",
+  "cnf_dir": "/home/bionicle8699/flag_verification/flag-analysis/cnf_out_unified/chao_du_[[17,1,5]]_config",
+  "t": 2,
+  "wall_time_seconds": null,
+  "path_count": 21,
+  "total_solver_runtime_s": 123486.40909298821,
+  "total_sat_query_count": 21,
+  "sat_path_count": 3,
+  "min_dimacs_vars": 5466,
+  "max_dimacs_vars": 11582,
+  "min_clauses": 48370,
+  "max_clauses": 122417,
+  "fail_path_count": 3,
+  "unsat_path_count": 18,
+  "sat_path_count_result": 3,
+  "unknown_path_count": 0,
+  "exported_paths": 21
+}

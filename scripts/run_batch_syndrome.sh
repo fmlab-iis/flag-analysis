@@ -48,7 +48,7 @@ while IFS= read -r line; do
   name="$(basename "$config" .txt)"
   metrics="results_txt/${name}_syndrome_extraction_metrics.txt"
   if [[ -f "$metrics" ]]; then
-    failed_count="$(awk -F '|' '/Failed circuits:/ { gsub(/[^0-9/].*/, "", $2); print $2 }' "$metrics" | tail -1)"
+    failed_count="$(grep 'Failed circuits:' "$metrics" | tail -1 | sed -n 's/.*Failed circuits: *\([0-9]*\/[0-9]*\).*/\1/p')"
     if [[ "$failed_count" == "0/"* ]]; then
       printf "  PASS  %s\n" "$name"
       pass=$((pass + 1))

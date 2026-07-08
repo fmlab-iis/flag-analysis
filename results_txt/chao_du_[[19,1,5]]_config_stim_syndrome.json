@@ -1,0 +1,49 @@
+{
+  "verify_pipeline": "stim_syndrome",
+  "config": "/home/bionicle8699/flag_verification/flag-analysis/chau_du_[[19,1,5]]/chao_du_[[19,1,5]]_config.txt",
+  "config_stem": "chao_du_[[19,1,5]]_config",
+  "stab_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/chau_du_[[19,1,5]]/chao_du_[[19,1,5]]_stab.txt",
+  "log_txt_path": "/home/bionicle8699/flag_verification/flag-analysis/chau_du_[[19,1,5]]/chao_du_[[19,1,5]]_log.txt",
+  "circuits_total": 2,
+  "pass_count": 2,
+  "fail_count": 0,
+  "error_count": 0,
+  "job_status": "PASS",
+  "wall_time_seconds": 0.1559834119398147,
+  "total_runtime_s": 0.15370170399546623,
+  "peak_rss_bytes": 201912320,
+  "peak_rss_mb": 192.55859375,
+  "state_check": false,
+  "circuits": [
+    {
+      "config_key": "flag_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/chau_du_[[19,1,5]]/chao_du_[[19,1,5]]_flag_syndrome.qasm",
+      "circuit_name": "chao_du_[[19,1,5]]_flag_syndrome.qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXXXX______________________________": true,
+        "+ZZZZZZZZZZZZZZZZZZZ______________________________": true
+      },
+      "rank_before": 48,
+      "rank_after": 48,
+      "runtime_s": 0.0965057039866224,
+      "peak_rss_bytes": 201080832
+    },
+    {
+      "config_key": "raw_syndrome",
+      "circuit": "/home/bionicle8699/flag_verification/flag-analysis/chau_du_[[19,1,5]]/chao_du_[[19,1,5]]_raw_syndrome.qasm",
+      "circuit_name": "chao_du_[[19,1,5]]_raw_syndrome.qasm",
+      "status": "PASS",
+      "stabilizer_span_ok": true,
+      "logical_results": {
+        "+XXXXXXXXXXXXXXXXXXX__________________": true,
+        "+ZZZZZZZZZZZZZZZZZZZ__________________": true
+      },
+      "rank_before": 36,
+      "rank_after": 36,
+      "runtime_s": 0.05719600000884384,
+      "peak_rss_bytes": 201912320
+    }
+  ]
+}

@@ -1,24 +1,26 @@
 ================================================================================
 Syndrome extraction verification (no circuit faults)
 Property: ancillas match stabilizer(s); data qubits preserved
-Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli
+Solver: Z3 export + cryptominisat5 (SYNDROME_SAT_SOLVER_BIN)
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli; raw_syndrome_x/z vs X/Z rows of stab.txt
 Pass => ok; fail => ancilla mismatch or data not preserved
 Per-circuit metrics:
-  circuit_key           | mode    | status  | ancilla | data | runtime_s | reason
-  IIIIZZZZ_flag         | partial | error   | False   | False |  0.019461 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
-  IIIIZZZZ_raw          | partial | error   | False   | False |  0.001758 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
-  IIIXXXX_flag          | partial | pass    | True    | True |  0.012572 | 
-  IIIXXXX_raw           | partial | pass    | True    | True |  0.005544 | 
-  IXXIIXX_flag          | partial | pass    | True    | True |  0.006614 | 
-  IXXIIXX_raw           | partial | pass    | True    | True |  0.005365 | 
-  IZZIIZZZ_flag         | partial | error   | False   | False |  0.001805 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
-  IZZIIZZZ_raw          | partial | error   | False   | False |  0.001557 | True, False or Z3 Boolean expression expected. Received None of type <class 'NoneType'>
-  XIXIXIX_flag          | partial | pass    | True    | True |  0.007042 | 
-  XIXIXIX_raw           | partial | pass    | True    | True |  0.006290 | 
-  ZIZIZIZI_flag         | partial | pass    | True    | True |  0.006957 | 
-  ZIZIZIZI_raw          | partial | pass    | True    | True |  0.006931 | 
-  raw_syndrome_x        | full    | fail    | False   | False |  0.004038 | ancilla mismatch at indices [0, 1, 2]
-  raw_syndrome_z        | full    | fail    | False   | False |  0.003646 | ancilla mismatch at indices [0, 1, 2]
-Total runtime: 0.089581 s
-Failed circuits: 6/14
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | peak_rss_mb | reason
+  IIIXXXX_flag          | partial | pass    | True    | True |  0.021087 |      96.926 | 
+  IIIXXXX_raw           | partial | pass    | True    | True |  0.007579 |      97.086 | 
+  IIIZZZZ_flag          | partial | pass    | True    | True |  0.011075 |      95.488 | 
+  IIIZZZZ_raw           | partial | pass    | True    | True |  0.007480 |      95.559 | 
+  IXXIIXX_flag          | partial | pass    | True    | True |  0.008222 |      95.582 | 
+  IXXIIXX_raw           | partial | pass    | True    | True |  0.006735 |      95.598 | 
+  IZZIIZZ_flag          | partial | pass    | True    | True |  0.008330 |      95.617 | 
+  IZZIIZZ_raw           | partial | pass    | True    | True |  0.007475 |      95.633 | 
+  XIXIXIX_flag          | partial | pass    | True    | True |  0.017656 |      91.777 | 
+  XIXIXIX_raw           | partial | pass    | True    | True |  0.006797 |      91.836 | 
+  ZIZIZIZ_flag          | partial | pass    | True    | True |  0.008382 |      91.848 | 
+  ZIZIZIZ_raw           | partial | pass    | True    | True |  0.006887 |      86.133 | 
+  raw_syndrome_x        | x_subset | pass    | True    | True |  0.011200 |      86.086 | 
+  raw_syndrome_z        | z_subset | pass    | True    | True |  0.025781 |      86.035 | 
+Total runtime: 0.154687 s
+Max peak RSS (across circuits): 97.086 MB
+Failed circuits: 0/14
 ================================================================================

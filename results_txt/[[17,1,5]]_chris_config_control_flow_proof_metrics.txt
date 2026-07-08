@@ -1,0 +1,35 @@
+Verify pipeline: control_flow (type0 break-weight; type1 same gen_syn + pred_syn_diff; type2 skipped)
+================================================================================
+Max faults per path (t): 2
+Total number of paths: 21
+Per-path SAT metrics:
+  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
+        0 |    1 | raw_syndrome (raw)      | unsat   |        420 |  0.962567 |      88.824 |       1680 |        7124 |         46654 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |        536 |  5.440803 |      88.938 |       2144 |        8757 |         78054 |               1
+        3 |    1 | raw_syndrome (raw)      | unsat   |        536 | 214.552966 |     101.777 |       2144 |        9264 |         80797 |               1
+        4 |    1 | raw_syndrome (raw)      | unsat   |        536 |  6.877468 |      86.906 |       2144 |        9229 |         81041 |               1
+        5 |    1 | raw_syndrome (raw)      | unsat   |        652 | 15.962490 |      96.000 |       2608 |       10964 |        115853 |               1
+        7 |    1 | raw_syndrome (raw)      | unsat   |        652 | 23.874887 |     108.000 |       2608 |       11455 |        118636 |               1
+        9 |    1 | raw_syndrome (raw)      | unsat   |        536 |  9.331663 |     103.996 |       2144 |        9486 |         82333 |               1
+       10 |    1 | raw_syndrome (raw)      | unsat   |        652 | 722.605576 |     138.910 |       2608 |       11234 |        117239 |               1
+       12 |    1 | raw_syndrome (raw)      | unsat   |        652 | 1368.640602 |     155.129 |       2608 |       11760 |        120077 |               1
+       13 |    1 | raw_syndrome (raw)      | unsat   |        420 |  3.989255 |     114.000 |       1680 |        7592 |         49389 |               1
+       14 |    1 | raw_syndrome (raw)      | unsat   |        536 | 344.224064 |     110.000 |       2144 |        9239 |         80786 |               1
+       16 |    1 | raw_syndrome (raw)      | unsat   |        536 | 4292.001128 |     172.871 |       2144 |        9752 |         83559 |               1
+       17 |    1 | raw_syndrome (raw)      | unsat   |        304 | 74.274182 |     104.453 |       1216 |        5039 |         53564 |               1
+       18 |    1 | raw_syndrome (raw)      | unsat   |        420 | 47.427424 |     106.000 |       1680 |        7136 |         46777 |               1
+       20 |    1 | raw_syndrome (raw)      | unsat   |        420 | 479.644834 |     133.758 |       1680 |        7653 |         49570 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 7609.809908 s
+  SAT solver calls (sum sat_query_count): 15
+  Paths with SAT result: 0/15
+  DIMACS variables (min / max): 5039 / 11760
+  Clauses (min / max): 46654 / 120077
+Total runtime (sum of all paths): 7609.809908 s
+Failed paths (SAT): 0/15
+Total SAT paths: 0/21
+pred_syn fail (type 1): 0/15
+Max fault variables (across paths): 2608
+Max DIMACS variables (across paths): 11760
+Max peak RSS (across paths): 172.871 MB
+================================================================================

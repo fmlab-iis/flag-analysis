@@ -4,7 +4,7 @@
 # Requires: pip install qiskit z3-solver
 
 from dataclasses import dataclass
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Any
 from pathlib  import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -27,7 +27,21 @@ def _resolve_project_path(path: str | Path) -> Path:
     return (PROJECT_ROOT / p).resolve()
 
 
-from dimacs_bridge import build_dimacs, merge_dimacs_cnfs, resolve_cryptominisat_binary, run_cryptominisat, model_to_z3_assignment, pretty_print_z3_assignment, pretty_print_true_z3_vars, is_user_var
+from dimacs_bridge import (
+    build_dimacs,
+    merge_dimacs_cnfs,
+    default_sat_solver_bin,
+    default_syndrome_sat_solver_bin,
+    resolve_sat_solver_binary,
+    resolve_cryptominisat_binary,
+    run_dimacs_solver,
+    run_cryptominisat,
+    z3_expr_is_unsat,
+    model_to_z3_assignment,
+    pretty_print_z3_assignment,
+    pretty_print_true_z3_vars,
+    is_user_var,
+)
 
 from circuit_op import *
 from protocol import *
@@ -584,11 +598,12 @@ def build_state_with_fault_after_gate(qasm_path: str, gate_index: int, fault_mod
                     "fault_mode": "1q",
                 }
 
-        elif name in ("cx","cnot", "notnot", "cz"):
+        elif name in ("cx","cnot", "notnot", "cz", "cy"):
             c, t = qidxs
             if (name == "cx"  or name == "cnot"):apply_cnot(state, c, t)
             elif (name == "notnot"): apply_notnot(state, c, t)
             elif (name == "cz"): apply_cz(state, c, t)
+            elif (name == "cy"): apply_cy(state, c, t)
             if i == gate_index:
                 info = _inject_2q_fault_after(
                     state, c, t, 
@@ -665,7 +680,7 @@ def build_state_with_faults_after_gates(qasm_path: str, gate_indices: list, faul
                     "fault_mode": "1q",
                 })
 
-        elif name in ("cx","cnot","notnot","cz"):
+        elif name in ("cx","cnot","notnot","cz","cy"):
             c, t = qidxs
             if name in ("cx","cnot"):
                 apply_cnot(state, c, t)
@@ -673,6 +688,8 @@ def build_state_with_faults_after_gates(qasm_path: str, gate_indices: list, faul
                 apply_notnot(state, c, t)
             elif name == "cz":
                 apply_cz(state, c, t)
+            elif name == "cy":
+                apply_cy(state, c, t)
             if i in gate_indices:
                 info = _inject_2q_fault_after(
                     state, c, t,
@@ -1292,12 +1309,16 @@ def control_flow_build_goal(
     at_most_t_faults,
     condition,
     data_qubits,
+    gen_syn_z3,
     stab_txt_path: str,
 ):
     """
-    Control-flow type-1 goal: SAT counterexample has pred_syn(E1) != pred_syn(E2).
-    UNSAT = pred_syn consistent across fault assignments on the path.
+    Control-flow type-1 goal: SAT counterexample has same gen_syn but pred_syn(E1) != pred_syn(E2).
+    UNSAT = no two ≤t-fault patterns with equal measured syndrome and differing pred_syn.
     """
+    if not gen_syn_z3:
+        raise ValueError("control_flow_build_goal requires non-empty gen_syn_z3")
+
     E_x = [dq.x for dq in data_qubits]
     E_z = [dq.z for dq in data_qubits]
 
@@ -1315,6 +1336,10 @@ def control_flow_build_goal(
     at_most_t_faults_1 = primed_copy(at_most_t_faults, ren_1)
     at_most_t_faults_2 = primed_copy(at_most_t_faults, ren_2)
 
+    gen_syn_z3_1 = primed_copy(gen_syn_z3, ren_1)
+    gen_syn_z3_2 = primed_copy(gen_syn_z3, ren_2)
+    same_syn = And(*[x == y for x, y in zip(gen_syn_z3_1, gen_syn_z3_2)])
+
     stab_gens = load_symplectic_txt(stab_txt_path)
     pred_syn_1 = stabilizer_syndrome_from_data(E_x_1, E_z_1, stab_gens)
     pred_syn_2 = stabilizer_syndrome_from_data(E_x_2, E_z_2, stab_gens)
@@ -1328,6 +1353,7 @@ def control_flow_build_goal(
     g.add(And(*condition_2))
     g.add(at_most_t_faults_1)
     g.add(at_most_t_faults_2)
+    g.add(same_syn)
     g.add(pred_syn_diff)
     return g
 
@@ -1340,14 +1366,15 @@ def control_flow_export_dimacs(
     stab_txt_path: str,
     cnf_dir,
     path_tag: str,
+    gen_syn_z3,
     use_card2bv: bool = True,
 ):
-    """Export control-flow type-1 pred_syn_diff constraints to DIMACS."""
+    """Export control-flow type-1 (same gen_syn, pred_syn_diff) constraints to DIMACS."""
     cnf_dir = Path(cnf_dir)
     cnf_dir.mkdir(parents=True, exist_ok=True)
 
     g = control_flow_build_goal(
-        vars, at_most_t_faults, condition, data_qubits, stab_txt_path,
+        vars, at_most_t_faults, condition, data_qubits, gen_syn_z3, stab_txt_path,
     )
 
     old_cwd = os.getcwd()
@@ -1398,12 +1425,13 @@ def control_flow_export_dimacs(
     )
 
     fault_var_names = sorted({_z3_bool_name(v) for v in vars})
+    gen_syn_var_names = [_z3_bool_name(v) for v in gen_syn_z3]
     meta = {
         "path_tag": path_tag,
         "witness_mode": "control_flow_type1",
         "verify_pipeline": "control_flow",
         "fault_var_names": fault_var_names,
-        "gen_syn_var_names": [],
+        "gen_syn_var_names": gen_syn_var_names,
         "num_fault_vars": len(fault_var_names),
         "total_clauses": total_clauses,
         "total_dimacs_vars": total_dimacs_vars,
@@ -1740,7 +1768,7 @@ def uniqueness_solve_with_cryptominisat_unified(
     stab_txt_path,
     log_txt_path,
     out_cnf: str = "uniq.cnf",
-    cms_bin: str = "cryptominisat5",
+    cms_bin: str | None = None,
     cms_extra_args: list = None,
     use_card2bv: bool = True,
     timeout_s: Optional[float] = None,
@@ -1749,7 +1777,7 @@ def uniqueness_solve_with_cryptominisat_unified(
     cms_retries: int = 8,
     num_meas_syn_bits: int = 0,
 ):
-    """Inline unified uniqueness solve via export-to-temp + CryptoMiniSat."""
+    """Inline unified uniqueness solve via export-to-temp + external SAT solver (MiniSat by default)."""
     import tempfile
 
     path_tag = Path(out_cnf).stem if out_cnf.endswith(".cnf") else (out_cnf or "uniq")
@@ -1839,7 +1867,7 @@ from z3 import Then  # make sure Goal/Then exist in your imports
 
 
 ##-----------------------
-# solve uniqueness constraints with CryptoMiniSat
+# solve uniqueness constraints with external SAT solver (MiniSat by default)
 ####
 import json
 import os, re, shutil, subprocess
@@ -1996,7 +2024,7 @@ def _load_export_sidecars(cnf_dir, path_tag: str):
 def uniqueness_solve_from_export(
     cnf_dir,
     path_tag: str,
-    cms_bin: str = "cryptominisat5",
+    cms_bin: str | None = None,
     cms_extra_args=None,
     timeout_s=None,
     cms_retries: int = 8,
@@ -2005,7 +2033,7 @@ def uniqueness_solve_from_export(
     """Solve a previously exported path CNF. Returns (status, counterexample, stats)."""
     cnf_dir = Path(cnf_dir)
     cnf_path, var_map, meta = _load_export_sidecars(cnf_dir, path_tag)
-    cms_exec = resolve_cryptominisat_binary(cms_bin)
+    cms_exec = resolve_sat_solver_binary(cms_bin or default_sat_solver_bin())
 
     witness_mode = meta.get("witness_mode", "type1")
     gen_syn_z3 = [Bool(n) for n in meta.get("gen_syn_var_names", [])]
@@ -2017,8 +2045,8 @@ def uniqueness_solve_from_export(
     st = "unknown"
 
     for _attempt in range(max(1, cms_retries)):
-        st, lits, _out, elapsed_s, rss_bytes = run_cryptominisat(
-            str(cnf_path), cms_exec, timeout_s=timeout_s, cms_extra_args=cms_extra_args,
+        st, lits, _out, elapsed_s, rss_bytes = run_dimacs_solver(
+            str(cnf_path), cms_exec, timeout_s=timeout_s, extra_args=cms_extra_args,
         )
         total_solver_time_s += elapsed_s
         if rss_bytes is not None:
@@ -2033,6 +2061,9 @@ def uniqueness_solve_from_export(
         if st == "sat" and lits:
             if witness_mode == "break":
                 counterexample = _break_weight_counterexample_from_lits(lits, var_map)
+                break
+            if witness_mode == "flag_raised":
+                counterexample = _flag_raised_counterexample_from_lits(lits, var_map)
                 break
             p1, p2 = pretty_print_true_z3_vars(lits, var_map, do_print=False)
             if witness_mode == "control_flow_type1" or _verify_witness_same_syn(
@@ -2073,7 +2104,7 @@ def uniqueness_solve_with_cryptominisat(
     stab_txt_path,
     log_txt_path,
     out_cnf: str = "uniq.cnf",
-    cms_bin: str = "cryptominisat5",
+    cms_bin: str | None = None,
     cms_extra_args: list = None,
     use_card2bv: bool = True,
     timeout_s: Optional[float] = None,
@@ -2083,7 +2114,7 @@ def uniqueness_solve_with_cryptominisat(
     cms_retries: int = 8,
 ):
     """
-    Z3 -> CNF (DIMACS) -> CryptoMiniSat.
+    Z3 -> CNF (DIMACS) -> external SAT solver (MiniSat by default).
 
         IMPORTANT (matches caller contract):
             returns (status, model_lits, solver_output, counterexample)
@@ -2142,8 +2173,8 @@ def uniqueness_solve_with_cryptominisat(
         except (OSError, ValueError):
             pass
 
-    # 3) Find CryptoMiniSat
-    cms_exec = resolve_cryptominisat_binary(cms_bin)
+    # 3) Find external SAT solver (MiniSat by default)
+    cms_exec = resolve_sat_solver_binary(cms_bin or default_sat_solver_bin())
 
     # 4) Merge subgoals into one CNF when needed (avoids invalid partial models)
     solve_cnf = cnf_files[0]
@@ -2195,8 +2226,8 @@ def uniqueness_solve_with_cryptominisat(
     collected_model_lits = None
     st = "unknown"
     for attempt in range(max(1, cms_retries)):
-        st, lits, out, elapsed_s, rss_bytes = run_cryptominisat(
-            solve_cnf, cms_exec, timeout_s=timeout_s, cms_extra_args=cms_extra_args
+        st, lits, out, elapsed_s, rss_bytes = run_dimacs_solver(
+            solve_cnf, cms_exec, timeout_s=timeout_s, extra_args=cms_extra_args,
         )
         total_solver_time_s += elapsed_s
         if rss_bytes is not None:
@@ -2571,10 +2602,8 @@ def anticomm_formula(Sx, Sz, varenv):
 # ---------------------------
 
 def _equiv(a, b) -> bool:
-    """True iff a and b are logically equivalent (UNSAT of XOR)."""
-    s = Solver()
-    s.add(Xor(a, b))          # SAT means there exists an assignment where they differ
-    return s.check() == unsat # UNSAT ⇒ no such assignment ⇒ equivalent
+    """True iff a and b are logically equivalent (UNSAT of XOR), via CryptoMiniSat."""
+    return z3_expr_is_unsat(Xor(a, b))
 
 def _counterexample(a, b):
     """Return a counterexample model if a ≢ b, else None."""
@@ -2643,15 +2672,10 @@ def check_ancillas_match_symplectic_ordered(qasm_path: str,
     # Combine all equivalence checks into a single AND condition
     combined_condition = And(*[Xor(a, s) == False for a, s in zip(ancillas, stabs)])
 
-    # Check if the combined condition is satisfied
-    s = Solver()
-    s.add(Not(combined_condition))  # Check if there exists a counterexample
-    if s.check() == unsat:
-        #print("Overall ordered match: True")
+    # Check if the combined condition is satisfied (CryptoMiniSat on exported CNF)
+    if z3_expr_is_unsat(Not(combined_condition)):
         return {"ok": True, "mismatches": []}
     else:
-        #print("Overall ordered match: False")
-        #print("Counterexample:", s.model())
         mismatches = [i for i, (a, s) in enumerate(zip(ancillas, stabs)) if not _equiv(a, s)]
         return {"ok": False, "mismatches": mismatches}
 
@@ -3486,9 +3510,7 @@ def verify_syndrome_extraction(
         groups = detect_qubit_groups(qc)
         regmap = _regmap_indices(qc)
         data_eqs = _data_qubit_preservation_eqs(state, groups, varenv, regmap)
-        s = Solver()
-        s.add(Not(And(*data_eqs)))
-        if s.check() == unsat:
+        if z3_expr_is_unsat(Not(And(*data_eqs))):
             data_preserved = True
         else:
             for idx in groups["data"]:
@@ -3651,9 +3673,213 @@ def find_bad_locations(qasm_path: str, stab_txt_path: str,num_gates: int):
 
     return bad_locations_dict
 """
-def check_flag_raised(qasm_path: str, stab_txt_path: str,num_gates: int, bad_locations_dict: List[int], *, t =1):
-    
-    
+def _flag_raised_counterexample_from_lits(lits, var_map):
+    """Extract true fault vars from a SAT model for witness_mode flag_raised."""
+    assign = model_to_z3_assignment(lits, var_map)
+    faults = {k: v for k, v in assign.items() if v and k.startswith("faulty_")}
+    return {"faults": faults, "assignment": assign}
+
+
+def flag_raised_build_goal(
+    E_x,
+    E_z,
+    F,
+    acts,
+    stab_txt_path: str,
+    min_weight: int,
+    fault_w: int,
+    gsel_prefix: str = "fr_gsel",
+):
+    """
+    Flag-raised counterexample goal (prove UNSAT):
+      ∀ gsel : stab_equiv_weight(E, gsel) ≥ min_weight
+      ∧ no flag raised
+      ∧ at most fault_w fault sites
+
+    The universal quantifier over gsel is expanded to 2^m disjunctive clauses
+    so the goal is quantifier-free and CNF-exportable.
+    """
+    from itertools import product
+
+    Epx, Epz, gsel = build_stab_equiv_errors(E_x, E_z, stab_txt_path, prefix=gsel_prefix)
+
+    forall_constraints = []
+    for bits in product((False, True), repeat=len(gsel)):
+        subs = [(gsel[j], BoolVal(bits[j])) for j in range(len(gsel))]
+        b_fixed = [
+            Or(simplify(substitute(Epx[i], subs)), simplify(substitute(Epz[i], subs)))
+            for i in range(len(Epx))
+        ]
+        forall_constraints.append(PbGe([(bi, 1) for bi in b_fixed], min_weight))
+
+    g = Goal()
+    for c in forall_constraints:
+        g.add(c)
+    if F:
+        g.add(Not(Or(*F)))
+    else:
+        g.add(BoolVal(True))
+    g.add(AtMost(*acts, fault_w))
+    return g, gsel
+
+
+def flag_raised_export_dimacs(
+    E_x,
+    E_z,
+    F,
+    acts,
+    fault_var_names: List[str],
+    stab_txt_path: str,
+    min_weight: int,
+    fault_w: int,
+    cnf_dir,
+    path_tag: str,
+    gsel_prefix: Optional[str] = None,
+    use_card2bv: bool = True,
+):
+    """Build flag-raised goal, convert to DIMACS, write path_tag.cnf + sidecars."""
+    cnf_dir = Path(cnf_dir)
+    cnf_dir.mkdir(parents=True, exist_ok=True)
+    prefix = gsel_prefix or f"{path_tag}_gsel"
+
+    g, gsel = flag_raised_build_goal(
+        E_x, E_z, F, acts, stab_txt_path, min_weight, fault_w, gsel_prefix=prefix,
+    )
+
+    old_cwd = os.getcwd()
+    os.chdir(cnf_dir)
+    temp_files = []
+    cnf_files = []
+    solve_vmap = {}
+    merged_cnf = None
+    try:
+        cnf_files, var_maps = build_dimacs(g, use_card2bv)
+        if not cnf_files:
+            raise RuntimeError(f"No CNF subgoals produced for {path_tag}")
+
+        solve_cnf = cnf_files[0]
+        solve_vmap = var_maps[0]
+        if len(cnf_files) > 1:
+            merged_cnf = f"{path_tag}_merged.cnf"
+            solve_vmap = merge_dimacs_cnfs(cnf_files, merged_cnf)
+            solve_cnf = merged_cnf
+
+        final_cnf = cnf_dir / f"{path_tag}.cnf"
+        solve_path = Path(solve_cnf)
+        if not solve_path.is_absolute():
+            solve_path = cnf_dir / solve_path
+        if solve_path.resolve() != final_cnf.resolve():
+            shutil.copy2(solve_path, final_cnf)
+
+        temp_files = list(cnf_files)
+        if merged_cnf and merged_cnf not in temp_files:
+            temp_files.append(merged_cnf)
+    finally:
+        os.chdir(old_cwd)
+        for p in temp_files:
+            try:
+                fp = cnf_dir / p if not os.path.isabs(p) else Path(p)
+                if fp.exists() and fp.name != f"{path_tag}.cnf":
+                    fp.unlink()
+            except OSError:
+                pass
+
+    final_cnf = cnf_dir / f"{path_tag}.cnf"
+    total_clauses, total_dimacs_vars = _count_cnf_stats(str(final_cnf))
+
+    var_map_path = cnf_dir / f"{path_tag}_var_map.json"
+    var_map_path.write_text(
+        json.dumps({str(k): _z3_bool_name(v) for k, v in solve_vmap.items()}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    meta = {
+        "path_tag": path_tag,
+        "witness_mode": "flag_raised",
+        "verify_pipeline": "flag_raised",
+        "fault_var_names": fault_var_names,
+        "num_fault_vars": len(fault_var_names),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "stab_txt_path": str(stab_txt_path),
+        "num_subgoals": len(cnf_files),
+        "min_weight": min_weight,
+        "fault_w": fault_w,
+    }
+    meta_path = cnf_dir / f"{path_tag}_meta.json"
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+
+    return {
+        "path_tag": path_tag,
+        "cnf_path": str(final_cnf),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "num_fault_vars": len(fault_var_names),
+        "sat_query_count": len(cnf_files),
+    }
+
+
+def flag_raised_solve_with_cryptominisat(
+    E_x,
+    E_z,
+    F,
+    acts,
+    fault_var_names: List[str],
+    stab_txt_path: str,
+    min_weight: int,
+    fault_w: int,
+    *,
+    cms_bin: str | None = None,
+    cms_extra_args: list | None = None,
+    use_card2bv: bool = True,
+    timeout_s: Optional[float] = None,
+    cms_retries: int = 8,
+    verbose: bool = True,
+) -> Tuple[str, Optional[Dict[str, Any]], Dict[str, Any]]:
+    """Export flag-raised goal to DIMACS and solve with external SAT solver."""
+    import tempfile
+
+    path_tag = "flag_raised"
+    with tempfile.TemporaryDirectory(prefix="flag_raised_solve_") as td:
+        flag_raised_export_dimacs(
+            E_x,
+            E_z,
+            F,
+            acts,
+            fault_var_names,
+            stab_txt_path,
+            min_weight,
+            fault_w,
+            td,
+            path_tag,
+            use_card2bv=use_card2bv,
+        )
+        st, counterexample, stats = uniqueness_solve_from_export(
+            td,
+            path_tag,
+            cms_bin=cms_bin,
+            cms_extra_args=cms_extra_args,
+            timeout_s=timeout_s,
+            cms_retries=cms_retries,
+            verbose=verbose,
+        )
+    return st, counterexample, stats
+
+
+def check_flag_raised(
+    qasm_path: str,
+    stab_txt_path: str,
+    num_gates: int,
+    bad_locations_dict: List[int],
+    *,
+    t=1,
+    w: Optional[int] = None,
+    return_stats: bool = False,
+    cms_bin: str | None = None,
+):
+    # w: max fault sites; flag must raise when stabilizer error weight > w (i.e. weight >= w+1).
+    fault_w = w if w is not None else t
+    min_weight = fault_w + 1
     state, qc, sites_info, groups = build_state_with_faults_after_gates(qasm_path ,bad_locations_dict, fault_mode="2q")    
     # Detailed symbolic state dump suppressed
     #print(sites_info)
@@ -3690,54 +3916,45 @@ def check_flag_raised(qasm_path: str, stab_txt_path: str,num_gates: int, bad_loc
 
     
 
-    Epx, Epz, gsel = build_stab_equiv_errors(E_x, E_z,stab_txt_path)
-    b= [Or(xi, zi) for xi, zi in zip(Epx, Epz)]
+    Epx, Epz, gsel = build_stab_equiv_errors(E_x, E_z, stab_txt_path)
+    fault_var_names = sorted({_z3_bool_name(v) for sublist in fault_var for v in sublist})
 
-    s = Solver()
-    # Add the constraint to the solver
-    #s.add(AtMost(*acts,1 )  )
-    #s.add(Xor(acts[0],acts[1]))
-    #s.add(acts[0] == True)
-    #s.add(Exists(all_fault_vars,Implies( Not(Exists(gsel, PbLe([(bi, 1) for bi in b], 1))), Not(Or(F[0],F[1]) )  )))
-    
-    #s.add(ForAll(all_fault_vars, Implies(Not(Exists(gsel, PbLe([(bi, 1) for bi in b], 1))),Or(*F)  )))# Combine F_z into a single condition if it's a list
-    '''
-    s.add(ForAll(gsel, Implies(
-        And(
-            Not(Exists(fault_var, PbLe([(bi, 1) for bi in b], 1))),
-            AtMost(*acts,1 ),
-        ),
-        Or(F)  # Combine F_z into a single condition if it's a list
-    )))
-    '''
-    #s.add(ForAll(gsel, And( PbGe([(bi, 1) for bi in b], 2), AtMost(*acts,1 ), And( Not(Or(F) ))  )  ) )
-    #s.add(Exists(all_fault_vars,  ForAll(gsel,And(PbGe( [(bi, 1) for bi in b], 2), And([Not(f) for f in F]))) ) )
-    s.add(
-        And(
-            ForAll(gsel, PbGe([(bi,1) for bi in b], t+1)),
-            Not(Or(F))
-        )
+    st, counterexample, solve_stats = flag_raised_solve_with_cryptominisat(
+        E_x,
+        E_z,
+        F,
+        acts,
+        fault_var_names,
+        stab_txt_path,
+        min_weight,
+        fault_w,
+        cms_bin=cms_bin or default_syndrome_sat_solver_bin(),
+        verbose=not _QUIET,
     )
-    s.add(AtMost(*acts,t ))  # At most two faults
-   
+    sat_stats = {
+        "sat_query_count": solve_stats.get("sat_query_count", 1),
+        "sat_time_s": solve_stats.get("solver_runtime_seconds", 0.0),
+        "dimacs_vars": solve_stats.get("total_dimacs_vars", 0),
+        "total_clauses": solve_stats.get("total_clauses", 0),
+        "peak_solver_rss_bytes": solve_stats.get("peak_solver_rss_bytes", 0),
+    }
 
-    #print(s.check())
-    if s.check() == unsat : 
-        print("Result:")
-        print("Success : when high-weight error happens, at least one of the flag qubits raised")
-
-        return True
-    if s.check() == sat:
-        print("Result:")
-        print("Failure : there exists a high-weight error where none of the flag qubits raised ")
-        print("Counterexample model:")
-        for d in s.model().decls(): 
-        
-            val = s.model()[d]
-            if str(val)  == "True": 
-                print(f"{d.name()} = {val}")
-                
-        return False
+    if st == "unsat":
+        if not _QUIET:
+            print("Result:")
+            print("Success : when high-weight error happens, at least one of the flag qubits raised")
+        return (True, sat_stats) if return_stats else True
+    if st == "sat" and counterexample:
+        if not _QUIET:
+            print("Result:")
+            print("Failure : there exists a high-weight error where none of the flag qubits raised ")
+            print("Counterexample model:")
+            for name in sorted(counterexample.get("faults", {})):
+                print(f"{name} = True")
+        return (False, sat_stats) if return_stats else False
+    if return_stats:
+        return False, sat_stats
+    return False
 
 def check_generalised_syndrome_uniqueness(
     qasm_path: str,

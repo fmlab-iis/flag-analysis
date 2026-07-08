@@ -1,6 +1,0 @@
-Path 0 / 13
-  type: 0  last_instr: Break (other)
-  status: UNSAT
-  runtime: 0.014416 s  peak RSS: 90.000 MB
-  dimacs_vars: 207  clauses: 2187
-  result: break weight bound holds (no counterexample)

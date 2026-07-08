@@ -5,6 +5,12 @@ Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
         0 |    0 | Break (other)           | unsat   |         24 |  0.007497 |      74.234 |         96 |         205 |          2182 |               1
         1 |    1 | raw_syndrome (raw)      | unsat   |         40 |  0.059853 |      87.285 |        160 |         656 |          4766 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 0.067350 s
+  SAT solver calls (sum sat_query_count): 2
+  Paths with SAT result: 0/2
+  DIMACS variables (min / max): 205 / 656
+  Clauses (min / max): 2182 / 4766
 Total runtime (sum of all paths): 0.067350 s
 Total SAT paths: 0/2
 Break-weight SAT (fail): 0/1

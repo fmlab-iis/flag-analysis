@@ -4,8 +4,8 @@ include "qelib1.inc";
 qreg q[17];          // data qubits
 qreg ancX[8];        // ancillas measured in X (for X-type stabilizers)
 qreg ancZ[8];        // ancillas measured in Z (for Z-type stabilizers)
-qreg flagX[8];       // flags measured in X (paired with Z-type stabs)
-qreg flagZ[8];       // flags measured in Z (paired with X-type stabs)
+qreg flagX[7];       // flags measured in X (paired with Z-type stabs)
+qreg flagZ[7];       // flags measured in Z (paired with X-type stabs)
 
 // ========== Z-type stabilizer extraction ==========
 
@@ -62,7 +62,7 @@ cx q[5], ancZ[7];
 cx flagX[0], ancZ[1];
 cx flagX[1], ancZ[4];
 cx flagX[2], ancZ[5];
-cx flagX[5], ancZ[7];
+
 barrier q, ancZ, flagX;
 
 // --- Block 7 ---
@@ -159,7 +159,7 @@ cx ancX[7], q[5];
 cx ancX[1], flagZ[0];
 cx ancX[4], flagZ[1];
 cx ancX[5], flagZ[2];
-cx ancX[7], flagZ[5];
+
 barrier q, ancX, flagZ;
 
 // --- Block 7 ---

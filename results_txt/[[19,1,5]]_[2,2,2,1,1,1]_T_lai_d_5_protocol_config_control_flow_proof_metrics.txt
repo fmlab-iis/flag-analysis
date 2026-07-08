@@ -1,0 +1,24 @@
+Verify pipeline: control_flow (type0 break-weight; type1 same gen_syn + pred_syn_diff; type2 skipped)
+================================================================================
+Max faults per path (t): 2
+Total number of paths: 4
+Per-path SAT metrics:
+  path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
+        0 |    0 | Break (other)           | unknown |        132 | 708.072371 |   14914.414 |        528 |     5506178 |     146548287 |               1
+        2 |    1 | raw_syndrome (raw)      | unsat   |        480 | 73.437362 |     106.000 |       1920 |        8972 |         66739 |               1
+        3 |    1 | raw_syndrome (raw)      | unsat   |        348 | 24.646854 |      83.430 |       1392 |        6480 |         53375 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 806.156587 s
+  SAT solver calls (sum sat_query_count): 3
+  Paths with SAT result: 0/3
+  DIMACS variables (min / max): 6480 / 5506178
+  Clauses (min / max): 53375 / 146548287
+Total runtime (sum of all paths): 806.156587 s
+Failed paths (SAT): 0/3
+Total SAT paths: 0/4
+Break-weight SAT (fail): 0/1
+pred_syn fail (type 1): 0/2
+Max fault variables (across paths): 1920
+Max DIMACS variables (across paths): 5506178
+Max peak RSS (across paths): 14914.414 MB
+================================================================================

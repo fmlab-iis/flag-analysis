@@ -1,0 +1,16 @@
+verify_pipeline: stim_syndrome
+config: /home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[1,1,1,1,...]/[[17,1,5]]_chris_config.txt
+stab_txt_path: /home/bionicle8699/flag_verification/flag-analysis/chris_[[17,1,5]]/chris_[[17,1,5]].txt
+log_txt_path: /home/bionicle8699/flag_verification/flag-analysis/chris_[[17,1,5]]/chris_[[17,1,5]]_log_op.txt
+circuits_total: 2
+pass: 2  fail: 0  error: 0
+wall_time_seconds: 0.150
+total_runtime_s: 0.147664
+peak_rss_mb: 232.254
+job_status: PASS
+
+  status | config_key                     | circuit                         | runtime_s | peak_rss_mb
+  PASS  | flag_syndrome                  | chris_[[17,1,5]]_[1,1,1,1,.....].qasm |  0.095837 |     232.254
+  PASS  | raw_syndrome                   | raw_chris_[[17,1,5]]_[1,1,1,1,.....].qasm |  0.051827 |     223.047
+
+Overall: PASS

@@ -562,7 +562,7 @@ def proof_control_flow(protocol, start_node: str, init_state, config: Dict, t: i
     report_lines: List[str] = []
     report_lines.append("=" * 80)
     report_lines.append(
-        "Verify pipeline: control_flow (type0 break-weight; type1 pred_syn_diff; type2 skipped)"
+        "Verify pipeline: control_flow (type0 break-weight; type1 same gen_syn + pred_syn_diff; type2 skipped)"
     )
     report_lines.append(f"Max faults per path (t): {t}")
     report_lines.append(f"Total number of paths: {len(all_paths)}")
@@ -1567,7 +1567,7 @@ def proof_control_flow(protocol, start_node: str, init_state, config: Dict, t: i
     report_lines: List[str] = []
     report_lines.append("=" * 80)
     report_lines.append(
-        "Verify pipeline: control_flow (type0 break-weight; type1 pred_syn_diff; type2 skipped)"
+        "Verify pipeline: control_flow (type0 break-weight; type1 same gen_syn + pred_syn_diff; type2 skipped)"
     )
     report_lines.append(f"Max faults per path (t): {t}")
     report_lines.append(f"Total number of paths: {len(all_paths)}")

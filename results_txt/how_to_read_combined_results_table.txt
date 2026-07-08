@@ -1,0 +1,183 @@
+How to read the combined protocol + FTEC results table
+======================================================
+
+This document explains the LaTeX table (tab:combined-results): column order,
+row definitions, data sources, and how to interpret timing numbers.
+
+
+Column order (18 setups)
+------------------------
+
+Columns follow the same order as scripts/generate_flag_metrics_table.py
+TABLE_JOBS and results_txt/control_flow_metrics_table.tex.
+
+  Col  Code          Optimization              Protocol
+  ---  ------------  ------------------------  ---------------
+   1   [[5,1,3]]     Low-depth                 [Bha23]
+   2   [[5,1,3]]     [1,1,1,1]^T               [LL25] d=3
+   3   [[5,1,3]]     [2,2]                     [LL25] d=3
+   4   [[5,1,3]]     [2,2]^T                    [LL25] d=3
+   5   [[5,1,3]]     [2,2]^T fix_2             [LL25] d=3
+   6   [[5,1,3]]     Origin                    [LL25] d=3
+   7   [[7,1,3]]     Low-depth                 [Bha23]
+   8   [[7,1,3]]     Low-depth_2               [Bha23]
+   9   [[7,1,3]]     [1,1,1,1]^T               [LL25] d=3
+  10   [[9,1,3]]     Seq.                      Chris d=3
+  11   [[19,1,5]]    [2,2,2,1,1,1]^T           [LL25] d=5
+  12   [[19,1,5]]    [1,1,1,...]^T             [LL25] d=5
+  13   [[17,1,5]]    [2,2,2,1,1]^T             [LL25] d=5
+  14   [[17,1,5]]    [1,1,1,1,1,...]^T         [LL25] d=5
+  15   [[17,1,5]]    Par. flag                 [Du24] d=5
+  16   [[17,1,5]]    Seq.                      Chris d=5
+  17   [[19,1,5]]    Par. flag                 [Du24] d=5
+  18   [[25,1,5]]    Seq.                      Chris d=5
+
+Each column is one jobs.txt config (one protocol JSON + one config .txt).
+
+
+Section: Protocol Verification
+------------------------------
+
+Syndrome extraction bugs
+  Format:  failed/total
+  Meaning: Per config, how many QASM syndrome circuits failed stim_syndrome
+           invariance checks, out of all .qasm paths listed in the config.
+  Source:  bash scripts/run_batch_stim_syndrome.sh
+           results_txt/*_stim_syndrome.json
+  Count as failed:  circuit status FAIL or ERROR (not PASS).
+  Note:     This is the Stim stabilizer-span + logical check, NOT the older
+           SAT-based syndrome_extraction_verification (ancilla match) pipeline.
+           A circuit can pass SAT syndrome check and still fail here.
+
+Control flow bugs
+  Format:  integer (path count)
+  Meaning: Number of protocol control-flow paths that failed the
+           control-flow DIMACS pipeline (pred_syn mismatch on type-1 paths,
+           break-weight SAT on type-0 paths, etc.).
+  Source:  cnf_out_control_flow/ or results_txt/*_control_flow_proof_metrics.txt
+
+Flag bugs
+  Format:  integer
+  Meaning: Number of failed flag-raised / flag-related verification paths
+           for that config (pipeline-specific).
+  Source:  flag-raised or protocol proof metrics for that setup.
+
+
+Section: Stim
+-------------
+
+Stim Runtime (s)
+  Meaning: Wall-clock time for the whole stim_syndrome job on that config
+           (all listed .qasm circuits, sequential in one Python process).
+  Source:  results_txt/*_stim_syndrome.json  ->  wall_time_seconds
+
+Stim Peak Mem (MB)
+  Meaning: Maximum peak RSS (MiB) across circuits in that job, sampled via
+           /proc during each circuit check.
+  Source:  results_txt/*_stim_syndrome.json  ->  peak_rss_mb
+
+
+Section: SAT Solver (protocol uniqueness / DIMACS pipeline)
+-----------------------------------------------------------
+
+Applies to the main protocol proof pipeline (cnf_out/, unified, or
+control-flow depending on which batch produced the table row).
+
+Total Runtime (s)
+  Meaning: WALL-CLOCK for the entire DIMACS job on that config:
+             (1) Z3 export of all protocol paths to .cnf
+             (2) parallel SAT solve of all path_*.cnf files
+  Source:  cnf_out/<config_stem>/job_timing.json  ->  wall_time_seconds
+           Written by scripts/run_one_job_dimacs.sh (timer wraps export + solve).
+
+Total SAT Time (s)
+  Meaning: SUM of per-path external SAT solver durations (worker-seconds).
+           Does NOT include Z3 export time.
+  Source:  Sum of solver_runtime_seconds in path_*_result.json
+           Same as "Solver time (sum of paths)" in *_proof_metrics.txt
+
+  Naming trap: Inside *_proof_metrics.txt, the line
+    "Total runtime (sum of all paths)"
+  is the same number as Total SAT Time, NOT wall-clock Total Runtime.
+
+Why Total SAT Time can be MUCH LARGER than Total Runtime
+  Paths are solved in parallel (GNU parallel, PATH_JOBS up to ~32).
+  SAT Time adds every path's solver duration.
+  Wall Runtime is how long you actually waited.
+  Example: three paths taking 700s + 70s + 25s -> SAT Time ~795s, but
+  wall Runtime ~700s if they ran in parallel.
+
+Why Total Runtime can be LARGER than Total SAT Time
+  On small/fast configs, Z3 DIMACS export dominates wall time while each
+  SAT call is only milliseconds. Export is in wall Runtime but not in SAT Time.
+
+Peak Memory (MB)
+  Meaning: Max peak RSS of the SAT solver subprocess across all paths
+           in that config.
+  Source:  peak_solver_rss_bytes in path_*_result.json (reported in
+           *_proof_metrics.txt as peak_rss_mb per path; table uses max).
+
+Total SAT Calls
+  Meaning: Sum of sat_query_count over all solved paths (usually one SAT
+           call per path).
+  Source:  path_*_result.json
+
+#Vars / #Clauses
+  Format:  min--max
+  Meaning: Range of DIMACS variable and clause counts across paths in that job.
+  Source:  path_*_result.json
+
+
+Section: FTEC (flag-raised verification)
+----------------------------------------
+
+FTEC
+  Format:  failed/total
+  Meaning: Failed flag-raised circuits over total flag circuits checked
+           for that config (Step 3: fault sites, weight > w implies flag).
+  Source:  results_txt/*_flag_raised_metrics.txt
+
+Time (s)
+  Meaning: Sum of per-circuit runtime_s for the flag-raised batch (each
+           circuit: Z3 export + SAT, typically run sequentially per circuit).
+  Source:  "Total runtime" line in *_flag_raised_metrics.txt
+
+Peak Mem (MB)
+  Meaning: Max peak RSS across flag-raised circuits in that config.
+
+SAT Calls
+  Meaning: Sum of sat_query_count across flag circuits.
+
+Total SAT Time (s)
+  Meaning: Sum of sat_time_s only (SAT subprocess per circuit, no Z3 export).
+  Source:  "SAT solver time (sum)" in *_flag_raised_metrics.txt
+
+#Vars / #Clauses
+  Format:  min--max across flag-raised DIMACS instances for that config.
+
+
+Quick reference: which time is which?
+-------------------------------------
+
+  Table row              |  Clock on wall?  |  Includes Z3 export?  |  Parallel paths?
+  -----------------------|------------------|----------------------|------------------
+  Stim Runtime           |  yes             |  n/a (no SAT)        |  no (sequential)
+  Total Runtime (SAT)    |  yes             |  yes                 |  yes (path parallel)
+  Total SAT Time (SAT)   |  no (sum)        |  no                  |  n/a
+  FTEC Time              |  no (sum)        |  yes (per circuit)   |  usually sequential
+  FTEC Total SAT Time    |  no (sum)        |  no                  |  n/a
+
+
+Regenerating numbers
+--------------------
+
+  stim_syndrome:     bash scripts/run_batch_stim_syndrome.sh
+  DIMACS protocol:   bash scripts/run_batch_dimacs.sh
+                     (or run_batch_unified_dimacs.sh / run_batch_control_flow_dimacs.sh)
+  FTEC / flag:       bash scripts/run_batch_flag.sh
+  Summaries:         results_txt/jobs_stim_syndrome_summary.txt
+                     results_txt/jobs_dimacs_summary.txt
+                     results_txt/jobs_control_flow_summary.txt
+
+Config stem for column N matches TABLE_JOBS in scripts/generate_flag_metrics_table.py.
+

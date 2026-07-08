@@ -1,6 +1,6 @@
 raw_syndrome = ../[[7,1,3]]_low_depth_w_6/raw_[[7,1,3]].qasm
-IZZXXYY = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_IZZXXYY_flag.qasm
-XIXYZYZ = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_XIXYZYZ_flag.qasm
-ZXYYXZI = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_ZXYYXZI_flag.qasm
+IZZXXYY_flag = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_IZZXXYY_flag.qasm
+XIXYZYZ_flag = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_XIXYZYZ_flag.qasm
+ZXYYXZI_flag = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_ZXYYXZI_flag.qasm
 stab_txt_path = ../[[7,1,3]]_[1,1,1,1,1,1]/[[7,1,3]].txt
 log_txt_path = ../[[7,1,3]]_low_depth_w_6/[[7,1,3]]_log_op.txt

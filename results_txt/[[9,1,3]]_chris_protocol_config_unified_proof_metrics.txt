@@ -4,13 +4,20 @@ Max faults per path (t): 1
 Total number of paths: 4
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        0 |    1 | raw_syndrome (raw)      | unsat   |         56 |  0.014804 |      70.105 |        224 |         837 |          6274 |               1
-        1 |    1 | raw_syndrome (raw)      | unsat   |         88 |  0.016617 |      71.484 |        352 |        1311 |         10604 |               1
-        2 |    1 | raw_syndrome (raw)      | unsat   |         88 |  0.101895 |      67.824 |        352 |        1336 |         10700 |               1
-        3 |    1 | raw_syndrome (raw)      | sat     |         88 |  0.025458 |      68.258 |        352 |        1325 |         10695 |               1
-Total runtime (sum of all paths): 0.158774 s
+        0 |    1 | raw_syndrome (raw)      | unsat   |         56 |  0.013102 |      77.121 |        224 |         837 |          6274 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |         88 |  0.015170 |      69.133 |        352 |        1311 |         10604 |               1
+        2 |    1 | raw_syndrome (raw)      | unsat   |         88 |  0.094332 |      82.000 |        352 |        1336 |         10700 |               1
+        3 |    1 | raw_syndrome (raw)      | sat     |         88 |  0.024998 |      85.855 |        352 |        1325 |         10695 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 0.147602 s
+  SAT solver calls (sum sat_query_count): 4
+  Paths with SAT result: 1/4
+  DIMACS variables (min / max): 837 / 1336
+  Clauses (min / max): 6274 / 10700
+Total runtime (sum of all paths): 0.147602 s
+Failed paths (SAT): 1/4
 Total SAT paths: 1/4
 Max fault variables (across paths): 352
 Max DIMACS variables (across paths): 1336
-Max peak RSS (across paths): 71.484 MB
+Max peak RSS (across paths): 85.855 MB
 ================================================================================

@@ -1,0 +1,11 @@
+================================================================================
+Flag-raised verification (Step 3)
+Parameters: t=1 (max fault sites), w=3 (min error weight for flag check)
+Property: for errors at bad gate locations with weight >= w, at least one flag qubit is raised
+Per-circuit metrics:
+  circuit_key           | status  | bad_locs | runtime_s | peak_rss_mb | reason
+  flag_syndrome         | pass    | 8 gates  |  0.834829 |     107.367 | 
+Total runtime: 0.834829 s
+Max peak RSS (across circuits): 107.367 MB
+Failed circuits: 0/1
+================================================================================

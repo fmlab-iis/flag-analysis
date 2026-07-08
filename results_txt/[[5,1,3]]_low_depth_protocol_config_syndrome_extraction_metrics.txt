@@ -1,24 +1,26 @@
 ================================================================================
 Syndrome extraction verification (no circuit faults)
 Property: ancillas match stabilizer(s); data qubits preserved
-Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli
+Solver: Z3 export + cryptominisat5 (SYNDROME_SAT_SOLVER_BIN)
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli; raw_syndrome_x/z vs X/Z rows of stab.txt
 Pass => ok; fail => ancilla mismatch or data not preserved
 Per-circuit metrics:
-  circuit_key           | mode    | status  | ancilla | data | runtime_s | reason
-  IXZZX_flag            | partial | pass    | True    | True |  0.037087 | 
-  IXZZX_raw             | partial | pass    | True    | True |  0.005437 | 
-  IYXXY_raw             | partial | pass    | True    | True |  0.006129 | 
-  XIXZZ_flag            | partial | pass    | True    | True |  0.006275 | 
-  XIXZZ_raw             | partial | pass    | True    | True |  0.005189 | 
-  XZZXI_flag            | partial | pass    | True    | True |  0.005968 | 
-  XZZXI_raw             | partial | pass    | True    | True |  0.005209 | 
-  YIYXX_raw             | partial | pass    | True    | True |  0.005379 | 
-  YXXYI_raw             | partial | pass    | True    | True |  0.005715 | 
-  YZIZY_raw             | partial | pass    | True    | True |  0.006252 | 
-  ZIZYY_raw             | partial | pass    | True    | True |  0.006489 | 
-  ZXIXZ_flag            | partial | pass    | True    | True |  0.006969 | 
-  ZXIXZ_raw             | partial | pass    | True    | True |  0.005906 | 
-  raw_syndrome          | full    | pass    | True    | True |  0.011675 | 
-Total runtime: 0.119679 s
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | peak_rss_mb | reason
+  IXZZX_flag            | partial | pass    | True    | True |  0.041120 |      99.105 | 
+  IXZZX_raw             | partial | pass    | True    | True |  0.017436 |      99.273 | 
+  IYXXY_raw             | partial | pass    | True    | True |  0.022827 |      99.305 | 
+  XIXZZ_flag            | partial | pass    | True    | True |  0.018066 |      99.320 | 
+  XIXZZ_raw             | partial | pass    | True    | True |  0.021877 |      99.344 | 
+  XZZXI_flag            | partial | pass    | True    | True |  0.019268 |      99.367 | 
+  XZZXI_raw             | partial | pass    | True    | True |  0.018654 |      99.379 | 
+  YIYXX_raw             | partial | pass    | True    | True |  0.026967 |      99.398 | 
+  YXXYI_raw             | partial | pass    | True    | True |  0.023814 |      99.418 | 
+  YZIZY_raw             | partial | pass    | True    | True |  0.023708 |      99.441 | 
+  ZIZYY_raw             | partial | pass    | True    | True |  0.027093 |      99.461 | 
+  ZXIXZ_flag            | partial | pass    | True    | True |  0.028183 |      99.504 | 
+  ZXIXZ_raw             | partial | pass    | True    | True |  0.022717 |      99.516 | 
+  raw_syndrome          | full    | pass    | True    | True |  0.039165 |     100.301 | 
+Total runtime: 0.350895 s
+Max peak RSS (across circuits): 100.301 MB
 Failed circuits: 0/14
 ================================================================================

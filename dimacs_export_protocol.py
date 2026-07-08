@@ -226,10 +226,63 @@ def _resolve_cnf_dir(config: Dict[str, Any], cnf_dir: Optional[str]) -> Path:
     return (Path("cnf_out") / stem).resolve()
 
 
+def aggregate_job_solve_stats(path_query_stats: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Per-job totals and min/max DIMACS size across solved paths."""
+    if not path_query_stats:
+        return {
+            "path_count": 0,
+            "total_solver_runtime_s": 0.0,
+            "total_sat_query_count": 0,
+            "sat_path_count": 0,
+            "min_dimacs_vars": 0,
+            "max_dimacs_vars": 0,
+            "min_clauses": 0,
+            "max_clauses": 0,
+        }
+    vars_list = [int(row.get("total_dimacs_vars", 0) or 0) for row in path_query_stats]
+    clause_list = [int(row.get("total_clauses", 0) or 0) for row in path_query_stats]
+    return {
+        "path_count": len(path_query_stats),
+        "total_solver_runtime_s": sum(
+            float(row.get("solver_runtime_seconds", 0.0) or 0.0)
+            for row in path_query_stats
+        ),
+        "total_sat_query_count": sum(
+            int(row.get("sat_query_count", 0) or 0) for row in path_query_stats
+        ),
+        "sat_path_count": sum(
+            1 for row in path_query_stats if row.get("status") == "sat"
+        ),
+        "min_dimacs_vars": min(vars_list),
+        "max_dimacs_vars": max(vars_list),
+        "min_clauses": min(clause_list),
+        "max_clauses": max(clause_list),
+    }
+
+
+def format_job_aggregate_lines(agg: Dict[str, Any], *, wall_time_s: float | None = None) -> List[str]:
+    lines = ["Job aggregate (across solved paths):"]
+    if wall_time_s is not None:
+        lines.append(f"  Wall time (export + solve): {wall_time_s:.6f} s")
+    lines.append(
+        f"  Solver time (sum of paths): {agg['total_solver_runtime_s']:.6f} s"
+    )
+    lines.append(f"  SAT solver calls (sum sat_query_count): {agg['total_sat_query_count']}")
+    lines.append(f"  Paths with SAT result: {agg['sat_path_count']}/{agg['path_count']}")
+    lines.append(
+        f"  DIMACS variables (min / max): {agg['min_dimacs_vars']} / {agg['max_dimacs_vars']}"
+    )
+    lines.append(f"  Clauses (min / max): {agg['min_clauses']} / {agg['max_clauses']}")
+    return lines
+
+
 def format_proof_metrics_report(
     path_query_stats: List[Dict[str, Any]],
     t: int,
     total_paths: int,
+    *,
+    wall_time_s: float | None = None,
+    verify_pipeline: str | None = None,
 ) -> str:
     lines: List[str] = []
     lines.append("=" * 80)
@@ -267,10 +320,22 @@ def format_proof_metrics_report(
     max_fault_vars = max((row.get("num_fault_vars", 0) or 0 for row in path_query_stats), default=0)
     max_dimacs_vars = max((row.get("total_dimacs_vars", 0) or 0 for row in path_query_stats), default=0)
     max_peak_rss_bytes = max((row.get("peak_solver_rss_bytes", 0) or 0 for row in path_query_stats), default=0)
+    agg = aggregate_job_solve_stats(path_query_stats)
+    lines.extend(format_job_aggregate_lines(agg, wall_time_s=wall_time_s))
     lines.append(f"Total runtime (sum of all paths): {total_runtime_s:.6f} s")
+    solved_paths = len(path_query_stats)
+    lines.append(f"Failed paths (SAT): {total_sat_paths}/{solved_paths}")
     lines.append(f"Total SAT paths: {total_sat_paths}/{total_paths}")
     if break_total:
         lines.append(f"Break-weight SAT (fail): {break_sat_paths}/{break_total}")
+    if verify_pipeline == "control_flow":
+        pred_syn_total = sum(1 for row in path_query_stats if row.get("path_type") == 1)
+        pred_syn_fail = sum(
+            1 for row in path_query_stats
+            if row.get("path_type") == 1 and row.get("status") == "sat"
+        )
+        if pred_syn_total:
+            lines.append(f"pred_syn fail (type 1): {pred_syn_fail}/{pred_syn_total}")
     lines.append(f"Max fault variables (across paths): {max_fault_vars}")
     lines.append(f"Max DIMACS variables (across paths): {max_dimacs_vars}")
     lines.append(f"Max peak RSS (across paths): {max_peak_rss_bytes / (1024 * 1024):.3f} MB")
@@ -879,19 +944,46 @@ def export_control_flow_path_constraints(
                         f"{path_tag}.cnf ({export_stats['total_clauses']} clauses)"
                     )
             else:
-                export_stats = control_flow_export_dimacs(
-                    vars_list,
-                    at_most_t_faults,
+                lut_instr = find_lut_instr_in_path(full_path)
+                if not lut_instr:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "not_verified",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
+
+                gen_syn = parse_lut_instr(lut_instr)
+                constraint = build_path_constraint(
+                    full_path,
+                    t,
+                    gen_syn,
                     all_condition,
-                    full_path[-1]["state"]["data"],
                     config["stab_txt_path"],
+                    config["log_txt_path"],
+                    verify_mode="type1",
+                )
+                export_stats = control_flow_export_dimacs(
+                    constraint.vars,
+                    constraint.at_most_t_faults,
+                    constraint.condition,
+                    constraint.data_qubits,
+                    constraint.stab_txt_path,
                     out_dir,
                     path_tag,
+                    constraint.gen_syn_z3,
                 )
                 if not quiet:
                     print(
-                        f"Exported control-flow path {path_idx}: type 1 (pred_syn_diff) -> "
-                        f"{path_tag}.cnf ({export_stats['total_clauses']} clauses)"
+                        f"Exported control-flow path {path_idx}: type 1 (same gen_syn, pred_syn_diff) -> "
+                        f"{path_tag}.cnf ({export_stats['total_clauses']} clauses, "
+                        f"gen_syn={len(constraint.gen_syn_z3)} bits)"
                     )
 
             row = {

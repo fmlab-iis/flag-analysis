@@ -50,10 +50,24 @@ bash "$ROOT/scripts/run_solve_paths.sh" "$cnf_dir"
 solve_rc=$?
 set -e
 
+fail_paths="?"
+solved_paths="?"
+agg_path="$cnf_dir/job_aggregate.json"
+if [[ -f "$agg_path" ]]; then
+  read -r fail_paths solved_paths <<< "$("$PYTHON" -c "
+import json
+from pathlib import Path
+agg = json.loads(Path('$agg_path').read_text(encoding='utf-8'))
+fail = agg.get('fail_path_count', agg.get('sat_path_count', 0))
+solved = agg.get('path_count', agg.get('exported_paths', 0))
+print(fail, solved)
+")"
+fi
+
 if (( solve_rc == 0 )); then
-  echo "DONE   $name (job ${job_id}/${total})"
+  echo "DONE   $name  fail_paths=${fail_paths}/${solved_paths} (job ${job_id}/${total})"
 else
-  echo "FAIL   $name (job ${job_id}/${total})" >&2
+  echo "FAIL   $name  fail_paths=${fail_paths}/${solved_paths} (job ${job_id}/${total})" >&2
 fi
 
 exit "$solve_rc"

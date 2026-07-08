@@ -1,33 +1,40 @@
-Verify pipeline: unified (gen_syn + pred_syn, no syn_constraint)
+Verify pipeline: unified (all measured gen_syn + logical-product witness)
 ================================================================================
 Max faults per path (t): 2
 Total number of paths: 21
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        0 |    1 | raw_syndrome (raw)      | unsat   |        408 |  3.653456 |      96.828 |       1632 |        7060 |         44060 |               1
-        1 |    1 | raw_syndrome (raw)      | unsat   |        520 |  8.366175 |     111.270 |       2080 |        8628 |         72344 |               1
-        2 |    2 | flag_syndrome (other)   | sat     |        448 |  0.613697 |     102.969 |       1792 |        8054 |         56233 |               1
-        3 |    1 | raw_syndrome (raw)      | unsat   |        520 | 448.210116 |     112.750 |       2080 |        9246 |         75887 |               1
-        4 |    1 | raw_syndrome (raw)      | unsat   |        520 | 10.984580 |     103.344 |       2080 |        9215 |         75884 |               1
-        5 |    1 | raw_syndrome (raw)      | unsat   |        632 | 21.084956 |     107.445 |       2528 |       10784 |        117778 |               1
-        6 |    2 | flag_syndrome (other)   | sat     |        560 | 16.889305 |     105.793 |       2240 |       10149 |         93047 |               1
-        7 |    1 | raw_syndrome (raw)      | unsat   |        632 | 1311.940395 |     148.891 |       2528 |       11378 |        121201 |               1
-        8 |    2 | flag_syndrome (other)   | unsat   |        336 | 207.156310 |      79.633 |       1344 |        6365 |         58322 |               1
-        9 |    1 | raw_syndrome (raw)      | unsat   |        520 | 734.453897 |     124.793 |       2080 |        9516 |         77652 |               1
-       10 |    1 | raw_syndrome (raw)      | unsat   |        632 | 786.722105 |     123.219 |       2528 |       11081 |        119489 |               1
-       11 |    2 | flag_syndrome (other)   | unsat   |        560 | 28089.755467 |     252.012 |       2240 |       10487 |         94966 |               1
-       12 |    1 | raw_syndrome (raw)      | unsat   |        632 | 30327.405096 |     255.598 |       2528 |       11689 |        122982 |               1
-       13 |    1 | raw_syndrome (raw)      | unsat   |        408 | 35.401184 |      75.727 |       1632 |        7631 |         47403 |               1
-       14 |    1 | raw_syndrome (raw)      | unsat   |        520 | 1352.554880 |     139.902 |       2080 |        9219 |         75846 |               1
-       15 |    2 | flag_syndrome (other)   | unsat   |        448 | 14771.161777 |     210.984 |       1792 |        8623 |         59622 |               1
+        0 |    1 | raw_syndrome (raw)      | unsat   |        408 |  1.532297 |      99.359 |       1632 |        7780 |         48370 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |        520 |  6.279079 |     113.359 |       2080 |        9642 |         78414 |               1
+        2 |    2 | flag_syndrome (other)   | sat     |        448 |  1.701397 |     101.461 |       1792 |        8488 |         58841 |               1
+        3 |    1 | raw_syndrome (raw)      | unsat   |        520 | 514.411353 |     122.461 |       2080 |        9683 |         78565 |               1
+        4 |    1 | raw_syndrome (raw)      | unsat   |        520 |  5.013699 |      99.355 |       2080 |        9680 |         78635 |               1
+        5 |    1 | raw_syndrome (raw)      | unsat   |        632 | 49.638143 |      99.574 |       2528 |       11549 |        122306 |               1
+        6 |    2 | flag_syndrome (other)   | sat     |        560 |  4.120057 |      97.684 |       2240 |       10339 |         94161 |               1
+        7 |    1 | raw_syndrome (raw)      | unsat   |        632 | 2002.146226 |     170.617 |       2528 |       11582 |        122417 |               1
+        8 |    2 | flag_syndrome (other)   | unsat   |        336 | 272.001989 |      81.246 |       1344 |        6238 |         57590 |               1
+        9 |    1 | raw_syndrome (raw)      | unsat   |        520 | 320.830934 |     139.719 |       2080 |        9711 |         78734 |               1
+       10 |    1 | raw_syndrome (raw)      | unsat   |        632 | 385.954352 |     142.293 |       2528 |       11571 |        122360 |               1
+       11 |    2 | flag_syndrome (other)   | unsat   |        560 | 27680.033229 |     173.855 |       2240 |       10401 |         94415 |               1
+       12 |    1 | raw_syndrome (raw)      | unsat   |        632 | 12754.783511 |     143.879 |       2528 |       11582 |        122361 |               1
+       13 |    1 | raw_syndrome (raw)      | unsat   |        408 | 566.543243 |     140.004 |       1632 |        7813 |         48476 |               1
+       14 |    1 | raw_syndrome (raw)      | unsat   |        520 | 834.783769 |     133.688 |       2080 |        9699 |         78640 |               1
+       15 |    2 | flag_syndrome (other)   | unsat   |        448 | 26577.623662 |     134.000 |       1792 |        8524 |         58962 |               1
        16 |    1 | raw_syndrome (raw)      | unsat   |        520 | 48703.094887 |     306.285 |       2080 |        9821 |         79303 |               1
-       17 |    1 | raw_syndrome (raw)      | unsat   |        296 | 41.901021 |      73.590 |       1184 |        5047 |         50885 |               1
-       18 |    1 | raw_syndrome (raw)      | unsat   |        408 | 65.117929 |      81.367 |       1632 |        7067 |         44089 |               1
-       19 |    2 | flag_syndrome (other)   | sat     |        336 | 15.326985 |      71.980 |       1344 |        6104 |         56745 |               1
-       20 |    1 | raw_syndrome (raw)      | unsat   |        408 | 1724.670822 |     172.617 |       1632 |        7675 |         47579 |               1
-Total runtime (sum of all paths): 128676.465041 s
+       17 |    1 | raw_syndrome (raw)      | unsat   |        296 | 57.249777 |      65.105 |       1184 |        5466 |         53466 |               1
+       18 |    1 | raw_syndrome (raw)      | unsat   |        408 | 75.485586 |      94.000 |       1632 |        7789 |         48415 |               1
+       19 |    2 | flag_syndrome (other)   | sat     |        336 | 17.342543 |      61.875 |       1344 |        6251 |         57654 |               1
+       20 |    1 | raw_syndrome (raw)      | unsat   |        408 | 2655.839360 |     141.613 |       1632 |        7811 |         48471 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 123486.409093 s
+  SAT solver calls (sum sat_query_count): 21
+  Paths with SAT result: 3/21
+  DIMACS variables (min / max): 5466 / 11582
+  Clauses (min / max): 48370 / 122417
+Total runtime (sum of all paths): 123486.409093 s
+Failed paths (SAT): 3/21
 Total SAT paths: 3/21
 Max fault variables (across paths): 2528
-Max DIMACS variables (across paths): 11689
+Max DIMACS variables (across paths): 11582
 Max peak RSS (across paths): 306.285 MB
 ================================================================================

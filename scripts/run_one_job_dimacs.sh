@@ -17,6 +17,7 @@ job_id="${4:-?}"
 total="${5:-?}"
 name="$(basename "$config" .txt)"
 cnf_dir="cnf_out/$name"
+job_start_s="$("$PYTHON" -c 'import time; print(time.perf_counter())')"
 
 if [[ -z "$protocol" || -z "$config" ]]; then
   exit 0
@@ -49,6 +50,20 @@ fi
 bash "$ROOT/scripts/run_solve_paths.sh" "$cnf_dir"
 solve_rc=$?
 set -e
+
+job_end_s="$("$PYTHON" -c 'import time; print(time.perf_counter())')"
+wall_time_s="$("$PYTHON" -c "print(${job_end_s} - ${job_start_s})")"
+mkdir -p "$cnf_dir"
+"$PYTHON" -c "
+import json
+from pathlib import Path
+p = Path('$cnf_dir') / 'job_timing.json'
+p.write_text(json.dumps({
+    'wall_time_seconds': float('$wall_time_s'),
+    'export_rc': int('$export_rc'),
+    'solve_rc': int('$solve_rc'),
+}, indent=2) + '\n', encoding='utf-8')
+"
 
 if (( solve_rc == 0 )); then
   echo "DONE   $name (job ${job_id}/${total})"

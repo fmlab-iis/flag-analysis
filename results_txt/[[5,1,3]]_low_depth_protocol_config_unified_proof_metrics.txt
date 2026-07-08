@@ -4,23 +4,30 @@ Max faults per path (t): 1
 Total number of paths: 13
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        0 |    0 | Break (other)           | unsat   |         24 |  0.035074 |      63.129 |         96 |         368 |          2672 |               1
-        1 |    1 | raw_syndrome (raw)      | unsat   |         40 |  0.036254 |      74.910 |        160 |         626 |          4576 |               1
-        2 |    1 | YIYXX_raw (raw)         | unsat   |         36 |  0.008186 |      58.754 |        144 |         554 |          4193 |               1
-        3 |    1 | XIXZZ_raw (raw)         | unsat   |         36 |  0.008261 |      60.688 |        144 |         552 |          4176 |               1
-        4 |    1 | raw_syndrome (raw)      | unsat   |         34 |  0.013767 |      53.605 |        136 |         532 |          3878 |               1
-        5 |    1 | YZIZY_raw (raw)         | unsat   |         30 |  0.007199 |      52.668 |        120 |         463 |          3464 |               1
-        6 |    1 | ZXIXZ_raw (raw)         | unsat   |         30 |  0.007943 |      59.672 |        120 |         470 |          3454 |               1
-        7 |    1 | raw_syndrome (raw)      | unsat   |         28 |  0.020126 |      58.512 |        112 |         436 |          3206 |               1
-        8 |    1 | YZIZY_raw (raw)         | unsat   |         24 |  0.007423 |      48.449 |         96 |         375 |          2768 |               1
-        9 |    1 | ZXIXZ_raw (raw)         | unsat   |         24 |  0.008940 |      58.648 |         96 |         378 |          2750 |               1
-       10 |    1 | raw_syndrome (raw)      | unsat   |         22 |  0.008218 |      57.543 |         88 |         346 |          2446 |               1
-       11 |    1 | ZIZYY_raw (raw)         | unsat   |         18 |  0.006618 |      45.180 |         72 |         283 |          2040 |               1
-       12 |    1 | XIXZZ_raw (raw)         | unsat   |         18 |  0.006405 |      53.191 |         72 |         278 |          2010 |               1
-Total runtime (sum of all paths): 0.174414 s
+        0 |    0 | Break (other)           | unsat   |         24 |  0.024843 |      79.676 |         96 |         368 |          2672 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |         40 |  0.016171 |      83.816 |        160 |         626 |          4576 |               1
+        2 |    1 | YIYXX_raw (raw)         | unsat   |         36 |  0.007125 |      78.957 |        144 |         554 |          4193 |               1
+        3 |    1 | XIXZZ_raw (raw)         | unsat   |         36 |  0.008031 |      79.863 |        144 |         552 |          4176 |               1
+        4 |    1 | raw_syndrome (raw)      | unsat   |         34 |  0.013668 |      83.648 |        136 |         532 |          3878 |               1
+        5 |    1 | YZIZY_raw (raw)         | unsat   |         30 |  0.013694 |      81.680 |        120 |         463 |          3464 |               1
+        6 |    1 | ZXIXZ_raw (raw)         | unsat   |         30 |  0.006892 |      83.441 |        120 |         470 |          3454 |               1
+        7 |    1 | raw_syndrome (raw)      | unsat   |         28 |  0.011044 |      85.438 |        112 |         436 |          3206 |               1
+        8 |    1 | YZIZY_raw (raw)         | unsat   |         24 |  0.007033 |      81.281 |         96 |         375 |          2768 |               1
+        9 |    1 | ZXIXZ_raw (raw)         | unsat   |         24 |  0.006542 |      68.785 |         96 |         378 |          2750 |               1
+       10 |    1 | raw_syndrome (raw)      | unsat   |         22 |  0.008498 |      66.047 |         88 |         346 |          2446 |               1
+       11 |    1 | ZIZYY_raw (raw)         | unsat   |         18 |  0.010370 |      75.125 |         72 |         283 |          2040 |               1
+       12 |    1 | XIXZZ_raw (raw)         | unsat   |         18 |  0.011057 |      60.938 |         72 |         278 |          2010 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 0.144967 s
+  SAT solver calls (sum sat_query_count): 13
+  Paths with SAT result: 0/13
+  DIMACS variables (min / max): 278 / 626
+  Clauses (min / max): 2010 / 4576
+Total runtime (sum of all paths): 0.144967 s
+Failed paths (SAT): 0/13
 Total SAT paths: 0/13
 Break-weight SAT (fail): 0/1
 Max fault variables (across paths): 160
 Max DIMACS variables (across paths): 626
-Max peak RSS (across paths): 74.910 MB
+Max peak RSS (across paths): 85.438 MB
 ================================================================================

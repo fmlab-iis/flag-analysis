@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\caption{Experimental results of the flag-raised verification (Step 3). Flag-raised row: number of failed flag circuits over total checked per config (Z3 export + external SAT on \texttt{check\_flag\_raised}; faults at any gate, at most $w$ sites; flag required when error weight $> w$). Time is total flag-check runtime per config. Peak memory, SAT calls, total SAT time, \#vars, and \#clauses are from the flag-raised DIMACS pipeline.}
+\label{tab:experiment-results-flag-raised}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{l ccccccccc cccccccccc}
+\toprule
+\textbf{Metric} & \multicolumn{18}{c}{\textbf{Experimental Setups}} \\
+\midrule
+Code & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[7,1,3]]$ & $[[7,1,3]]$ & $[[7,1,3]]$ & $[[9,1,3]]$ & $[[19,1,5]]$ & $[[19,1,5]]$ & $[[17,1,5]]$ & $[[17,1,5]]$ & $[[17,1,5]]$ & $[[17,1,5]]$ & $[[19,1,5]]$ & $[[25,1,5]]$ \\
+Optimization & Low-depth & $[1,1,1,1]^{T}$ & $[2,2]$ & $[2,2]^{T}$ & $[2,2]^{T}$ fix & Origin & Low-depth & Low-depth$_2$ & $[1,1,1,1]^{T}$ & Seq. & $[2,2,2,1,1,1]^{T}$ & $[1,1,1,\dots]^{T}$ & $[2,2,2,1,1]^{T}$ & $[1,1,1,1,1,\dots]^{T}$ & Par. flag & Seq. & Par. flag & Seq. \\
+Protocol & [Bha23] & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [Bha23] & [Bha23] & [LL25] $d{=}3$ & Chris $d{=}3$ & [LL25] $d{=}5$ & [LL25] $d{=}5$ & [LL25] $d{=}5$ & [LL25] $d{=}5$ & [Du24] $d{=}5$ & Chris $d{=}5$ & [Du24] $d{=}5$ & Chris $d{=}5$ \\
+\midrule
+Flag raised & 0/4 & 0/1 & 0/1 & 0/1 & 0/1 & 0/5 & 1/3 & 0/6 & 0/1 & 0/1 & 0/1 & 0/1 & 0/1 & 0/1 & 1/1 & 0/1 & 1/1 & 0/1 \\
+\midrule
+Time (s) & 0.375 & 0.139 & 0.146 & 0.119 & 0.137 & 0.438 & 0.745 & 1.385 & 0.454 & 1.423 & 0.217 & 0.197 & 1096.848 & 1159.199 & 0.243 & 4.941 & 0.264 & 36.543 \\
+Peak Mem (MB) & 92.1 & 92.4 & 93.0 & 92.4 & 92.4 & 92.1 & 92.1 & 92.2 & 93.6 & 100.3 & 101.9 & 108.6 & 8119.3 & 8126.8 & 101.9 & 109.6 & 100.3 & 126.4 \\
+\midrule
+SAT Calls & 4 & 1 & 1 & 1 & 1 & 5 & 3 & 6 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+Total SAT Time (s) & 0.037 & 0.008 & 0.011 & 0.011 & 0.016 & 0.045 & 0.036 & 0.056 & 0.011 & 0.036 & 0.116 & 0.102 & 50.7 & 46.3 & 0.118 & 4.846 & 0.062 & 36.4 \\
+\#Vars & 45 & 188 & 183 & 184 & 184 & 45--184 & 147--148 & 45 & 617 & 1734 & 2082 & 2088 & 918214 & 918225 & 2378 & 6269 & 1708 & 21105 \\
+\#Clauses & 352 & 2053 & 2049 & 2049 & 2049 & 352--2057 & 1198 & 340 & 6104 & 27649 & 5484 & 5094 & 12588917 & 12588929 & 5825 & 61059 & 3664 & 153479 \\
+\bottomrule
+\end{tabular}
+}%
+\end{table}
+

@@ -1,0 +1,26 @@
+================================================================================
+Syndrome extraction verification (no circuit faults)
+Property: ancillas match stabilizer(s); data qubits preserved
+Solver: Z3 export + cryptominisat5 (SYNDROME_SAT_SOLVER_BIN)
+Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs named Pauli; raw_syndrome_x/z vs X/Z rows of stab.txt
+Pass => ok; fail => ancilla mismatch or data not preserved
+Per-circuit metrics:
+  circuit_key           | mode    | status  | ancilla | data | runtime_s | peak_rss_mb | reason
+  IIIXXXX_flag          | partial | pass    | True    | True |  0.029312 |      96.926 | 
+  IIIXXXX_raw           | partial | pass    | True    | True |  0.008529 |      97.086 | 
+  IIIZZZZ_flag          | partial | pass    | True    | True |  0.009879 |      97.105 | 
+  IIIZZZZ_raw           | partial | pass    | True    | True |  0.008431 |      97.121 | 
+  IXXIIXX_flag          | partial | pass    | True    | True |  0.008947 |      97.145 | 
+  IXXIIXX_raw           | partial | pass    | True    | True |  0.007543 |      97.160 | 
+  IZZIIZZ_flag          | partial | pass    | True    | True |  0.009524 |      97.176 | 
+  IZZIIZZ_raw           | partial | pass    | True    | True |  0.008512 |      97.191 | 
+  XIXIXIX_flag          | partial | pass    | True    | True |  0.009459 |      97.207 | 
+  XIXIXIX_raw           | partial | pass    | True    | True |  0.007538 |      97.227 | 
+  ZIZIZIZ_flag          | partial | pass    | True    | True |  0.009834 |      97.238 | 
+  ZIZIZIZ_raw           | partial | pass    | True    | True |  0.008017 |      97.238 | 
+  raw_syndrome_x        | x_subset | pass    | True    | True |  0.014004 |      97.242 | 
+  raw_syndrome_z        | z_subset | pass    | True    | True |  0.014467 |      97.250 | 
+Total runtime: 0.153997 s
+Max peak RSS (across circuits): 97.250 MB
+Failed circuits: 0/14
+================================================================================

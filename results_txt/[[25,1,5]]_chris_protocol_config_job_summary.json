@@ -1,0 +1,23 @@
+{
+  "config_stem": "[[25,1,5]]_chris_protocol_config",
+  "cnf_dir": "/home/bionicle8699/flag_verification/flag-analysis/cnf_out_control_flow/[[25,1,5]]_chris_protocol_config",
+  "t": 2,
+  "wall_time_seconds": null,
+  "path_count": 15,
+  "total_solver_runtime_s": 3109.9396666618995,
+  "total_sat_query_count": 15,
+  "sat_path_count": 0,
+  "min_dimacs_vars": 4952,
+  "max_dimacs_vars": 11297,
+  "min_clauses": 45073,
+  "max_clauses": 123213,
+  "fail_path_count": 0,
+  "unsat_path_count": 15,
+  "sat_path_count_result": 0,
+  "unknown_path_count": 0,
+  "exported_paths": 15,
+  "pred_syn_fail_count": 0,
+  "pred_syn_path_count": 15,
+  "break_fail_count": 0,
+  "break_path_count": 0
+}

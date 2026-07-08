@@ -13,6 +13,7 @@ jobs.txt
 *.cnf
 cnf_out/
 cnf_out_unified/
+cnf_out_control_flow/
 
 # OS
 .DS_Store

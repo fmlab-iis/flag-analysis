@@ -10,6 +10,8 @@ pl_init_tmpdir "$ROOT"
 
 mkdir -p results_txt cnf_out_control_flow
 
+PYTHON="$ROOT/venv/bin/python"
+
 filter_jobs() {
   grep -vE '^\s*$|^\s*#' "$ROOT/jobs.txt"
 }
@@ -34,20 +36,24 @@ filter_jobs | parallel -j "$BATCH_JOBS" --tmpdir "$PARALLEL_TMPDIR" "${MEMFREE_E
   "$ROOT/scripts/run_one_job_control_flow_dimacs.sh" {1} {2} {3} {#} "$TOTAL"
 
 echo ""
+"$PYTHON" summarize_jobs_control_flow.py --root "$ROOT" --jobs-file "$ROOT/jobs.txt"
+
+echo ""
 echo "========== Summary =========="
 awk -v total="$TOTAL" '
   NR == 1 { next }
   {
     exitval = $7
-    status = (exitval == 0 ? "OK    " : "FAIL  ")
+    status = (exitval == 0 ? "PASS  " : "FAIL  ")
     cmd = $0
     sub(/^[^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ [^ ]+ /, "", cmd)
     printf "  %s  %s\n", status, cmd
   }
   END {
     print ""
-    print "  CNF:     cnf_out_control_flow/"
-    print "  Metrics: results_txt/"
-    print "  Log:     run_control_flow_dimacs.log"
+    print "  CNF:         cnf_out_control_flow/"
+    print "  Metrics:     results_txt/*_control_flow_proof_metrics.txt"
+    print "  Job summary: results_txt/jobs_control_flow_summary.txt"
+    print "  Log:         run_control_flow_dimacs.log"
   }
 ' run_control_flow_dimacs.log

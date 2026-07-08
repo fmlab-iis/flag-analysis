@@ -9,7 +9,11 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from dimacs_export_protocol import format_proof_metrics_report
+from dimacs_export_protocol import (
+    aggregate_job_solve_stats,
+    format_job_aggregate_lines,
+    format_proof_metrics_report,
+)
 from flag_analysis import uniqueness_solve_from_export
 
 
@@ -168,8 +172,20 @@ def summarize(cnf_dir: Path, metrics_dir: Optional[Path]) -> int:
             "sat_query_count": data.get("sat_query_count", 0),
         })
 
-    report = format_proof_metrics_report(rows, t, manifest.get("total_paths", len(rows)))
+    agg = aggregate_job_solve_stats(rows)
+    timing_path = cnf_dir / "job_timing.json"
+    wall_time_s = None
+    if timing_path.is_file():
+        try:
+            wall_time_s = float(json.loads(timing_path.read_text(encoding="utf-8")).get("wall_time_seconds"))
+        except (OSError, json.JSONDecodeError, TypeError, ValueError):
+            wall_time_s = None
+
     pipeline = manifest.get("verify_pipeline")
+    report = format_proof_metrics_report(
+        rows, t, manifest.get("total_paths", len(rows)), wall_time_s=wall_time_s,
+        verify_pipeline=pipeline,
+    )
     if pipeline == "unified":
         report = (
             "Verify pipeline: unified (all measured gen_syn + logical-product witness)\n"
@@ -177,7 +193,7 @@ def summarize(cnf_dir: Path, metrics_dir: Optional[Path]) -> int:
         )
     elif pipeline == "control_flow":
         report = (
-            "Verify pipeline: control_flow (type0 break-weight; type1 pred_syn_diff; type2 skipped)\n"
+            "Verify pipeline: control_flow (type0 break-weight; type1 same gen_syn + pred_syn_diff; type2 skipped)\n"
             + report
         )
     protocol_report = cnf_dir / "protocol_report.txt"
@@ -200,6 +216,38 @@ def summarize(cnf_dir: Path, metrics_dir: Optional[Path]) -> int:
     unsat = sum(1 for r in rows if r.get("status") == "unsat")
     sat = sum(1 for r in rows if r.get("status") == "sat")
     unknown = sum(1 for r in rows if r.get("status") == "unknown")
+    pred_syn_fail = sum(
+        1 for r in rows if r.get("path_type") == 1 and r.get("status") == "sat"
+    )
+    pred_syn_total = sum(1 for r in rows if r.get("path_type") == 1)
+    break_fail = sum(
+        1 for r in rows if r.get("path_type") == 0 and r.get("status") == "sat"
+    )
+    break_total = sum(1 for r in rows if r.get("path_type") == 0)
+
+    job_summary = {
+        "config_stem": config_stem,
+        "cnf_dir": str(cnf_dir),
+        "t": t,
+        "wall_time_seconds": wall_time_s,
+        **agg,
+        "fail_path_count": sat,
+        "unsat_path_count": unsat,
+        "sat_path_count_result": sat,
+        "unknown_path_count": unknown,
+        "exported_paths": total,
+    }
+    if pipeline == "control_flow":
+        job_summary["pred_syn_fail_count"] = pred_syn_fail
+        job_summary["pred_syn_path_count"] = pred_syn_total
+        job_summary["break_fail_count"] = break_fail
+        job_summary["break_path_count"] = break_total
+    (cnf_dir / "job_aggregate.json").write_text(
+        json.dumps(job_summary, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    batch_summary_path = metrics_dir / f"{config_stem}_job_summary.json"
+    batch_summary_path.write_text(json.dumps(job_summary, indent=2) + "\n", encoding="utf-8")
 
     if os.environ.get("DIMACS_VERBOSE"):
         print(f"========== Summary: {config_stem} ==========")

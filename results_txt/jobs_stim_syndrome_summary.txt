@@ -1,0 +1,22 @@
+========================================================================================================================
+jobs.txt stim_syndrome batch summary (per config)
+  config_stem | circuits | pass | fail | error | runtime_s | peak_mb | verify | status
+  [[5,1,3]]_[1,1,1,1]_T_lai_d_3_protocol_config |        2 |    2 |    0 |     0 |     0.082 | 223.512 |   pass | PASS
+  [[5,1,3]]_[2,2]_T_fix_2_lai_3_protocol_config |        2 |    2 |    0 |     0 |     0.084 | 207.219 |   pass | PASS
+  [[7,1,3]]_lai_3_protocol                 |        2 |    2 |    0 |     0 |     0.092 | 232.484 |   pass | PASS
+  [[5,1,3]]_low_depth_protocol_config      |       14 |   14 |    0 |     0 |     0.480 | 211.688 |   pass | PASS
+  [[5,1,3]]_[2,2]_T_lai_3_protocol_config  |        2 |    0 |    2 |     0 |     0.085 | 197.121 |   fail | FAIL
+  [[5,1,3]]_[2,2]_lai_3_protocol_config    |        2 |    0 |    2 |     0 |     0.108 | 202.637 |   fail | FAIL
+  [[5,1,3]]_origin_config                  |        6 |    6 |    0 |     0 |     0.189 | 198.953 |   pass | PASS
+  [[7,1,3]]_low_depth_2_config             |       14 |   14 |    0 |     0 |     0.426 | 236.316 |   pass | PASS
+  low_depth_7_1_3_w_6                      |        4 |    4 |    0 |     0 |     0.139 | 192.391 |   pass | PASS
+  [[9,1,3]]_chris_protocol_config          |        2 |    2 |    0 |     0 |     0.118 | 197.309 |   pass | PASS
+  [[25,1,5]]_chris_protocol_config         |        2 |    2 |    0 |     0 |     0.173 | 192.176 |   pass | PASS
+  [[17,1,5]]_chris_config                  |        2 |    2 |    0 |     0 |     0.148 | 232.254 |   pass | PASS
+  chao_du_[[19,1,5]]_config                |        2 |    2 |    0 |     0 |     0.154 | 192.559 |   pass | PASS
+  chao_du_[[17,1,5]]_config                |        2 |    2 |    0 |     0 |     0.137 | 193.238 |   pass | PASS
+  [[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config |        2 |    2 |    0 |     0 |     0.155 | 201.512 |   pass | PASS
+  [[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config |        2 |    2 |    0 |     0 |     0.218 | 231.234 |   pass | PASS
+  [[17,1,5]]_[1,1,1,1,1,...]_T_config      |        2 |    2 |    0 |     0 |     0.144 | 199.504 |   pass | PASS
+  [[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config |        2 |    1 |    1 |     0 |     0.231 | 235.766 |   fail | FAIL
+========================================================================================================================
