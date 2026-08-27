@@ -4,13 +4,13 @@ stab_txt_path: /home/bionicle8699/flag_verification/flag-analysis/chau_du_[[17,1
 log_txt_path: /home/bionicle8699/flag_verification/flag-analysis/chau_du_[[17,1,5]]/chao_du_[[17,1,5]]_log.txt
 circuits_total: 2
 pass: 2  fail: 0  error: 0
-wall_time_seconds: 0.140
-total_runtime_s: 0.137497
-peak_rss_mb: 193.238
+wall_time_seconds: 0.149
+total_runtime_s: 0.146777
+peak_rss_mb: 195.676
 job_status: PASS
 
   status | config_key                     | circuit                         | runtime_s | peak_rss_mb
-  PASS  | flag_syndrome                  | chau_du_[[17,1,5]]_flag_syndrome.qasm |  0.086204 |     193.238
-  PASS  | raw_syndrome                   | raw_chau_du_[[17,1,5]]_flag_syndrome.qasm |  0.051293 |     192.852
+  PASS  | flag_syndrome                  | chau_du_[[17,1,5]]_flag_syndrome.qasm |  0.092524 |     194.199
+  PASS  | raw_syndrome                   | raw_chau_du_[[17,1,5]]_flag_syndrome.qasm |  0.054254 |     195.676
 
 Overall: PASS

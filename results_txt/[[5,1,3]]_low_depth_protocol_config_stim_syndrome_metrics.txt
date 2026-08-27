@@ -4,25 +4,25 @@ stab_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_low_
 log_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[5,1,3]]_low_depth/[[5,1,3]]_low_depth_log_op.txt
 circuits_total: 14
 pass: 14  fail: 0  error: 0
-wall_time_seconds: 0.549
-total_runtime_s: 0.479893
-peak_rss_mb: 211.688
+wall_time_seconds: 0.635
+total_runtime_s: 0.554101
+peak_rss_mb: 214.066
 job_status: PASS
 
   status | config_key                     | circuit                         | runtime_s | peak_rss_mb
-  PASS  | IXZZX_flag                     | IXZZX_flag.qasm                 |  0.047962 |     204.254
-  PASS  | IXZZX_raw                      | IXZZX_raw.qasm                  |  0.025145 |     205.785
-  PASS  | IYXXY_raw                      | IYXXY_raw.qasm                  |  0.025498 |     206.555
-  PASS  | XIXZZ_flag                     | XIXZZ_flag.qasm                 |  0.026079 |     206.941
-  PASS  | XIXZZ_raw                      | XIXZZ_raw.qasm                  |  0.025137 |     207.477
-  PASS  | XZZXI_flag                     | XZZXI_flag.qasm                 |  0.026129 |     207.773
-  PASS  | XZZXI_raw                      | XZZXI_raw.qasm                  |  0.026109 |     208.387
-  PASS  | YIYXX_raw                      | YIYXX_raw.qasm                  |  0.025514 |     208.738
-  PASS  | YXXYI_raw                      | YXXYI_raw.qasm                  |  0.025357 |     209.305
-  PASS  | YZIZY_raw                      | YZIZY_raw.qasm                  |  0.025616 |     209.906
-  PASS  | ZIZYY_raw                      | ZIZYY_raw.qasm                  |  0.025172 |     210.211
-  PASS  | ZXIXZ_flag                     | ZXIXZ_flag.qasm                 |  0.027049 |     210.816
-  PASS  | ZXIXZ_raw                      | ZXIXZ_raw.qasm                  |  0.025211 |     211.152
-  PASS  | raw_syndrome                   | raw_[[5,1,3]]_low_depth_flag_syndrome.qasm |  0.123916 |     211.688
+  PASS  | IXZZX_flag                     | IXZZX_flag.qasm                 |  0.050007 |     207.027
+  PASS  | IXZZX_raw                      | IXZZX_raw.qasm                  |  0.027320 |     208.320
+  PASS  | IYXXY_raw                      | IYXXY_raw.qasm                  |  0.027703 |     208.680
+  PASS  | XIXZZ_flag                     | XIXZZ_flag.qasm                 |  0.028402 |     209.238
+  PASS  | XIXZZ_raw                      | XIXZZ_raw.qasm                  |  0.028543 |     209.852
+  PASS  | XZZXI_flag                     | XZZXI_flag.qasm                 |  0.030543 |     210.152
+  PASS  | XZZXI_raw                      | XZZXI_raw.qasm                  |  0.029066 |     210.766
+  PASS  | YIYXX_raw                      | YIYXX_raw.qasm                  |  0.028362 |     211.117
+  PASS  | YXXYI_raw                      | YXXYI_raw.qasm                  |  0.028791 |     211.395
+  PASS  | YZIZY_raw                      | YZIZY_raw.qasm                  |  0.028901 |     212.281
+  PASS  | ZIZYY_raw                      | ZIZYY_raw.qasm                  |  0.037290 |     212.332
+  PASS  | ZXIXZ_flag                     | ZXIXZ_flag.qasm                 |  0.044147 |     213.090
+  PASS  | ZXIXZ_raw                      | ZXIXZ_raw.qasm                  |  0.040799 |     213.539
+  PASS  | raw_syndrome                   | raw_[[5,1,3]]_low_depth_flag_syndrome.qasm |  0.124228 |     214.066
 
 Overall: PASS

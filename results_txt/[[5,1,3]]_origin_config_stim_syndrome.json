@@ -9,10 +9,10 @@
   "fail_count": 0,
   "error_count": 0,
   "job_status": "PASS",
-  "wall_time_seconds": 0.20004899706691504,
-  "total_runtime_s": 0.1885845329379663,
-  "peak_rss_bytes": 208617472,
-  "peak_rss_mb": 198.953125,
+  "wall_time_seconds": 0.221904324949719,
+  "total_runtime_s": 0.20893754507414997,
+  "peak_rss_bytes": 210399232,
+  "peak_rss_mb": 200.65234375,
   "state_check": false,
   "circuits": [
     {
@@ -27,8 +27,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.04643566894810647,
-      "peak_rss_bytes": 204836864
+      "runtime_s": 0.051690919091925025,
+      "peak_rss_bytes": 207028224
     },
     {
       "config_key": "XIXZZ_flag",
@@ -42,8 +42,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.027002447983250022,
-      "peak_rss_bytes": 206303232
+      "runtime_s": 0.028839836944825947,
+      "peak_rss_bytes": 208396288
     },
     {
       "config_key": "XZZXI_flag",
@@ -57,8 +57,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.026353438035584986,
-      "peak_rss_bytes": 207011840
+      "runtime_s": 0.02846762095578015,
+      "peak_rss_bytes": 208822272
     },
     {
       "config_key": "ZXIXZ_flag",
@@ -72,8 +72,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.026258655940182507,
-      "peak_rss_bytes": 207298560
+      "runtime_s": 0.03184352000243962,
+      "peak_rss_bytes": 209084416
     },
     {
       "config_key": "flag_syndrome",
@@ -87,8 +87,8 @@
       },
       "rank_before": 12,
       "rank_after": 12,
-      "runtime_s": 0.03326124500017613,
-      "peak_rss_bytes": 208285696
+      "runtime_s": 0.03610363509505987,
+      "peak_rss_bytes": 209477632
     },
     {
       "config_key": "raw_syndrome",
@@ -102,8 +102,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.029273077030666173,
-      "peak_rss_bytes": 208617472
+      "runtime_s": 0.031992012984119356,
+      "peak_rss_bytes": 210399232
     }
   ]
 }

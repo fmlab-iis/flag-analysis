@@ -9,10 +9,10 @@
   "fail_count": 0,
   "error_count": 0,
   "job_status": "PASS",
-  "wall_time_seconds": 0.08609014307148755,
-  "total_runtime_s": 0.08395647711586207,
-  "peak_rss_bytes": 217284608,
-  "peak_rss_mb": 207.21875,
+  "wall_time_seconds": 0.09114074590615928,
+  "total_runtime_s": 0.08910158998332918,
+  "peak_rss_bytes": 209760256,
+  "peak_rss_mb": 200.04296875,
   "state_check": false,
   "circuits": [
     {
@@ -27,8 +27,8 @@
       },
       "rank_before": 10,
       "rank_after": 10,
-      "runtime_s": 0.054860623087733984,
-      "peak_rss_bytes": 216190976
+      "runtime_s": 0.05724182794801891,
+      "peak_rss_bytes": 209264640
     },
     {
       "config_key": "raw_syndrome",
@@ -42,8 +42,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.029095854028128088,
-      "peak_rss_bytes": 217284608
+      "runtime_s": 0.03185976203531027,
+      "peak_rss_bytes": 209760256
     }
   ]
 }

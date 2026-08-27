@@ -9,10 +9,10 @@
   "fail_count": 2,
   "error_count": 0,
   "job_status": "FAIL",
-  "wall_time_seconds": 0.08723851095419377,
-  "total_runtime_s": 0.08526585693471134,
-  "peak_rss_bytes": 206696448,
-  "peak_rss_mb": 197.12109375,
+  "wall_time_seconds": 0.0913978279568255,
+  "total_runtime_s": 0.08900327503215522,
+  "peak_rss_bytes": 208060416,
+  "peak_rss_mb": 198.421875,
   "state_check": false,
   "circuits": [
     {
@@ -61,8 +61,8 @@
           "in_g_after": false
         }
       ],
-      "runtime_s": 0.054949461948126554,
-      "peak_rss_bytes": 204873728
+      "runtime_s": 0.057487281039357185,
+      "peak_rss_bytes": 206667776
     },
     {
       "config_key": "raw_syndrome",
@@ -110,8 +110,8 @@
           "in_g_after": false
         }
       ],
-      "runtime_s": 0.030316394986584783,
-      "peak_rss_bytes": 206696448
+      "runtime_s": 0.03151599399279803,
+      "peak_rss_bytes": 208060416
     }
   ]
 }

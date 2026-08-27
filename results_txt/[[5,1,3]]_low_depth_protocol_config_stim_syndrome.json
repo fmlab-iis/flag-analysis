@@ -9,10 +9,10 @@
   "fail_count": 0,
   "error_count": 0,
   "job_status": "PASS",
-  "wall_time_seconds": 0.5492970970226452,
-  "total_runtime_s": 0.47989268507808447,
-  "peak_rss_bytes": 221970432,
-  "peak_rss_mb": 211.6875,
+  "wall_time_seconds": 0.6348096949514002,
+  "total_runtime_s": 0.5541011518798769,
+  "peak_rss_bytes": 224464896,
+  "peak_rss_mb": 214.06640625,
   "state_check": false,
   "circuits": [
     {
@@ -27,8 +27,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.047961995005607605,
-      "peak_rss_bytes": 214175744
+      "runtime_s": 0.05000670091249049,
+      "peak_rss_bytes": 217083904
     },
     {
       "config_key": "IXZZX_raw",
@@ -42,8 +42,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025145448045805097,
-      "peak_rss_bytes": 215781376
+      "runtime_s": 0.027319750981405377,
+      "peak_rss_bytes": 218439680
     },
     {
       "config_key": "IYXXY_raw",
@@ -57,8 +57,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025498082977719605,
-      "peak_rss_bytes": 216588288
+      "runtime_s": 0.02770262793637812,
+      "peak_rss_bytes": 218816512
     },
     {
       "config_key": "XIXZZ_flag",
@@ -72,8 +72,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.026078963070176542,
-      "peak_rss_bytes": 216993792
+      "runtime_s": 0.02840167994145304,
+      "peak_rss_bytes": 219402240
     },
     {
       "config_key": "XIXZZ_raw",
@@ -87,8 +87,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025136817013844848,
-      "peak_rss_bytes": 217554944
+      "runtime_s": 0.02854260301683098,
+      "peak_rss_bytes": 220045312
     },
     {
       "config_key": "XZZXI_flag",
@@ -102,8 +102,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.02612860396038741,
-      "peak_rss_bytes": 217866240
+      "runtime_s": 0.030543489032424986,
+      "peak_rss_bytes": 220360704
     },
     {
       "config_key": "XZZXI_raw",
@@ -117,8 +117,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.02610864397138357,
-      "peak_rss_bytes": 218509312
+      "runtime_s": 0.029066232033073902,
+      "peak_rss_bytes": 221003776
     },
     {
       "config_key": "YIYXX_raw",
@@ -132,8 +132,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025513553991913795,
-      "peak_rss_bytes": 218877952
+      "runtime_s": 0.028362349956296384,
+      "peak_rss_bytes": 221372416
     },
     {
       "config_key": "YXXYI_raw",
@@ -147,8 +147,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025356531026773155,
-      "peak_rss_bytes": 219471872
+      "runtime_s": 0.028790807002224028,
+      "peak_rss_bytes": 221663232
     },
     {
       "config_key": "YZIZY_raw",
@@ -162,8 +162,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025615685037337244,
-      "peak_rss_bytes": 220102656
+      "runtime_s": 0.028900889097712934,
+      "peak_rss_bytes": 222593024
     },
     {
       "config_key": "ZIZYY_raw",
@@ -177,8 +177,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.025172297027893364,
-      "peak_rss_bytes": 220422144
+      "runtime_s": 0.037290296982973814,
+      "peak_rss_bytes": 222646272
     },
     {
       "config_key": "ZXIXZ_flag",
@@ -192,8 +192,8 @@
       },
       "rank_before": 6,
       "rank_after": 6,
-      "runtime_s": 0.027049078955315053,
-      "peak_rss_bytes": 221057024
+      "runtime_s": 0.04414666793309152,
+      "peak_rss_bytes": 223440896
     },
     {
       "config_key": "ZXIXZ_raw",
@@ -207,8 +207,8 @@
       },
       "rank_before": 5,
       "rank_after": 5,
-      "runtime_s": 0.02521066798362881,
-      "peak_rss_bytes": 221409280
+      "runtime_s": 0.04079926898702979,
+      "peak_rss_bytes": 223911936
     },
     {
       "config_key": "raw_syndrome",
@@ -222,8 +222,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.12391631701029837,
-      "peak_rss_bytes": 221970432
+      "runtime_s": 0.12422778806649148,
+      "peak_rss_bytes": 224464896
     }
   ]
 }

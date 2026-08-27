@@ -9,10 +9,10 @@
   "fail_count": 0,
   "error_count": 0,
   "job_status": "PASS",
-  "wall_time_seconds": 0.47551273193676025,
-  "total_runtime_s": 0.4262607350246981,
-  "peak_rss_bytes": 247795712,
-  "peak_rss_mb": 236.31640625,
+  "wall_time_seconds": 0.48273600393440574,
+  "total_runtime_s": 0.4266803282080218,
+  "peak_rss_bytes": 251318272,
+  "peak_rss_mb": 239.67578125,
   "state_check": false,
   "circuits": [
     {
@@ -27,8 +27,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.047534417011775076,
-      "peak_rss_bytes": 245497856
+      "runtime_s": 0.06253667001146823,
+      "peak_rss_bytes": 245891072
     },
     {
       "config_key": "IIIXXXX_raw",
@@ -42,8 +42,8 @@
       },
       "rank_before": 7,
       "rank_after": 7,
-      "runtime_s": 0.02619279397185892,
-      "peak_rss_bytes": 247119872
+      "runtime_s": 0.028632313013076782,
+      "peak_rss_bytes": 247128064
     },
     {
       "config_key": "IIIZZZZ_flag",
@@ -57,8 +57,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.02652840001974255,
-      "peak_rss_bytes": 247545856
+      "runtime_s": 0.028837307007052004,
+      "peak_rss_bytes": 247566336
     },
     {
       "config_key": "IIIZZZZ_raw",
@@ -72,8 +72,8 @@
       },
       "rank_before": 7,
       "rank_after": 7,
-      "runtime_s": 0.02483351097907871,
-      "peak_rss_bytes": 247795712
+      "runtime_s": 0.0285248119616881,
+      "peak_rss_bytes": 248127488
     },
     {
       "config_key": "IXXIIXX_flag",
@@ -87,8 +87,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.02620281500276178,
-      "peak_rss_bytes": 247762944
+      "runtime_s": 0.02970968303270638,
+      "peak_rss_bytes": 248455168
     },
     {
       "config_key": "IXXIIXX_raw",
@@ -102,8 +102,8 @@
       },
       "rank_before": 7,
       "rank_after": 7,
-      "runtime_s": 0.025826149038039148,
-      "peak_rss_bytes": 247762944
+      "runtime_s": 0.02730302105192095,
+      "peak_rss_bytes": 249077760
     },
     {
       "config_key": "IZZIIZZ_flag",
@@ -117,8 +117,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.029860245995223522,
-      "peak_rss_bytes": 236032000
+      "runtime_s": 0.02753311488777399,
+      "peak_rss_bytes": 249450496
     },
     {
       "config_key": "IZZIIZZ_raw",
@@ -132,8 +132,8 @@
       },
       "rank_before": 7,
       "rank_after": 7,
-      "runtime_s": 0.02581196802202612,
-      "peak_rss_bytes": 236621824
+      "runtime_s": 0.02587440505158156,
+      "peak_rss_bytes": 250048512
     },
     {
       "config_key": "XIXIXIX_flag",
@@ -147,8 +147,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.02992512797936797,
-      "peak_rss_bytes": 236941312
+      "runtime_s": 0.02644057502038777,
+      "peak_rss_bytes": 250687488
     },
     {
       "config_key": "XIXIXIX_raw",
@@ -162,8 +162,8 @@
       },
       "rank_before": 7,
       "rank_after": 7,
-      "runtime_s": 0.039868226973339915,
-      "peak_rss_bytes": 237367296
+      "runtime_s": 0.025891365949064493,
+      "peak_rss_bytes": 250998784
     },
     {
       "config_key": "ZIZIZIZ_flag",
@@ -177,8 +177,8 @@
       },
       "rank_before": 8,
       "rank_after": 8,
-      "runtime_s": 0.02985248703043908,
-      "peak_rss_bytes": 238018560
+      "runtime_s": 0.029438227997161448,
+      "peak_rss_bytes": 251318272
     },
     {
       "config_key": "ZIZIZIZ_raw",
@@ -192,8 +192,8 @@
       },
       "rank_before": 7,
       "rank_after": 7,
-      "runtime_s": 0.028712967061437666,
-      "peak_rss_bytes": 238022656
+      "runtime_s": 0.0257956130662933,
+      "peak_rss_bytes": 251314176
     },
     {
       "config_key": "raw_syndrome_x",
@@ -207,8 +207,8 @@
       },
       "rank_before": 9,
       "rank_after": 9,
-      "runtime_s": 0.03206121490802616,
-      "peak_rss_bytes": 236449792
+      "runtime_s": 0.029101583058945835,
+      "peak_rss_bytes": 251314176
     },
     {
       "config_key": "raw_syndrome_z",
@@ -222,8 +222,8 @@
       },
       "rank_before": 9,
       "rank_after": 9,
-      "runtime_s": 0.03305041103158146,
-      "peak_rss_bytes": 236355584
+      "runtime_s": 0.031061637098900974,
+      "peak_rss_bytes": 245186560
     }
   ]
 }
