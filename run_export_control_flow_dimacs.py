@@ -22,6 +22,23 @@ def main() -> int:
         default=None,
         help="Output directory (default: cnf_out_control_flow/<config_stem>/)",
     )
+    parser.add_argument(
+        "--initial-data-error",
+        action="store_true",
+        help="Enable symbolic initial data error on Type-0 (Break) paths only",
+    )
+    parser.add_argument(
+        "--type0-only",
+        action="store_true",
+        help="Export only Type-0 (Break) paths; skip Type-1/Type-2 export",
+    )
+    parser.add_argument(
+        "--stab-encoding",
+        choices=("coset", "dual"),
+        default=None,
+        help="Stab encoding: dual (default, low-weight Pauli) or coset (legacy 2^m expand). "
+        "Without --cnf-dir, dual writes to cnf_out_control_flow_dual/ and coset to cnf_out_control_flow/.",
+    )
     parser.add_argument("--quiet", action="store_true", help="Suppress verbose output")
     args = parser.parse_args()
 
@@ -31,6 +48,12 @@ def main() -> int:
         config = read_config(args.config)
         if args.quiet:
             config["__quiet__"] = True
+        if args.initial_data_error:
+            config["initial_data_error"] = 1
+        if args.type0_only:
+            config["type0_only"] = 1
+        if args.stab_encoding:
+            config["stab_encoding"] = args.stab_encoding
         config["protocol_path"] = str(Path(args.protocol).resolve())
         gen = load_symplectic_txt(str(config["stab_txt_path"]))
         init_state = new_clean_circuit_state(len(gen[0][0]))

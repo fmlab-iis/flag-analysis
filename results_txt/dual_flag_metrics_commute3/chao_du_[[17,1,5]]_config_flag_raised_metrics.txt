@@ -1,0 +1,16 @@
+================================================================================
+Flag-raised verification (Step 3)
+Parameters: w=2 (max fault sites), min error weight=3 (weight > w)
+Property: faults may occur at any gate (at most w sites); if error weight > w then at least one flag qubit is raised
+Solver: Z3 export + cryptominisat5 (SYNDROME_SAT_SOLVER_BIN)
+Per-circuit metrics:
+  circuit_key           | status  | fault_sites | runtime_s | peak_rss_mb | sat_query_count | sat_time_s | dimacs_vars | total_clauses | reason
+  flag_syndrome         | fail    | all (112)   |  6.010068 |     149.445 |               1 |   0.319135 |        1737 |         13097 | high-weight error with no flag raised
+Total runtime: 6.010068 s
+Max peak RSS (across circuits): 149.445 MB
+  SAT solver calls (sum sat_query_count): 1
+  SAT solver time (sum): 0.319135 s
+  DIMACS variables (min / max): 1737 / 1737
+  Clauses (min / max): 13097 / 13097
+Failed circuits: 1/1
+================================================================================

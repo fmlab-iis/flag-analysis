@@ -1,0 +1,70 @@
+[
+  {
+    "config": "./[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config.txt",
+    "initial_data_error": false,
+    "enum_s": 0.2875107139989268,
+    "n_paths": 4,
+    "n_type0": 1,
+    "results": [
+      {
+        "path_index": 0,
+        "status": "unsat",
+        "solve_s": 8.060644210985629,
+        "last_instr": "Break"
+      }
+    ],
+    "tag": "baseline_111",
+    "wall_s": 8.388412372005405
+  },
+  {
+    "config": "./[[19,1,5]]_[2,2,2,1,1,1]_T/[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config.txt",
+    "initial_data_error": false,
+    "enum_s": 0.26945662099751644,
+    "n_paths": 4,
+    "n_type0": 1,
+    "results": [
+      {
+        "path_index": 0,
+        "status": "sat",
+        "solve_s": 1.0297525960195344,
+        "last_instr": "Break"
+      }
+    ],
+    "tag": "baseline_222",
+    "wall_s": 1.3181301449949387
+  },
+  {
+    "config": "./[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config.txt",
+    "initial_data_error": true,
+    "enum_s": 0.2717376269865781,
+    "n_paths": 4,
+    "n_type0": 1,
+    "results": [
+      {
+        "path_index": 0,
+        "status": "sat",
+        "solve_s": 0.29768238600809127,
+        "last_instr": "Break"
+      }
+    ],
+    "tag": "initdata_111",
+    "wall_s": 0.6572670789901167
+  },
+  {
+    "config": "./[[19,1,5]]_[2,2,2,1,1,1]_T/[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config.txt",
+    "initial_data_error": true,
+    "enum_s": 0.27152447402477264,
+    "n_paths": 4,
+    "n_type0": 1,
+    "results": [
+      {
+        "path_index": 0,
+        "status": "sat",
+        "solve_s": 0.03353320900350809,
+        "last_instr": "Break"
+      }
+    ],
+    "tag": "initdata_222",
+    "wall_s": 0.39523103498504497
+  }
+]

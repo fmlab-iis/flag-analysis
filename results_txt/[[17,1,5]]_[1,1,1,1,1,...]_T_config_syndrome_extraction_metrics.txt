@@ -6,9 +6,9 @@ Full: flag_syndrome/raw_syndrome vs stab.txt; Partial: <PAULI>_flag/_raw vs name
 Pass => ok; fail => ancilla mismatch or data not preserved
 Per-circuit metrics:
   circuit_key           | mode    | status  | ancilla | data | runtime_s | peak_rss_mb | reason
-  flag_syndrome         | full    | pass    | True    | True |  0.181244 |      89.301 | 
-  raw_syndrome          | full    | pass    | True    | True |  0.075844 |      88.594 | 
-Total runtime: 0.257088 s
-Max peak RSS (across circuits): 89.301 MB
+  flag_syndrome         | full    | pass    | True    | True |  0.175808 |     100.062 | 
+  raw_syndrome          | full    | pass    | True    | True |  0.082691 |     100.316 | 
+Total runtime: 0.258499 s
+Max peak RSS (across circuits): 100.316 MB
 Failed circuits: 0/2
 ================================================================================

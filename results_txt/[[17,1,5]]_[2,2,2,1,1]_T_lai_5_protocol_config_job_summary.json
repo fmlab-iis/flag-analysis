@@ -4,7 +4,7 @@
   "t": 2,
   "wall_time_seconds": null,
   "path_count": 3,
-  "total_solver_runtime_s": 1215.8603912229883,
+  "total_solver_runtime_s": 1733.144500904018,
   "total_sat_query_count": 3,
   "sat_path_count": 0,
   "min_dimacs_vars": 5393,

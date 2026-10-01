@@ -1,0 +1,15 @@
+================================================================================
+Flag-raised verification (Step 3)
+Parameters: w=1 (max fault sites), min error weight=2 (weight > w)
+Property: faults may occur at any gate (at most w sites); if error weight > w then at least one flag qubit is raised
+Per-circuit metrics:
+  circuit_key           | status  | fault_sites | runtime_s | peak_rss_mb | sat_query_count | sat_time_s | z3_vars | z3_clauses | reason
+  flag_syndrome         | pass    | all (150)   |  0.217431 |     101.879 |               1 |   0.116000 |    2082 |       5484 | 
+Total runtime: 0.217431 s
+Max peak RSS (across circuits): 101.879 MB
+  SAT solver calls (sum sat_query_count): 1
+  SAT solver time (sum): 0.116000 s
+  Z3 variables (min / max): 2082 / 2082
+  Clauses (min / max): 5484 / 5484
+Failed circuits: 0/1
+================================================================================

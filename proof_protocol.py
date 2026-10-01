@@ -76,6 +76,127 @@ def classify_full_path(path_steps: List[Dict[str, Any]]) -> Tuple[int, str]:
     return 2, last_instr
 
 
+def _is_qasm_config_instr(instr: Optional[str], config: Dict) -> bool:
+    if not instr or instr not in config:
+        return False
+    val = config[instr]
+    return isinstance(val, (str, Path)) and str(val).lower().endswith(".qasm")
+
+
+def replay_path_with_initial_data_error(
+    full_path: List[Dict[str, Any]],
+    config: Dict,
+    init_state,
+    protocol=None,
+) -> List[Dict[str, Any]]:
+    """
+    Re-simulate a finished path with symbolic initial data error on the first
+    QASM circuit step only. Later steps inherit data.
+
+    Branch conditions are recomputed from the replayed state (including dataInit),
+    using the same branch targets as the original path. Stale DFS conditions
+    (built without dataInit) must not be reused.
+    """
+    import json
+
+    if protocol is None:
+        proto_path = config.get("protocol_path")
+        if proto_path:
+            _, protocol = load_protocol(str(proto_path))
+
+    cur_state = init_state
+    groups = None
+    first_circuit = True
+    new_path: List[Dict[str, Any]] = []
+
+    for step in full_path:
+        instr = step.get("instruction")
+        round_idx = step.get("round", 0)
+        site_info: List[Dict[str, Any]] = []
+
+        if _is_qasm_config_instr(instr, config):
+            qasm_path = config[instr]
+            qc = load_qasm(qasm_path)
+            gate_list = get_gate_only_indices(qc)
+            groups = detect_qubit_groups(qc)
+            cur_state, site_info = symbolic_execution_of_state(
+                qasm_path,
+                cur_state,
+                round_idx,
+                fault_gate=gate_list,
+                track_steps=False,
+                initial_data_error=first_circuit,
+            )
+            first_circuit = False
+            state_dict = state_to_raw_expr_dict(cur_state, groups)
+            flag_key = f"{instr}_flag_group"
+            if flag_key in config:
+                with open(config[flag_key], "r", encoding="utf-8") as f:
+                    flag_group = json.load(f)
+                state_dict = dict(state_dict)
+                state_dict["flagX"] = [
+                    [state_dict["flagX"][i] for i in g] for g in flag_group["flagX"]
+                ]
+                state_dict["flagZ"] = [
+                    [state_dict["flagZ"][i] for i in g] for g in flag_group["flagZ"]
+                ]
+        else:
+            if groups is not None:
+                state_dict = state_to_raw_expr_dict(cur_state, groups)
+            else:
+                state_dict = step.get("state")
+
+        z3_condition = None
+        next_id = step.get("next")
+        node_id = step.get("node")
+        if (
+            protocol is not None
+            and next_id is not None
+            and node_id is not None
+            and node_id in protocol
+        ):
+            matched = None
+            for br in protocol[node_id].branches:
+                if br.target == next_id:
+                    matched = br
+                    break
+            if matched is not None:
+                cond_dict = (
+                    matched.condition.to_dict()
+                    if matched.condition is not None
+                    else None
+                )
+                cond_groups = groups
+                if cond_groups is None and state_dict is not None:
+                    cond_groups = data_only_groups_from_state_dict(state_dict)
+                full_state = [s["state"] for s in new_path] + [state_dict]
+                z3_condition = condition_to_z3(cond_dict, full_state, cond_groups)
+            else:
+                z3_condition = step.get("condition")
+        else:
+            # Leaf (no next) or missing protocol: keep original condition.
+            z3_condition = step.get("condition")
+
+        new_path.append({
+            **step,
+            "state": state_dict,
+            "site_info": site_info,
+            "condition": z3_condition,
+        })
+
+    return new_path
+
+
+def prepare_type0_path(full_path, config, init_state, protocol=None):
+    """If config.initial_data_error is set, replay Type-0 path with dataInit."""
+    from flag_analysis import config_flag_enabled
+    if not config_flag_enabled(config, "initial_data_error", False):
+        return full_path
+    return replay_path_with_initial_data_error(
+        full_path, config, init_state, protocol=protocol,
+    )
+
+
 from copy import deepcopy
 
 from typing import List, Dict, Any
@@ -226,8 +347,11 @@ def proof_protocol(protocol,
                     })
                     return
 
+                break_path = prepare_type0_path(
+                    full_path, config, init_state, protocol=protocol,
+                )
                 status, counterexample, query_stats = proof_path_break_weight(
-                    full_path,
+                    break_path,
                     t,
                     config["stab_txt_path"],
                     query_tag=f"path_{path_idx}",
@@ -1263,12 +1387,22 @@ def proof_path_break_weight(
 ):
     """
     Break-path weight bound: prove UNSAT of
-      path_conditions ∧ PbLe(fault_acts,t) ∧ ¬∃gsel: stab_equiv_weight(E) ≤ t
+      path_conditions ∧ PbLe(budget_acts,t) ∧ residual weight bound
+
+    If the path has fault_mode=="init" sites (initial data error), budget is
+    wt(dataInit)+gate_faults ≤ t and residual min-stab weight must exceed
+    (# circuit faults). Otherwise legacy: gate faults ≤ t and residual > t.
     """
     import tempfile
-    from flag_analysis import break_weight_export_dimacs, uniqueness_solve_from_export
+    from flag_analysis import (
+        break_acts_from_path,
+        break_weight_export_dimacs,
+        uniqueness_solve_from_export,
+    )
 
-    faults = [info["act"] for step in path for info in step["site_info"]]
+    data_acts, gate_fault_acts = break_acts_from_path(path)
+    faults = data_acts + gate_fault_acts
+    compare_to_gate = bool(data_acts)
     if not faults:
         return "skipped", None, {
             "solver_runtime_seconds": 0.0,
@@ -1298,6 +1432,8 @@ def proof_path_break_weight(
             td,
             path_tag,
             gsel_prefix=f"{path_tag}_gsel",
+            gate_fault_acts=gate_fault_acts if compare_to_gate else None,
+            compare_residual_to_gate_faults=compare_to_gate,
         )
         status, counterexample, query_stats = uniqueness_solve_from_export(
             td, path_tag, verbose=False,

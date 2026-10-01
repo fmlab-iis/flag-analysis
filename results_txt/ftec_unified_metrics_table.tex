@@ -1,6 +1,6 @@
 \begin{table}[htbp]
 \centering
-\caption{Experimental results of the flagged syndrome extraction verification (FTEC metrics). FTEC row: number of failed paths over total solved paths from the unified uniqueness check (SAT counterexamples / paths). Time is total syndrome-extraction runtime (Z3 export + CryptoMiniSat). Peak memory, SAT calls, total SAT time, \#vars, and \#clauses are from the unified DIMACS pipeline (external SAT solver on exported CNFs).}
+\caption{Experimental results of the flagged syndrome extraction verification (FTEC metrics). FTEC row: number of failed paths over total solved paths from the unified uniqueness check (SAT counterexamples / paths). Peak memory, SAT calls, total SAT time, \#vars, and \#clauses are from the unified DIMACS pipeline (external SAT solver on exported CNFs).}
 \label{tab:experiment-results-ftec-unified}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{l ccccccccc cccccccccc}
@@ -13,13 +13,11 @@ Protocol & [Bha23] & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $
 \midrule
 FTEC & 0/13 & 0/2 & 1/2 & 1/2 & 1/2 & 0/5 & 1/4 & 0/19 & 0/2 & 1/4 & 0/4 & 0/4 & 0/4 & 0/4 & 3/21 & 0/21 & 0/21 & 0/21 \\
 \midrule
-Time (s) & 0.351 & 0.091 & 0.088 & 0.085 & 0.096 & 0.192 & 0.143 & 0.155 & 0.085 & 0.065 & 0.262 & 0.307 & 0.262 & 0.257 & 0.211 & 0.222 & 0.263 & 0.348 \\
-Peak Mem (MB) & 85.4 & 88.0 & 90.0 & 90.0 & 71.0 & 87.0 & 87.8 & 87.6 & 86.0 & 85.9 & 144.3 & 155.6 & 111.8 & 114.6 & 306.3 & 164.1 & 321.4 & 172.8 \\
-\midrule
+Peak Mem (MB) & 85.4 & 88.0 & 90.0 & 90.0 & 71.0 & 87.0 & 88.0 & 87.6 & 86.0 & 85.9 & 144.3 & 155.6 & 111.8 & 114.6 & 306.3 & 164.1 & 321.4 & 172.8 \\
 SAT Calls & 13 & 2 & 2 & 2 & 2 & 5 & 4 & 19 & 2 & 4 & 4 & 4 & 4 & 4 & 21 & 21 & 21 & 21 \\
-Total SAT Time (s) & 0.145 & 0.065 & 0.027 & 0.057 & 0.058 & 0.079 & 0.052 & 0.207 & 0.057 & 0.148 & 2104.4 & 2312.0 & 1243.5 & 1562.3 & 123486.4 & 86124.3 & 151274.4 & 40477.4 \\
-\#Vars & 278--626 & 366--626 & 374--624 & 376--624 & 461--776 & 348--626 & 397--774 & 274--803 & 560--942 & 837--1336 & 2373--8973 & 2362--8868 & 2051--7749 & 2041--7648 & 5466--11582 & 5494--11755 & 6586--14266 & 5372--11398 \\
-\#Clauses & 2010--4576 & 2670--4588 & 2714--4620 & 2724--4620 & 3444--5798 & 2458--4578 & 2828--5742 & 1974--6033 & 4124--6960 & 6274--10700 & 20085--66716 & 19960--66195 & 14410--57111 & 14304--56636 & 48370--122417 & 50906--120417 & 45341--119101 & 49264--123632 \\
+Total SAT Time (s) & 0.145 & 0.065 & 0.027 & 0.057 & 0.058 & 0.079 & 0.060 & 0.207 & 0.057 & 0.148 & 2104.4 & 2312.0 & 1243.5 & 1562.3 & 123486.4 & 86124.3 & 151274.4 & 40477.4 \\
+\#Vars & 278--626 & 366--626 & 374--624 & 376--624 & 461--776 & 348--626 & 396--772 & 274--803 & 560--942 & 837--1336 & 2373--8973 & 2362--8868 & 2051--7749 & 2041--7648 & 5466--11582 & 5494--11755 & 6586--14266 & 5372--11398 \\
+\#Clauses & 2010--4576 & 2670--4588 & 2714--4620 & 2724--4620 & 3444--5798 & 2458--4578 & 2824--5738 & 1974--6033 & 4124--6960 & 6274--10700 & 20085--66716 & 19960--66195 & 14410--57111 & 14304--56636 & 48370--122417 & 50906--120417 & 45341--119101 & 49264--123632 \\
 \bottomrule
 \end{tabular}
 }%

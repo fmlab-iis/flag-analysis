@@ -4,13 +4,13 @@ stab_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[1,
 log_txt_path: /home/bionicle8699/flag_verification/flag-analysis/[[17,1,5]]_[1,1,1,1,1,...]_T/[[17,1,5]]_log.txt
 circuits_total: 2
 pass: 2  fail: 0  error: 0
-wall_time_seconds: 0.161
-total_runtime_s: 0.156916
-peak_rss_mb: 234.922
+wall_time_seconds: 0.155
+total_runtime_s: 0.151414
+peak_rss_mb: 235.848
 job_status: PASS
 
   status | config_key                     | circuit                         | runtime_s | peak_rss_mb
-  PASS  | flag_syndrome                  | [[17,1,5]]_flag.qasm            |  0.101067 |     233.957
-  PASS  | raw_syndrome                   | [[17,1,5]]_raw.qasm             |  0.055849 |     234.922
+  PASS  | flag_syndrome                  | [[17,1,5]]_flag.qasm            |  0.101061 |     234.945
+  PASS  | raw_syndrome                   | [[17,1,5]]_raw.qasm             |  0.050353 |     235.848
 
 Overall: PASS

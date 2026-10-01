@@ -1,0 +1,13 @@
+./protocols/d_3_lai_protocol.json	./[[5,1,3]]_[1,1,1,1]_T/[[5,1,3]]_[1,1,1,1]_T_lai_d_3_protocol_config.txt	1
+./protocols/d_3_lai_protocol.json	./[[5,1,3]]_[2,2]_T_fix_2 /[[5,1,3]]_[2,2]_T_fix_2_lai_3_protocol_config.txt	1
+./protocols/d_3_lai_protocol.json	./config/[[7,1,3]]_lai_3_protocol.txt	1
+./protocols/5_1_3_low_depth_protocol.json	./[[5,1,3]]_low_depth/[[5,1,3]]_low_depth_protocol_config.txt	1
+./protocols/d_3_lai_protocol.json	./[[5,1,3]]_[2,2]_T/[[5,1,3]]_[2,2]_T_lai_3_protocol_config.txt	1
+./protocols/d_3_lai_protocol.json	./[[5,1,3]]_[2,2]/[[5,1,3]]_[2,2]_lai_3_protocol_config.txt	1
+./protocols/origin_5_1_3_protocol.json	./[[5,1,3]]_origin/[[5,1,3]]_origin_config.txt	1
+./protocols/low_depth_7_1_3_w_6_second_protocol.json	./[[7,1,3]]_low_depth_2/[[7,1,3]]_low_depth_2_config.txt	1
+./protocols/low_depth_7_1_3_w_6_protocol.json	./config/low_depth_7_1_3_w_6.txt	1
+./protocols/d_5_lai_protocol.json	./[[19,1,5]]_[2,2,2,1,1,1]_T/[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config.txt	2
+./protocols/d_5_lai_protocol.json	./[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config.txt	2
+./protocols/d_5_lai_protocol.json	./[[17,1,5]]_[1,1,1,1,1,...]_T/[[17,1,5]]_[1,1,1,1,1,...]_T_config.txt	2
+./protocols/d_5_lai_protocol.json	./[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config.txt	2

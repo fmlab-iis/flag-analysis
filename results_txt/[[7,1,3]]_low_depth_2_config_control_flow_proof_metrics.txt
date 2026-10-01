@@ -4,37 +4,37 @@ Max faults per path (t): 1
 Total number of paths: 19
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        0 |    1 | IIIZZZZ_raw (raw)       | sat     |         22 |  0.006567 |      63.711 |         88 |         342 |          2437 |               1
-        1 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         18 |  0.007246 |      61.844 |         72 |         276 |          2006 |               1
-        2 |    1 | XIXIXIX_raw (raw)       | unsat   |         18 |  0.011990 |      61.398 |         72 |         279 |          1999 |               1
-        3 |    1 | IZZIIZZ_raw (raw)       | sat     |         28 |  0.012638 |      67.711 |        112 |         433 |          3214 |               1
-        4 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         24 |  0.007512 |      73.863 |         96 |         366 |          2695 |               1
-        5 |    1 | XIXIXIX_raw (raw)       | unsat   |         24 |  0.009807 |      77.992 |         96 |         370 |          2705 |               1
-        6 |    1 | ZIZIZIZ_raw (raw)       | sat     |         34 |  0.015366 |      66.000 |        136 |         521 |          3859 |               1
-        7 |    1 | IZZIIZZ_raw (raw)       | unsat   |         30 |  0.008399 |      71.840 |        120 |         458 |          3391 |               1
-        8 |    1 | IXXIIXX_raw (raw)       | unsat   |         30 |  0.010878 |      61.324 |        120 |         462 |          3425 |               1
-        9 |    1 | IIIXXXX_raw (raw)       | sat     |         40 |  0.013480 |      66.000 |        160 |         615 |          4559 |               1
-       10 |    1 | XIXIXIX_raw (raw)       | unsat   |         36 |  0.007956 |      63.582 |        144 |         545 |          4113 |               1
-       11 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         36 |  0.007749 |      63.438 |        144 |         549 |          4123 |               1
-       12 |    1 | IXXIIXX_raw (raw)       | sat     |         46 |  0.011207 |      70.684 |        184 |         711 |          5290 |               1
-       13 |    1 | XIXIXIX_raw (raw)       | unsat   |         42 |  0.008448 |      71.672 |        168 |         645 |          4747 |               1
-       14 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         42 |  0.010497 |      68.000 |        168 |         642 |          4770 |               1
-       15 |    1 | XIXIXIX_raw (raw)       | sat     |         52 |  0.015743 |      79.730 |        208 |         793 |          5999 |               1
-       16 |    1 | IXXIIXX_raw (raw)       | unsat   |         48 |  0.014976 |      71.746 |        192 |         728 |          5531 |               1
-       17 |    1 | IZZIIZZ_raw (raw)       | unsat   |         48 |  0.013595 |      69.668 |        192 |         734 |          5575 |               1
-       18 |    0 | Break (other)           | unsat   |         36 |  0.015586 |      70.000 |        144 |         648 |          6317 |               1
+        0 |    1 | IIIZZZZ_raw (raw)       | sat     |         22 |  0.010602 |      75.559 |         88 |         342 |          2437 |               1
+        1 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         18 |  0.008689 |      69.434 |         72 |         276 |          2006 |               1
+        2 |    1 | XIXIXIX_raw (raw)       | unsat   |         18 |  0.011343 |      83.762 |         72 |         279 |          1999 |               1
+        3 |    1 | IZZIIZZ_raw (raw)       | sat     |         28 |  0.008627 |      62.988 |        112 |         433 |          3214 |               1
+        4 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         24 |  0.011051 |      69.430 |         96 |         366 |          2695 |               1
+        5 |    1 | XIXIXIX_raw (raw)       | unsat   |         24 |  0.008224 |      81.688 |         96 |         370 |          2705 |               1
+        6 |    1 | ZIZIZIZ_raw (raw)       | sat     |         34 |  0.012254 |      64.980 |        136 |         521 |          3859 |               1
+        7 |    1 | IZZIIZZ_raw (raw)       | unsat   |         30 |  0.011140 |      63.520 |        120 |         458 |          3391 |               1
+        8 |    1 | IXXIIXX_raw (raw)       | unsat   |         30 |  0.011316 |      47.641 |        120 |         462 |          3425 |               1
+        9 |    1 | IIIXXXX_raw (raw)       | sat     |         40 |  0.014018 |      69.812 |        160 |         615 |          4559 |               1
+       10 |    1 | XIXIXIX_raw (raw)       | unsat   |         36 |  0.008079 |      53.527 |        144 |         545 |          4113 |               1
+       11 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         36 |  0.008302 |      55.715 |        144 |         549 |          4123 |               1
+       12 |    1 | IXXIIXX_raw (raw)       | sat     |         46 |  0.018823 |      48.785 |        184 |         711 |          5290 |               1
+       13 |    1 | XIXIXIX_raw (raw)       | unsat   |         42 |  0.008667 |      50.375 |        168 |         645 |          4747 |               1
+       14 |    1 | ZIZIZIZ_raw (raw)       | unsat   |         42 |  0.012808 |      62.543 |        168 |         642 |          4770 |               1
+       15 |    1 | XIXIXIX_raw (raw)       | sat     |         52 |  0.016098 |      47.465 |        208 |         793 |          5999 |               1
+       16 |    1 | IXXIIXX_raw (raw)       | unsat   |         48 |  0.008890 |      47.070 |        192 |         728 |          5531 |               1
+       17 |    1 | IZZIIZZ_raw (raw)       | unsat   |         48 |  0.015666 |      59.340 |        192 |         734 |          5575 |               1
+       18 |    0 | Break (other)           | sat     |         36 |  0.010593 |      50.551 |        158 |         696 |          7932 |               1
 Job aggregate (across solved paths):
-  Solver time (sum of paths): 0.209643 s
+  Solver time (sum of paths): 0.215189 s
   SAT solver calls (sum sat_query_count): 19
-  Paths with SAT result: 6/19
+  Paths with SAT result: 7/19
   DIMACS variables (min / max): 276 / 793
-  Clauses (min / max): 1999 / 6317
-Total runtime (sum of all paths): 0.209643 s
-Failed paths (SAT): 6/19
-Total SAT paths: 6/19
-Break-weight SAT (fail): 0/1
+  Clauses (min / max): 1999 / 7932
+Total runtime (sum of all paths): 0.215189 s
+Failed paths (SAT): 7/19
+Total SAT paths: 7/19
+Break-weight SAT (fail): 1/1
 pred_syn fail (type 1): 6/18
 Max fault variables (across paths): 208
 Max DIMACS variables (across paths): 793
-Max peak RSS (across paths): 79.730 MB
+Max peak RSS (across paths): 83.762 MB
 ================================================================================

@@ -1,0 +1,4 @@
+./protocols/d_5_lai_protocol.json	./[[17,1,5]]_[1,1,1,1,1,...]_T/[[17,1,5]]_[1,1,1,1,1,...]_T_config.txt	2
+./protocols/d_5_lai_protocol.json	./[[17,1,5]]_[2,2,2,1,1]_T/[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config.txt	2
+./protocols/d_5_lai_protocol.json	./[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config.txt	2
+./protocols/d_5_lai_protocol.json	./[[19,1,5]]_[2,2,2,1,1,1]_T/[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config.txt	2

@@ -3,12 +3,21 @@ Max faults per path (t): 2
 Total number of paths: 4
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        1 |    2 | flag_syndrome (other)   | unsat   |        336 | 792.745632 |     113.633 |       1344 |        6212 |         57480 |               1
-        2 |    1 | raw_syndrome (raw)      | unsat   |        408 | 510.770850 |     121.781 |       1632 |        7788 |         48310 |               1
-        3 |    1 | raw_syndrome (raw)      | unsat   |        296 | 82.723869 |      90.000 |       1184 |        5459 |         53385 |               1
-Total runtime (sum of all paths): 1386.240351 s
+        0 |    0 | Break (other)           | unsat   |        112 | 1095.204914 |    3786.875 |        448 |     1377246 |      27335447 |               1
+        1 |    2 | flag_syndrome (other)   | unsat   |        336 | 853.502225 |     108.254 |       1344 |        6213 |         57479 |               1
+        2 |    1 | raw_syndrome (raw)      | unsat   |        408 | 1011.048719 |     164.887 |       1632 |        7786 |         48312 |               1
+        3 |    1 | raw_syndrome (raw)      | unsat   |        296 | 82.097648 |      96.535 |       1184 |        5466 |         53417 |               1
+Job aggregate (across solved paths):
+  Solver time (sum of paths): 3041.853506 s
+  SAT solver calls (sum sat_query_count): 4
+  Paths with SAT result: 0/4
+  DIMACS variables (min / max): 5466 / 1377246
+  Clauses (min / max): 48312 / 27335447
+Total runtime (sum of all paths): 3041.853506 s
+Failed paths (SAT): 0/4
 Total SAT paths: 0/4
+Break-weight SAT (fail): 0/1
 Max fault variables (across paths): 1632
-Max DIMACS variables (across paths): 7788
-Max peak RSS (across paths): 121.781 MB
+Max DIMACS variables (across paths): 1377246
+Max peak RSS (across paths): 3786.875 MB
 ================================================================================

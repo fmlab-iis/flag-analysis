@@ -63,12 +63,17 @@ def _control_flow_fail_counts(cnf_dir: Path, agg: Dict[str, Any]) -> Dict[str, i
     }
 
 
-def summarize_jobs(root: Path, jobs_file: Path) -> List[Dict[str, Any]]:
+def summarize_jobs(
+    root: Path,
+    jobs_file: Path,
+    *,
+    cnf_subdir: str = "cnf_out_control_flow",
+) -> List[Dict[str, Any]]:
     summaries: List[Dict[str, Any]] = []
     for job in _read_jobs(jobs_file):
         config = job["config"]
         stem = Path(config).stem
-        cnf_dir = root / "cnf_out_control_flow" / stem
+        cnf_dir = root / cnf_subdir / stem
         agg = _load_job_aggregate(cnf_dir)
         counts = _control_flow_fail_counts(cnf_dir, agg)
         solved = counts["path_count"]
@@ -96,7 +101,7 @@ def summarize_jobs(root: Path, jobs_file: Path) -> List[Dict[str, Any]]:
 def _format_table(summaries: List[Dict[str, Any]]) -> str:
     lines: List[str] = []
     lines.append("=" * 110)
-    lines.append("jobs.txt control-flow batch summary (per config)")
+    lines.append("control-flow batch summary (per config)")
     lines.append(
         "  config_stem | solved | fail_paths | pred_syn_fail | break_fail | "
         "solver_s | verify | status"
@@ -134,6 +139,11 @@ def main() -> int:
     parser.add_argument("--jobs-file", default="jobs.txt", help="Tab-separated jobs file")
     parser.add_argument("--root", default=".", help="Project root")
     parser.add_argument(
+        "--cnf-subdir",
+        default="cnf_out_control_flow",
+        help="CNF output subdirectory under root (default: cnf_out_control_flow)",
+    )
+    parser.add_argument(
         "--out",
         default="results_txt/jobs_control_flow_summary.txt",
         help="Write human-readable table here",
@@ -153,7 +163,7 @@ def main() -> int:
         print(f"Jobs file not found: {jobs_file}", file=sys.stderr)
         return 1
 
-    summaries = summarize_jobs(root, jobs_file)
+    summaries = summarize_jobs(root, jobs_file, cnf_subdir=args.cnf_subdir)
     table = _format_table(summaries)
     print(table, end="")
 

@@ -41,3 +41,16 @@ solve.log
 *.ipynb
 !boolean_learning.ipynb
 !test_for_function.ipynb
+.venv_pdf/
+
+# Paper/PDF extraction scratch (not part of the tool)
+*.pdf
+!protocols/**/*.pdf
+_arxiv_src/
+_page_*.png
+image-[0-9]*.png
+_fig*.png
+_surgery_*.png
+font-*.pfa
+surface_code_lattice_surgery.md
+.test_run/

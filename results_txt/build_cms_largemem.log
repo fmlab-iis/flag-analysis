@@ -1,0 +1,68 @@
+Symlinking oracle.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/oracle
+Symlinking cryptominisat_c.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/cryptominisat5
+[  0%] Built target CopyPublicHeaders_oracle
+Symlinking mpicosat.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/cryptominisat5
+[  1%] Built target oracle
+Symlinking cryptominisat.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/cryptominisat5
+Symlinking solvertypesmini.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/cryptominisat5
+[  3%] Built target oracle-bin
+Symlinking dimacsparser.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/cryptominisat5
+Symlinking streambuffer.h to /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/build/include/cryptominisat5
+[  3%] Built target CopyPublicHeaders_cryptominisat5
+[ 63%] Built target cadical
+[ 64%] Built target cadiback
+[ 64%] Linking CXX executable cadiback-cli
+[ 65%] Linking CXX executable assump_fuzz_oracle
+/usr/bin/ld: CMakeFiles/cadiback-cli.dir/main.cpp.o: in function `main':
+main.cpp:(.text.startup+0x3cf): undefined reference to `CadiBack::doit(std::vector<int, std::allocator<int> > const&, int, std::vector<int, std::allocator<int> >&, std::vector<int, std::allocator<int> >&, std::vector<int, std::allocator<int> >&, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >&, long, bool*)'
+collect2: error: ld returned 1 exit status
+gmake[2]: *** [_deps/cadiback-build/CMakeFiles/cadiback-cli.dir/build.make:99: _deps/cadiback-build/cadiback-cli] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:228: _deps/cadiback-build/CMakeFiles/cadiback-cli.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+/usr/bin/ld: CMakeFiles/assump_fuzz_oracle.dir/oracle/assump_fuzz_oracle.cpp.o: in function `main.cold':
+assump_fuzz_oracle.cpp:(.text.unlikely+0xcc): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.unlikely+0x169): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.unlikely+0x27a): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.unlikely+0x282): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.unlikely+0x3bb): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: CMakeFiles/assump_fuzz_oracle.dir/oracle/assump_fuzz_oracle.cpp.o: in function `main':
+assump_fuzz_oracle.cpp:(.text.startup+0x1010): undefined reference to `CaDiCaL::Solver::Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x1053): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x106b): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x108a): undefined reference to `CaDiCaL::Solver::solve()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x110a): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2146): undefined reference to `CaDiCaL::Solver::Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2186): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2199): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x21ce): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x21d8): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x222f): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: CMakeFiles/assump_fuzz_oracle.dir/oracle/assump_fuzz_oracle.cpp.o:assump_fuzz_oracle.cpp:(.text.startup+0x2239): more undefined references to `CaDiCaL::Solver::add(int)' follow
+/usr/bin/ld: CMakeFiles/assump_fuzz_oracle.dir/oracle/assump_fuzz_oracle.cpp.o: in function `main':
+assump_fuzz_oracle.cpp:(.text.startup+0x2aae): undefined reference to `CaDiCaL::Solver::Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2b07): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2b1b): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2b7b): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2b85): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2b97): undefined reference to `CaDiCaL::Solver::solve()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2c83): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2f02): undefined reference to `CaDiCaL::Solver::solve()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x2f23): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3817): undefined reference to `CaDiCaL::Solver::val(int, bool)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3997): undefined reference to `CaDiCaL::Solver::Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x39c6): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x39d9): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x39ea): undefined reference to `CaDiCaL::Solver::solve()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3a01): undefined reference to `CaDiCaL::Solver::Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3a4f): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3a63): undefined reference to `CaDiCaL::Solver::add(int)'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3c9b): undefined reference to `CaDiCaL::Solver::solve()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3f28): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x3f30): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x414b): undefined reference to `CaDiCaL::Solver::~Solver()'
+/usr/bin/ld: assump_fuzz_oracle.cpp:(.text.startup+0x4364): undefined reference to `CaDiCaL::Solver::~Solver()'
+collect2: error: ld returned 1 exit status
+gmake[2]: *** [cmsat5-src/CMakeFiles/assump_fuzz_oracle.dir/build.make:100: cmsat5-src/assump_fuzz_oracle] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:413: cmsat5-src/CMakeFiles/assump_fuzz_oracle.dir/all] Error 2
+[ 96%] Built target cryptominisat5
+gmake: *** [Makefile:136: all] Error 2

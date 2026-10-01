@@ -336,9 +336,25 @@ def build_dimacs(goal: Goal, use_card2bv: bool):
     return dimacs_files, var_maps
 
 
+_BUNDLED_CMS_BIN = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "third_party", "cryptominisat", "build_cms_static", "cryptominisat5",
+)
+
+
+def bundled_cryptominisat_bin() -> str:
+    """LARGEMEM CryptoMiniSat built in third_party/ if present, else cryptominisat5 on PATH.
+
+    The system cryptominisat5 (LARGEMEM=OFF) crashes on multi-GB CNFs.
+    """
+    if os.path.isfile(_BUNDLED_CMS_BIN) and os.access(_BUNDLED_CMS_BIN, os.X_OK):
+        return _BUNDLED_CMS_BIN
+    return "cryptominisat5"
+
+
 def default_sat_solver_bin() -> str:
     """External SAT solver for exported CNFs (override with DIMACS_SOLVER_BIN)."""
-    return os.environ.get("DIMACS_SOLVER_BIN", "minisat")
+    return os.environ.get("DIMACS_SOLVER_BIN") or bundled_cryptominisat_bin()
 
 
 def resolve_sat_solver_binary(solver_bin: Optional[str] = None) -> str:
@@ -396,7 +412,7 @@ def resolve_cryptominisat_binary(cms_bin: str = "cryptominisat5") -> str:
 
 def default_syndrome_sat_solver_bin() -> str:
     """External SAT solver for syndrome-extraction checks (override with SYNDROME_SAT_SOLVER_BIN)."""
-    return os.environ.get("SYNDROME_SAT_SOLVER_BIN", "cryptominisat5")
+    return os.environ.get("SYNDROME_SAT_SOLVER_BIN") or bundled_cryptominisat_bin()
 
 
 def z3_expr_is_unsat(

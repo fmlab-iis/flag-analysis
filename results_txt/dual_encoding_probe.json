@@ -1,0 +1,39 @@
+{
+  "config": "[[5,1,3]]_[1,1,1,1]_T/[[5,1,3]]_[1,1,1,1]_T_lai_d_3_protocol_config.txt",
+  "protocol": "protocols/d_3_lai_protocol.json",
+  "t": 1,
+  "n": 5,
+  "m": 4,
+  "coset_expand_size": 16,
+  "dual_pauli_count_w_le_t": 16,
+  "initial_data_error": false,
+  "n_type0": 1,
+  "results": [
+    {
+      "path_index": 0,
+      "last_instr": "Break",
+      "compare_to_gate": false,
+      "smt_forall": {
+        "status": "unsat",
+        "solve_s": 0.01927161798812449
+      },
+      "dual_z3": {
+        "status": "unsat",
+        "solve_s": 0.006732210051268339,
+        "num_pauli_constraints": 16
+      },
+      "status_match_smt_dual": true,
+      "coset_z3": {
+        "status": "unsat",
+        "solve_s": 0.003967560012824833
+      },
+      "status_match_coset_dual": true,
+      "dual_cnf": {
+        "total_dimacs_vars": 203,
+        "total_clauses": 1438,
+        "num_pauli_constraints": 16,
+        "cnf_path": "/home/bionicle8699/flag_verification/flag-analysis/cnf_out_control_flow_dual/probe_dual/path_000.cnf"
+      }
+    }
+  ]
+}

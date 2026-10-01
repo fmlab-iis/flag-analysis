@@ -1,6 +1,6 @@
 \begin{table}[htbp]
 \centering
-\caption{Experimental results of the control-flow verification (type-0 break-weight; type-1 same measured syndrome + predicted syndrome consistency). Control-flow row: number of SAT counterexample paths found ($0$ if none; \texttt{1 bug}, \texttt{7 bugs}, etc.\ otherwise). Time is total syndrome-extraction runtime (Z3 export + CryptoMiniSat). Peak memory, SAT calls, total SAT time, \#vars, and \#clauses are from the control-flow DIMACS pipeline.}
+\caption{Experimental results of the control-flow verification (type-0 break-weight; type-1 same measured syndrome + predicted syndrome consistency). Control-flow row: number of SAT counterexample paths found ($0$ if none; \texttt{1 bug}, \texttt{7 bugs}, etc.\ otherwise). Peak memory, SAT calls, total SAT time, \#vars, and \#clauses are from the control-flow DIMACS pipeline.}
 \label{tab:experiment-results-control-flow}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{l ccccccccc cccccccccc}
@@ -11,15 +11,13 @@ Code & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[
 Optimization & Low-depth & $[1,1,1,1]^{T}$ & $[2,2]$ & $[2,2]^{T}$ & $[2,2]^{T}$ fix$_2$ & Origin & Low-depth & Low-depth$_2$ & $[1,1,1,1]^{T}$ & Seq. & $[2,2,2,1,1,1]^{T}$ & $[1,1,1,\dots]^{T}$ & $[2,2,2,1,1]^{T}$ & $[1,1,1,1,1,\dots]^{T}$ & Par. flag & Seq. & Par. flag & Seq. \\
 Protocol & [Bha23] & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [LL25] $d{=}3$ & [Bha23] & [Bha23] & [LL25] $d{=}3$ & Chris $d{=}3$ & [LL25] $d{=}5$ & [LL25] $d{=}5$ & [LL25] $d{=}5$ & [LL25] $d{=}5$ & [Du24] $d{=}5$ & Chris $d{=}5$ & [Du24] $d{=}5$ & Chris $d{=}5$ \\
 \midrule
-Control flow & 7 bugs & 0 & 0 & 0 & 0 & 0 & 1 bug & 6 bugs & 0 & 4 bugs & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+Control flow & 7 bugs & 0 & 0 & 0 & 0 & 0 & 1 bug & 6 bugs & 0 & 4 bugs & 1 bug & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 \midrule
-Time (s) & 0.351 & 0.091 & 0.088 & 0.085 & 0.092 & 0.192 & 0.143 & 0.155 & 0.085 & 0.065 & 0.262 & 0.307 & 0.262 & 0.257 & 0.211 & 0.222 & 0.263 & 0.348 \\
-Peak Mem (MB) & 77.7 & 58.4 & 70.8 & 59.0 & 64.5 & 51.1 & 61.4 & 79.7 & 64.2 & 69.3 & 14914.4 & 14916.4 & 3786.0 & 3766.7 & 156.8 & 172.9 & 160.8 & 162.1 \\
-\midrule
+Peak Mem (MB) & 77.7 & 58.4 & 70.8 & 59.0 & 64.5 & 51.1 & 88.0 & 79.7 & 64.2 & 69.3 & 14926.0 & 14931.9 & 3790.6 & 3795.4 & 156.8 & 172.9 & 160.8 & 162.1 \\
 SAT Calls & 13 & 2 & 2 & 2 & 2 & 5 & 4 & 19 & 2 & 4 & 3 & 3 & 3 & 3 & 15 & 15 & 15 & 15 \\
-Total SAT Time (s) & 0.140 & 0.100 & 0.079 & 0.039 & 0.088 & 0.076 & 0.058 & 0.210 & 0.135 & 0.046 & 806.2 & 794.6 & 1215.9 & 1360.6 & 17096.1 & 7609.8 & 49352.4 & 3109.9 \\
-\#Vars & 207--615 & 205--615 & 207--625 & 208--627 & 208--623 & 207--615 & 506--764 & 276--793 & 648--923 & 771--1276 & 6480--5506178 & 6409--5506171 & 5393--1377250 & 5321--1377246 & 4918--11570 & 5039--11760 & 5925--14170 & 4952--11297 \\
-\#Clauses & 2005--4551 & 2182--4563 & 2202--4623 & 2207--4623 & 2207--4623 & 2187--4553 & 3794--5734 & 1999--6317 & 6317--6919 & 5939--10396 & 53375--146548287 & 53020--146548217 & 48159--27335500 & 47631--27335447 & 43363--122318 & 46654--120077 & 49992--114426 & 45073--123213 \\
+Total SAT Time (s) & 0.140 & 0.100 & 0.079 & 0.039 & 0.088 & 0.076 & 0.054 & 0.210 & 0.135 & 0.046 & 15914.6 & 24454.4 & 1733.1 & 2474.7 & 17096.1 & 7609.8 & 49352.4 & 3109.9 \\
+\#Vars & 207--615 & 205--615 & 207--625 & 208--627 & 208--623 & 207--615 & 505--763 & 276--793 & 648--923 & 771--1276 & 6480--5506178 & 6409--5506171 & 5393--1377250 & 5321--1377246 & 4918--11570 & 5039--11760 & 5925--14170 & 4952--11297 \\
+\#Clauses & 2005--4551 & 2182--4563 & 2202--4623 & 2207--4623 & 2207--4623 & 2187--4553 & 3777--5717 & 1999--6317 & 6317--6919 & 5939--10396 & 53375--146548287 & 53020--146548217 & 48159--27335500 & 47631--27335447 & 43363--122318 & 46654--120077 & 49992--114426 & 45073--123213 \\
 \bottomrule
 \end{tabular}
 }%

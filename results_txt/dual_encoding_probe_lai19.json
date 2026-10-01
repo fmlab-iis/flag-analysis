@@ -1,0 +1,34 @@
+{
+  "config": "[[19,1,5]]_[1,1,1,...]_T/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config.txt",
+  "protocol": "protocols/d_5_lai_protocol.json",
+  "t": 2,
+  "n": 19,
+  "m": 18,
+  "coset_expand_size": 262144,
+  "dual_pauli_count_w_le_t": 1597,
+  "initial_data_error": false,
+  "n_type0": 1,
+  "results": [
+    {
+      "path_index": 0,
+      "last_instr": "Break",
+      "compare_to_gate": false,
+      "smt_forall": {
+        "status": "unsat",
+        "solve_s": 8.12059348297771
+      },
+      "dual_z3": {
+        "status": "unsat",
+        "solve_s": 12.163393891998567,
+        "num_pauli_constraints": 1597
+      },
+      "status_match_smt_dual": true,
+      "dual_cnf": {
+        "total_dimacs_vars": 1484,
+        "total_clauses": 13005,
+        "num_pauli_constraints": 1597,
+        "cnf_path": "/home/bionicle8699/flag_verification/flag-analysis/cnf_out_control_flow_dual/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config/path_000.cnf"
+      }
+    }
+  ]
+}

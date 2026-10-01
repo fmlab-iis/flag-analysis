@@ -1,0 +1,229 @@
+[  1%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/contrib/craigtracer.cpp.o
+[  3%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/analyze.cpp.o
+[  3%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/arena.cpp.o
+[  3%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/assume.cpp.o
+[  4%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/averages.cpp.o
+[  6%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/block.cpp.o
+[  6%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/backbone.cpp.o
+[  7%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/checker.cpp.o
+[  7%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/backward.cpp.o
+[  7%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/backtrack.cpp.o
+[  8%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/condition.cpp.o
+[  8%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/compact.cpp.o
+[  9%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/bins.cpp.o
+[ 10%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/constrain.cpp.o
+[ 10%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/clause.cpp.o
+[ 10%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/config.cpp.o
+[ 10%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/ccadical.cpp.o
+[ 11%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/collect.cpp.o
+[ 12%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/contract.cpp.o
+[ 13%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/cover.cpp.o
+[ 13%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/congruence.cpp.o
+[ 14%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/deduplicate.cpp.o
+[ 14%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/definition.cpp.o
+[ 15%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/decide.cpp.o
+[ 16%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/decompose.cpp.o
+[ 17%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/drattracer.cpp.o
+[ 17%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/elim.cpp.o
+[ 18%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/elimfast.cpp.o
+[ 20%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/external_propagate.cpp.o
+[ 21%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/external.cpp.o
+[ 22%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/ema.cpp.o
+[ 22%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/file.cpp.o
+[ 23%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/flip.cpp.o
+[ 25%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/factor.cpp.o
+[ 25%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/format.cpp.o
+[ 25%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/extend.cpp.o
+[ 25%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/idruptracer.cpp.o
+[ 26%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/flags.cpp.o
+[ 26%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/instantiate.cpp.o
+[ 26%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/ipasir.cpp.o
+[ 27%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/internal.cpp.o
+[ 28%] Building C object _deps/cadical-build/CMakeFiles/cadical.dir/src/kitten.c.o
+[ 28%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/frattracer.cpp.o
+[ 29%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/gates.cpp.o
+[ 29%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/limit.cpp.o
+[ 30%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/lidruptracer.cpp.o
+[ 31%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/lookahead.cpp.o
+[ 31%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/lratchecker.cpp.o
+[ 31%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/lucky.cpp.o
+[ 32%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/logging.cpp.o
+[ 34%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/lrattracer.cpp.o
+[ 34%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/occs.cpp.o
+[ 34%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/options.cpp.o
+[ 35%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/minimize.cpp.o
+[ 35%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/profile.cpp.o
+[ 37%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/proof.cpp.o
+[ 37%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/message.cpp.o
+[ 38%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/propagate.cpp.o
+[ 38%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/parse.cpp.o
+[ 40%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/queue.cpp.o
+[ 40%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/phases.cpp.o
+[ 41%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/reap.cpp.o
+[ 42%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/probe.cpp.o
+[ 43%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/report.cpp.o
+[ 43%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/random.cpp.o
+[ 44%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/reduce.cpp.o
+[ 44%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/rephase.cpp.o
+[ 44%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/restore.cpp.o
+[ 45%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/resources.cpp.o
+[ 47%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/restart.cpp.o
+[ 47%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/shrink.cpp.o
+[ 48%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/score.cpp.o
+[ 48%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/signal.cpp.o
+[ 48%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/solver.cpp.o
+[ 50%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/stable.cpp.o
+[ 50%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/solution.cpp.o
+[ 52%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/stats.cpp.o
+[ 52%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/terminal.cpp.o
+[ 53%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/ternary.cpp.o
+[ 53%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/tier.cpp.o
+[ 54%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/sweep.cpp.o
+[ 54%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/transred.cpp.o
+[ 54%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/subsume.cpp.o
+[ 55%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/var.cpp.o
+[ 55%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/veripbtracer.cpp.o
+[ 56%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/unstable.cpp.o
+[ 57%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/vivify.cpp.o
+[ 57%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/util.cpp.o
+[ 57%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/warmup.cpp.o
+[ 58%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/walk_full_occs.cpp.o
+[ 61%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/watch.cpp.o
+[ 61%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/version.cpp.o
+[ 62%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/src/walk.cpp.o
+[ 62%] Building CXX object _deps/cadical-build/CMakeFiles/cadical.dir/cadical_gitsha1.cpp.o
+[ 63%] Linking CXX shared library libcadical.so
+[ 63%] Built target cadical
+[ 63%] Building CXX object _deps/cadiback-build/CMakeFiles/cadiback.dir/cadiback.cpp.o
+[ 64%] Linking CXX shared library libcadiback.so
+[ 64%] Built target cadiback
+[ 65%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/cnf.cpp.o
+[ 65%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/clausecleaner.cpp.o
+[ 65%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/probe.cpp.o
+[ 67%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/occsimplifier.cpp.o
+[ 68%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/oracle_use.cpp.o
+[ 68%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/propengine.cpp.o
+[ 68%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/backbone.cpp.o
+[ 69%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/varreplacer.cpp.o
+[ 70%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/distillerlong.cpp.o
+[ 71%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/distillerlitrem.cpp.o
+[ 71%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/gatefinder.cpp.o
+[ 73%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/sccfinder.cpp.o
+[ 73%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/distillerlongwithimpl.cpp.o
+[ 73%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/subsumestrengthen.cpp.o
+[ 75%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/solverconf.cpp.o
+[ 76%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/solutionextender.cpp.o
+[ 76%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/distillerbin.cpp.o
+[ 77%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/clauseallocator.cpp.o
+[ 77%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/completedetachreattacher.cpp.o
+[ 78%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/str_impl_w_impl.cpp.o
+[ 78%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/subsumeimplicit.cpp.o
+[ 78%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/searcher.cpp.o
+[ 80%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/solver.cpp.o
+[ 80%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/hyperengine.cpp.o
+[ 81%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/datasync.cpp.o
+[ 82%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/intree.cpp.o
+[ 83%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/searchstats.cpp.o
+[ 83%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/reducedb.cpp.o
+[ 84%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/cardfinder.cpp.o
+[ 84%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/sls.cpp.o
+[ 84%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/xorfinder.cpp.o
+[ 85%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/yalsat_cms.cpp.o
+[ 85%] Building C object cmsat5-src/CMakeFiles/cryptominisat5.dir/yals/yals.c.o
+[ 87%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/cryptominisat_c.cpp.o
+[ 87%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/vardistgen.cpp.o
+[ 89%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/sqlstats.cpp.o
+[ 89%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/lucky.cpp.o
+[ 89%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/packedrow.cpp.o
+[ 89%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/ccnr_oracle.cpp.o
+[ 91%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/ccnr_oracle_pre.cpp.o
+[ 91%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/get_clause_query.cpp.o
+[ 92%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/gaussian.cpp.o
+[ 92%] Building C object cmsat5-src/CMakeFiles/cryptominisat5.dir/mpicosat/mpicosat.c.o
+[ 92%] Building C object cmsat5-src/CMakeFiles/cryptominisat5.dir/mpicosat/version.c.o
+[ 93%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/matrixfinder.cpp.o
+[ 94%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/oracle/oracle.cpp.o
+[ 95%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/GitSHA1.cpp.o
+[ 96%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/signalcode.cpp.o
+[ 96%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5.dir/cryptominisat.cpp.o
+In file included from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/signalcode.cpp:25:
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/cryptominisat.h:221:33: warning: declaration of ‘wallclock_time_started’ shadows a global declaration [-Wshadow]
+  221 |         void print_stats(double wallclock_time_started = 0) const; //print solving stats. Call after solve()/simplify()
+      |                          ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/signalcode.cpp:23:
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/signalcode.h:34:30: note: shadowed declaration is here
+   34 |     extern DLL_PUBLIC double wallclock_time_started;
+      |                              ^~~~~~~~~~~~~~~~~~~~~~
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp: In member function ‘bool CMSat::Searcher::try_shrink_block(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t, CMSat::Lit&)’:
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp:601:10: warning: declaration of ‘ok’ shadows a member of ‘CMSat::Searcher’ [-Wshadow]
+  601 |     bool ok = true;
+      |          ^~
+In file included from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/propengine.h:42,
+                 from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.h:26,
+                 from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp:23:
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/cnf.h:92:10: note: shadowed declaration is here
+   92 |     bool ok = true; //If FALSE, state of CNF is UNSAT
+      |          ^~
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp: In member function ‘void CMSat::Searcher::bump_reason_side_lit(CMSat::Lit, uint32_t)’:
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp:1094:67: warning: declaration of ‘depth’ shadows a member of ‘CMSat::Searcher’ [-Wshadow]
+ 1094 | void Searcher::bump_reason_side_lit(const Lit lit, const uint32_t depth)
+      |                                                    ~~~~~~~~~~~~~~~^~~~~
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/cnf.h:102:22: note: shadowed declaration is here
+  102 |     vector<uint32_t> depth; //for ancestors in intree probing
+      |                      ^~~~~
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp: In member function ‘void CMSat::Searcher::bump_reason_side_lits()’:
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/searcher.cpp:1147:20: warning: declaration of ‘depth’ shadows a member of ‘CMSat::Searcher’ [-Wshadow]
+ 1147 |     const uint32_t depth = conf.bump_reason_depth
+      |                    ^~~~~
+/home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/cnf.h:102:22: note: shadowed declaration is here
+  102 |     vector<uint32_t> depth; //for ancestors in intree probing
+      |                      ^~~~~
+In file included from /usr/include/c++/13/array:43,
+                 from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/oracle/oracle.h:25,
+                 from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/oracle/oracle.cpp:23:
+In static member function ‘static constexpr _Up* std::__copy_move<_IsMove, true, std::random_access_iterator_tag>::__copy_m(_Tp*, _Tp*, _Up*) [with _Tp = const int; _Up = int; bool _IsMove = false]’,
+    inlined from ‘constexpr _OI std::__copy_move_a2(_II, _II, _OI) [with bool _IsMove = false; _II = const int*; _OI = int*]’ at /usr/include/c++/13/bits/stl_algobase.h:506:30,
+    inlined from ‘constexpr _OI std::__copy_move_a1(_II, _II, _OI) [with bool _IsMove = false; _II = const int*; _OI = int*]’ at /usr/include/c++/13/bits/stl_algobase.h:533:42,
+    inlined from ‘constexpr _OI std::__copy_move_a(_II, _II, _OI) [with bool _IsMove = false; _II = __gnu_cxx::__normal_iterator<const int*, vector<int> >; _OI = int*]’ at /usr/include/c++/13/bits/stl_algobase.h:540:31,
+    inlined from ‘constexpr _OI std::copy(_II, _II, _OI) [with _II = __gnu_cxx::__normal_iterator<const int*, vector<int> >; _OI = int*]’ at /usr/include/c++/13/bits/stl_algobase.h:633:7,
+    inlined from ‘static _ForwardIterator std::__uninitialized_copy<true>::__uninit_copy(_InputIterator, _InputIterator, _ForwardIterator) [with _InputIterator = __gnu_cxx::__normal_iterator<const int*, std::vector<int> >; _ForwardIterator = int*]’ at /usr/include/c++/13/bits/stl_uninitialized.h:147:27,
+    inlined from ‘_ForwardIterator std::uninitialized_copy(_InputIterator, _InputIterator, _ForwardIterator) [with _InputIterator = __gnu_cxx::__normal_iterator<const int*, vector<int> >; _ForwardIterator = int*]’ at /usr/include/c++/13/bits/stl_uninitialized.h:185:15,
+    inlined from ‘constexpr _ForwardIterator std::__uninitialized_copy_a(_InputIterator, _InputIterator, _ForwardIterator, allocator<_Tp>&) [with _InputIterator = __gnu_cxx::__normal_iterator<const int*, vector<int> >; _ForwardIterator = int*; _Tp = int]’ at /usr/include/c++/13/bits/stl_uninitialized.h:373:37,
+    inlined from ‘constexpr std::vector<_Tp, _Alloc>::vector(const std::vector<_Tp, _Alloc>&) [with _Tp = int; _Alloc = std::allocator<int>]’ at /usr/include/c++/13/bits/stl_vector.h:606:31,
+    inlined from ‘bool sspp::oracle::Oracle::AddClauseIfNeededAndStr(std::vector<int>, bool)’ at /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/oracle/oracle.cpp:1236:22:
+/usr/include/c++/13/bits/stl_algobase.h:437:30: warning: ‘void* __builtin_memmove(void*, const void*, long unsigned int)’ writing between 5 and 9223372036854775807 bytes into a region of size 4 overflows the destination [-Wstringop-overflow=]
+  437 |             __builtin_memmove(__result, __first, sizeof(_Tp) * _Num);
+      |             ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/c++/13/bits/c++allocator.h:33,
+                 from /usr/include/c++/13/bits/allocator.h:46,
+                 from /usr/include/c++/13/string:43,
+                 from /usr/include/c++/13/bits/locale_classes.h:40,
+                 from /usr/include/c++/13/bits/ios_base.h:41,
+                 from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/ostream:40,
+                 from /usr/include/c++/13/iostream:41,
+                 from /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/oracle/oracle.h:26:
+In member function ‘_Tp* std::__new_allocator<_Tp>::allocate(size_type, const void*) [with _Tp = int]’,
+    inlined from ‘constexpr _Tp* std::allocator< <template-parameter-1-1> >::allocate(std::size_t) [with _Tp = int]’ at /usr/include/c++/13/bits/allocator.h:198:40,
+    inlined from ‘static constexpr _Tp* std::allocator_traits<std::allocator<_CharT> >::allocate(allocator_type&, size_type) [with _Tp = int]’ at /usr/include/c++/13/bits/alloc_traits.h:482:28,
+    inlined from ‘constexpr std::_Vector_base<_Tp, _Alloc>::pointer std::_Vector_base<_Tp, _Alloc>::_M_allocate(std::size_t) [with _Tp = int; _Alloc = std::allocator<int>]’ at /usr/include/c++/13/bits/stl_vector.h:381:33,
+    inlined from ‘constexpr std::_Vector_base<_Tp, _Alloc>::pointer std::_Vector_base<_Tp, _Alloc>::_M_allocate(std::size_t) [with _Tp = int; _Alloc = std::allocator<int>]’ at /usr/include/c++/13/bits/stl_vector.h:378:7,
+    inlined from ‘constexpr void std::_Vector_base<_Tp, _Alloc>::_M_create_storage(std::size_t) [with _Tp = int; _Alloc = std::allocator<int>]’ at /usr/include/c++/13/bits/stl_vector.h:398:44,
+    inlined from ‘constexpr std::_Vector_base<_Tp, _Alloc>::_Vector_base(std::size_t, const allocator_type&) [with _Tp = int; _Alloc = std::allocator<int>]’ at /usr/include/c++/13/bits/stl_vector.h:335:26,
+    inlined from ‘constexpr std::vector<_Tp, _Alloc>::vector(const std::vector<_Tp, _Alloc>&) [with _Tp = int; _Alloc = std::allocator<int>]’ at /usr/include/c++/13/bits/stl_vector.h:603:61,
+    inlined from ‘bool sspp::oracle::Oracle::AddClauseIfNeededAndStr(std::vector<int>, bool)’ at /home/bionicle8699/flag_verification/flag-analysis/third_party/cryptominisat/src/oracle/oracle.cpp:1236:22:
+/usr/include/c++/13/bits/new_allocator.h:151:55: note: destination object of size [1, 4] allocated by ‘operator new’
+  151 |         return static_cast<_Tp*>(_GLIBCXX_OPERATOR_NEW(__n * sizeof(_Tp)));
+      |                                                       ^
+[ 96%] Linking CXX shared library ../lib/libcryptominisat5.so
+[ 96%] Built target cryptominisat5
+[ 97%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/main.cpp.o
+[ 98%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/main_common.cpp.o
+[ 98%] Building CXX object cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/main_exe.cpp.o
+[100%] Linking CXX executable ../cryptominisat5
+/usr/bin/ld: ../lib/libcryptominisat5.so.5.14: undefined reference to `CadiBack::doit(std::vector<int, std::allocator<int> > const&, int, std::vector<int, std::allocator<int> >&, std::vector<int, std::allocator<int> >&, std::vector<int, std::allocator<int> >&, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >&, long, bool*)'
+collect2: error: ld returned 1 exit status
+gmake[3]: *** [cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/build.make:133: cryptominisat5] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:307: cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:314: cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/rule] Error 2
+gmake: *** [Makefile:248: cryptominisat5-bin] Error 2

@@ -49,7 +49,7 @@ from protocol import *
 from qiskit import QuantumCircuit
 
 
-from z3 import BoolVal, Xor, Bool,simplify,substitute, And, Not,Or, PbLe, AtMost,ForAll, Implies, Exists, PbGe, AtLeast
+from z3 import BoolVal, Xor, Bool,simplify,substitute, And, Not,Or, PbLe, PbEq, AtMost,ForAll, Implies, Exists, PbGe, AtLeast
 
 from z3 import Solver, unsat, sat, unknown, is_true
 
@@ -844,7 +844,8 @@ def symbolic_execution_of_state(qasm_path: str,
                                 fault_inject : bool = True,
                                 fault_inject_on_anc_and_flag : bool = False,
                                 fault_mode = "either",
-                                fault_kind = None 
+                                fault_kind = None,
+                                initial_data_error: bool = False,
                                 ):
     
     qc = load_qasm(qasm_path)
@@ -853,11 +854,14 @@ def symbolic_execution_of_state(qasm_path: str,
     groups = detect_qubit_groups(qc)
     group_idxs = {g: groups.get(g, []) for g in ("data","ancX","ancZ","flagX","flagZ")}
 
-    
-    
-    for i in groups["data"]: 
-        state.qubits[i].x = input_state.qubits[i].x
-        state.qubits[i].z = input_state.qubits[i].z
+    if initial_data_error:
+        for i in groups["data"]:
+            state.qubits[i].x = Bool(f"r_{round}_dataInit_{i}_x")
+            state.qubits[i].z = Bool(f"r_{round}_dataInit_{i}_z")
+    else:
+        for i in groups["data"]:
+            state.qubits[i].x = input_state.qubits[i].x
+            state.qubits[i].z = input_state.qubits[i].z
     ###get all the  gate indices
     if fault_gate is None:
         fault_gate_indices = []
@@ -885,6 +889,19 @@ def symbolic_execution_of_state(qasm_path: str,
     
     snapshots = []
     sites_info = []
+
+    if initial_data_error:
+        for i in groups["data"]:
+            vx = state.qubits[i].x
+            vz = state.qubits[i].z
+            sites_info.append({
+                "gate_index": -1,
+                "gate_name": f"r_{round}_dataInit",
+                "qubits": (i,),
+                "vars": {"fx": vx, "fz": vz},
+                "act": Or(vx, vz),
+                "fault_mode": "init",
+            })
 
     ###run gates and inject faults if needed
     for i, (instr, qargs, _) in enumerate(qc.data):
@@ -1451,6 +1468,36 @@ def control_flow_export_dimacs(
     }
 
 
+def break_acts_from_path(path):
+    """Split path site acts into initial-data vs circuit-fault acts."""
+    data_acts = []
+    gate_fault_acts = []
+    for step in path:
+        for info in step.get("site_info") or []:
+            act = info.get("act")
+            if act is None:
+                continue
+            if info.get("fault_mode") == "init":
+                data_acts.append(act)
+            else:
+                gate_fault_acts.append(act)
+    return data_acts, gate_fault_acts
+
+
+def config_flag_enabled(config: dict, key: str, default: bool = False) -> bool:
+    """Parse config truthy values: bool/int or '1'/'true'/'yes'/'on'."""
+    if not config or key not in config:
+        return default
+    v = config[key]
+    if isinstance(v, bool):
+        return v
+    if isinstance(v, (int, float)):
+        return bool(v)
+    if isinstance(v, str):
+        return v.strip().lower() in ("1", "true", "yes", "on")
+    return default
+
+
 def break_weight_build_goal(
     at_most_t_faults,
     condition,
@@ -1458,14 +1505,19 @@ def break_weight_build_goal(
     stab_txt_path: str,
     t: int,
     gsel_prefix: str = "bw_gsel",
+    *,
+    gate_fault_acts=None,
+    compare_residual_to_gate_faults: bool = False,
 ):
     """
     Break-path counterexample goal (prove UNSAT):
-      path_conditions ∧ PbLe(fault_acts, t)
-      ∧ ∀ gsel : stab_equiv_weight(E, gsel) > t
+      path_conditions ∧ PbLe(budget_acts, t)
+      ∧ ∀ gsel : stab_equiv_weight(E, gsel) > threshold
 
-    The universal quantifier over gsel is expanded to 2^m disjunctive clauses
-    so the goal is quantifier-free and CNF-exportable.
+    threshold:
+      - legacy: fixed t  (PbGe(weight, t+1))
+      - compare_residual_to_gate_faults: (# circuit faults)
+        encoded as ∀k∈0..t: (Σ gate_faults = k) ⇒ wt ≥ k+1
     """
     E_x = [dq.x for dq in data_qubits]
     E_z = [dq.z for dq in data_qubits]
@@ -1473,6 +1525,7 @@ def break_weight_build_goal(
 
     from itertools import product
 
+    gate_fault_acts = list(gate_fault_acts or [])
     forall_constraints = []
     for bits in product((False, True), repeat=len(gsel)):
         subs = [(gsel[j], BoolVal(bits[j])) for j in range(len(gsel))]
@@ -1480,10 +1533,22 @@ def break_weight_build_goal(
             Or(simplify(substitute(Epx[i], subs)), simplify(substitute(Epz[i], subs)))
             for i in range(len(Epx))
         ]
-        # Require weight > t for EVERY stabilizer coset (min weight > t).
-        # Do NOT use Or(Not(pattern_match(gsel)), ...): with free gsel that
-        # encodes Exists gsel instead of ForAll gsel.
-        forall_constraints.append(PbGe([(bi, 1) for bi in b_fixed], t + 1))
+        weight_lits = [(bi, 1) for bi in b_fixed]
+        if compare_residual_to_gate_faults:
+            # Require wt(E_coset) > (# circuit faults) for every coset.
+            if not gate_fault_acts:
+                forall_constraints.append(PbGe(weight_lits, 1))
+            else:
+                fault_lits = [(f, 1) for f in gate_fault_acts]
+                for k in range(t + 1):
+                    forall_constraints.append(
+                        Implies(PbEq(fault_lits, k), PbGe(weight_lits, k + 1))
+                    )
+        else:
+            # Require weight > t for EVERY stabilizer coset (min weight > t).
+            # Do NOT use Or(Not(pattern_match(gsel)), ...): with free gsel that
+            # encodes Exists gsel instead of ForAll gsel.
+            forall_constraints.append(PbGe(weight_lits, t + 1))
 
     g = Goal()
     if condition:
@@ -1508,6 +1573,9 @@ def break_weight_export_dimacs(
     path_tag: str,
     gsel_prefix: Optional[str] = None,
     use_card2bv: bool = True,
+    *,
+    gate_fault_acts=None,
+    compare_residual_to_gate_faults: bool = False,
 ):
     """Build Break-path goal, convert to DIMACS, write path_tag.cnf + sidecars."""
     cnf_dir = Path(cnf_dir)
@@ -1516,6 +1584,8 @@ def break_weight_export_dimacs(
 
     g, gsel = break_weight_build_goal(
         at_most_t_faults, condition, data_qubits, stab_txt_path, t, gsel_prefix=prefix,
+        gate_fault_acts=gate_fault_acts,
+        compare_residual_to_gate_faults=compare_residual_to_gate_faults,
     )
 
     old_cwd = os.getcwd()
@@ -1579,6 +1649,7 @@ def break_weight_export_dimacs(
         "total_dimacs_vars": total_dimacs_vars,
         "stab_txt_path": str(stab_txt_path),
         "num_subgoals": len(cnf_files),
+        "compare_residual_to_gate_faults": bool(compare_residual_to_gate_faults),
     }
     meta_path = cnf_dir / f"{path_tag}_meta.json"
     meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
@@ -1590,6 +1661,183 @@ def break_weight_export_dimacs(
         "total_dimacs_vars": total_dimacs_vars,
         "num_fault_vars": len(fault_var_names),
         "sat_query_count": len(cnf_files),
+    }
+
+
+def break_weight_build_goal_dual(
+    at_most_t_faults,
+    condition,
+    data_qubits,
+    stab_txt_path: str,
+    t: int,
+    gsel_prefix: str = "bw_gsel",
+    *,
+    log_txt_path: Optional[str] = None,
+    gate_fault_acts=None,
+    compare_residual_to_gate_faults: bool = False,
+):
+    """Break goal via dual Pauli enum + commute membership (stab ∪ logical).
+
+    E⊕P ∉ ⟨S⟩ iff anticommutes with some stabilizer or logical (user criterion).
+    gsel_prefix ignored (API parity). Returns (goal, []).
+    """
+    from stab_dual_encoding import forall_min_weight_constraints
+
+    del gsel_prefix
+    E_x = [dq.x for dq in data_qubits]
+    E_z = [dq.z for dq in data_qubits]
+    gate_fault_acts = list(gate_fault_acts or [])
+    n = len(E_x)
+    log_path = log_txt_path
+
+    def _cs(min_w: int):
+        return forall_min_weight_constraints(
+            E_x, E_z, stab_txt_path, min_w, log_txt_path=log_path,
+        )
+
+    forall_constraints = []
+    num_pauli_constraints = 0
+    if compare_residual_to_gate_faults:
+        if not gate_fault_acts:
+            cs = _cs(1)
+            forall_constraints.extend(cs)
+            num_pauli_constraints += len(cs)
+        else:
+            fault_lits = [(f, 1) for f in gate_fault_acts]
+            for k in range(t + 1):
+                cs = _cs(k + 1)
+                num_pauli_constraints += len(cs)
+                if cs:
+                    forall_constraints.append(Implies(PbEq(fault_lits, k), And(*cs)))
+                else:
+                    forall_constraints.append(Implies(PbEq(fault_lits, k), BoolVal(True)))
+    else:
+        cs = _cs(t + 1)
+        forall_constraints.extend(cs)
+        num_pauli_constraints = len(cs)
+
+    g = Goal()
+    if condition:
+        g.add(And(*condition))
+    if at_most_t_faults:
+        constraints = at_most_t_faults if isinstance(at_most_t_faults, list) else [at_most_t_faults]
+        for c in constraints:
+            g.add(c)
+    for c in forall_constraints:
+        g.add(c)
+    g._dual_num_pauli_constraints = num_pauli_constraints  # type: ignore[attr-defined]
+    g._dual_n = n  # type: ignore[attr-defined]
+    return g, []
+
+
+def break_weight_export_dimacs_dual(
+    vars,
+    at_most_t_faults,
+    condition,
+    data_qubits,
+    stab_txt_path: str,
+    t: int,
+    cnf_dir,
+    path_tag: str,
+    gsel_prefix: Optional[str] = None,
+    use_card2bv: bool = True,
+    *,
+    log_txt_path: Optional[str] = None,
+    gate_fault_acts=None,
+    compare_residual_to_gate_faults: bool = False,
+):
+    """Export Break goal with dual stab encoding; does not overwrite coset CNFs."""
+    cnf_dir = Path(cnf_dir).resolve()
+    cnf_dir.mkdir(parents=True, exist_ok=True)
+    prefix = gsel_prefix or f"{path_tag}_gsel"
+
+    g, gsel = break_weight_build_goal_dual(
+        at_most_t_faults, condition, data_qubits, stab_txt_path, t, gsel_prefix=prefix,
+        log_txt_path=log_txt_path,
+        gate_fault_acts=gate_fault_acts,
+        compare_residual_to_gate_faults=compare_residual_to_gate_faults,
+    )
+    num_pauli = int(getattr(g, "_dual_num_pauli_constraints", 0))
+
+    old_cwd = os.getcwd()
+    os.chdir(cnf_dir)
+    temp_files = []
+    cnf_files = []
+    solve_vmap = {}
+    merged_cnf = None
+    try:
+        cnf_files, var_maps = build_dimacs(g, use_card2bv)
+        if not cnf_files:
+            raise RuntimeError(f"No CNF subgoals produced for {path_tag}")
+
+        solve_cnf = cnf_files[0]
+        solve_vmap = var_maps[0]
+        if len(cnf_files) > 1:
+            merged_cnf = f"{path_tag}_merged.cnf"
+            solve_vmap = merge_dimacs_cnfs(cnf_files, merged_cnf)
+            solve_cnf = merged_cnf
+
+        final_cnf = cnf_dir / f"{path_tag}.cnf"
+        solve_path = Path(solve_cnf)
+        if not solve_path.is_absolute():
+            solve_path = cnf_dir / solve_path
+        if solve_path.resolve() != final_cnf.resolve():
+            shutil.copy2(solve_path, final_cnf)
+
+        temp_files = list(cnf_files)
+        if merged_cnf and merged_cnf not in temp_files:
+            temp_files.append(merged_cnf)
+    finally:
+        os.chdir(old_cwd)
+        for p in temp_files:
+            try:
+                fp = cnf_dir / p if not os.path.isabs(p) else Path(p)
+                if fp.exists() and fp.name != f"{path_tag}.cnf":
+                    fp.unlink()
+            except OSError:
+                pass
+
+    final_cnf = cnf_dir / f"{path_tag}.cnf"
+    total_clauses, total_dimacs_vars = _count_cnf_stats(str(final_cnf))
+
+    var_map_path = cnf_dir / f"{path_tag}_var_map.json"
+    var_map_path.write_text(
+        json.dumps({str(k): _z3_bool_name(v) for k, v in solve_vmap.items()}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    fault_var_names = sorted({_z3_bool_name(v) for v in vars})
+    gsel_var_names = [_z3_bool_name(v) for v in gsel]
+    meta = {
+        "path_tag": path_tag,
+        "witness_mode": "break",
+        "stab_encoding": "dual_pauli",
+        "dual_membership": "commute_stab_and_logical",
+        "num_pauli_constraints": num_pauli,
+        "fault_var_names": fault_var_names,
+        "gsel_var_names": gsel_var_names,
+        "gen_syn_var_names": [],
+        "num_fault_vars": len(fault_var_names),
+        "t": t,
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "stab_txt_path": str(stab_txt_path),
+        "log_txt_path": str(log_txt_path) if log_txt_path else None,
+        "num_subgoals": len(cnf_files),
+        "compare_residual_to_gate_faults": bool(compare_residual_to_gate_faults),
+    }
+    meta_path = cnf_dir / f"{path_tag}_meta.json"
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+
+    return {
+        "path_tag": path_tag,
+        "cnf_path": str(final_cnf),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "num_fault_vars": len(fault_var_names),
+        "sat_query_count": len(cnf_files),
+        "stab_encoding": "dual_pauli",
+        "num_pauli_constraints": num_pauli,
     }
 
 
@@ -3819,6 +4067,144 @@ def flag_raised_export_dimacs(
     }
 
 
+def flag_raised_build_goal_dual(
+    E_x,
+    E_z,
+    F,
+    acts,
+    stab_txt_path: str,
+    min_weight: int,
+    fault_w: int,
+    gsel_prefix: str = "fr_gsel",
+    *,
+    log_txt_path: Optional[str] = None,
+):
+    """Flag-raised goal via dual Pauli enum + commute membership (stab ∪ logical)."""
+    from stab_dual_encoding import forall_min_weight_constraints
+
+    del gsel_prefix
+    cs = forall_min_weight_constraints(
+        E_x, E_z, stab_txt_path, min_weight, log_txt_path=log_txt_path,
+    )
+    g = Goal()
+    for c in cs:
+        g.add(c)
+    if F:
+        g.add(Not(Or(*F)))
+    else:
+        g.add(BoolVal(True))
+    g.add(AtMost(*acts, fault_w))
+    g._dual_num_pauli_constraints = len(cs)  # type: ignore[attr-defined]
+    return g, []
+
+
+def flag_raised_export_dimacs_dual(
+    E_x,
+    E_z,
+    F,
+    acts,
+    fault_var_names: List[str],
+    stab_txt_path: str,
+    min_weight: int,
+    fault_w: int,
+    cnf_dir,
+    path_tag: str,
+    gsel_prefix: Optional[str] = None,
+    use_card2bv: bool = True,
+    *,
+    log_txt_path: Optional[str] = None,
+):
+    """Export flag-raised goal with dual stab encoding."""
+    cnf_dir = Path(cnf_dir).resolve()
+    cnf_dir.mkdir(parents=True, exist_ok=True)
+    prefix = gsel_prefix or f"{path_tag}_gsel"
+
+    g, gsel = flag_raised_build_goal_dual(
+        E_x, E_z, F, acts, stab_txt_path, min_weight, fault_w, gsel_prefix=prefix,
+        log_txt_path=log_txt_path,
+    )
+    num_pauli = int(getattr(g, "_dual_num_pauli_constraints", 0))
+    del gsel
+
+    old_cwd = os.getcwd()
+    os.chdir(cnf_dir)
+    temp_files = []
+    cnf_files = []
+    solve_vmap = {}
+    merged_cnf = None
+    try:
+        cnf_files, var_maps = build_dimacs(g, use_card2bv)
+        if not cnf_files:
+            raise RuntimeError(f"No CNF subgoals produced for {path_tag}")
+
+        solve_cnf = cnf_files[0]
+        solve_vmap = var_maps[0]
+        if len(cnf_files) > 1:
+            merged_cnf = f"{path_tag}_merged.cnf"
+            solve_vmap = merge_dimacs_cnfs(cnf_files, merged_cnf)
+            solve_cnf = merged_cnf
+
+        final_cnf = cnf_dir / f"{path_tag}.cnf"
+        solve_path = Path(solve_cnf)
+        if not solve_path.is_absolute():
+            solve_path = cnf_dir / solve_path
+        if solve_path.resolve() != final_cnf.resolve():
+            shutil.copy2(solve_path, final_cnf)
+
+        temp_files = list(cnf_files)
+        if merged_cnf and merged_cnf not in temp_files:
+            temp_files.append(merged_cnf)
+    finally:
+        os.chdir(old_cwd)
+        for p in temp_files:
+            try:
+                fp = cnf_dir / p if not os.path.isabs(p) else Path(p)
+                if fp.exists() and fp.name != f"{path_tag}.cnf":
+                    fp.unlink()
+            except OSError:
+                pass
+
+    final_cnf = cnf_dir / f"{path_tag}.cnf"
+    total_clauses, total_dimacs_vars = _count_cnf_stats(str(final_cnf))
+
+    var_map_path = cnf_dir / f"{path_tag}_var_map.json"
+    var_map_path.write_text(
+        json.dumps({str(k): _z3_bool_name(v) for k, v in solve_vmap.items()}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    meta = {
+        "path_tag": path_tag,
+        "witness_mode": "flag_raised",
+        "verify_pipeline": "flag_raised",
+        "stab_encoding": "dual_pauli",
+        "dual_membership": "commute_stab_and_logical",
+        "num_pauli_constraints": num_pauli,
+        "fault_var_names": fault_var_names,
+        "num_fault_vars": len(fault_var_names),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "stab_txt_path": str(stab_txt_path),
+        "log_txt_path": str(log_txt_path) if log_txt_path else None,
+        "num_subgoals": len(cnf_files),
+        "min_weight": min_weight,
+        "fault_w": fault_w,
+    }
+    meta_path = cnf_dir / f"{path_tag}_meta.json"
+    meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
+
+    return {
+        "path_tag": path_tag,
+        "cnf_path": str(final_cnf),
+        "total_clauses": total_clauses,
+        "total_dimacs_vars": total_dimacs_vars,
+        "num_fault_vars": len(fault_var_names),
+        "sat_query_count": len(cnf_files),
+        "stab_encoding": "dual_pauli",
+        "num_pauli_constraints": num_pauli,
+    }
+
+
 def flag_raised_solve_with_cryptominisat(
     E_x,
     E_z,
@@ -3829,6 +4215,7 @@ def flag_raised_solve_with_cryptominisat(
     min_weight: int,
     fault_w: int,
     *,
+    log_txt_path: Optional[str] = None,
     cms_bin: str | None = None,
     cms_extra_args: list | None = None,
     use_card2bv: bool = True,
@@ -3838,8 +4225,37 @@ def flag_raised_solve_with_cryptominisat(
 ) -> Tuple[str, Optional[Dict[str, Any]], Dict[str, Any]]:
     """Export flag-raised goal to DIMACS and solve with external SAT solver."""
     import tempfile
+    import os as _os
 
     path_tag = "flag_raised"
+    encoding = (_os.environ.get("STAB_ENCODING") or "dual").strip().lower()
+    if encoding != "coset":
+        with tempfile.TemporaryDirectory(prefix="flag_raised_solve_") as td:
+            flag_raised_export_dimacs_dual(
+                E_x,
+                E_z,
+                F,
+                acts,
+                fault_var_names,
+                stab_txt_path,
+                min_weight,
+                fault_w,
+                td,
+                path_tag,
+                use_card2bv=use_card2bv,
+                log_txt_path=log_txt_path,
+            )
+            st, counterexample, stats = uniqueness_solve_from_export(
+                td,
+                path_tag,
+                cms_bin=cms_bin,
+                cms_extra_args=cms_extra_args,
+                timeout_s=timeout_s,
+                cms_retries=cms_retries,
+                verbose=verbose,
+            )
+        return st, counterexample, stats
+
     with tempfile.TemporaryDirectory(prefix="flag_raised_solve_") as td:
         flag_raised_export_dimacs(
             E_x,
@@ -3876,6 +4292,7 @@ def check_flag_raised(
     w: Optional[int] = None,
     return_stats: bool = False,
     cms_bin: str | None = None,
+    log_txt_path: Optional[str] = None,
 ):
     # w: max fault sites; flag must raise when stabilizer error weight > w (i.e. weight >= w+1).
     fault_w = w if w is not None else t
@@ -3928,6 +4345,7 @@ def check_flag_raised(
         stab_txt_path,
         min_weight,
         fault_w,
+        log_txt_path=log_txt_path,
         cms_bin=cms_bin or default_syndrome_sat_solver_bin(),
         verbose=not _QUIET,
     )

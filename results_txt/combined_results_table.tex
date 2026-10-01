@@ -1,0 +1,98 @@
+\begin{table}[!htbp]
+\centering
+
+% ==================== PART 1 ====================
+\scalebox{0.85}{% Applies the exact same scaling factor to both tables
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l ccccccccc}
+\toprule
+ \multicolumn{10}{c}{\textbf{Protocol}} \\
+\midrule
+Code & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[5,1,3]]$ & $[[7,1,3]]$ & $[[7,1,3]]$ & $[[19,1,5]]$ \\
+Optimization & Low-depth & $[1,1,1,1]^{T}$ & $[2,2]$ & $[2,2]^{T}$ & $[2,2]^{T}$ fix$_2$ & Origin & Low-depth & Low-depth$_2$ & $[2,2,2,1,1,1]^{T}$ \\
+Protocol & [Bha23] & [LL25] & [LL25]  & [LL25]  & [LL25] & [RC18]  & [Bha23] & [Bha23] & [LL25] \\
+Total circuits & 14 & 2 & 2 & 2 & 2 & 6 & 4 & 14 & 2 \\
+Total paths & 13 & 2 & 2 & 2 & 2 & 5 & 4 & 19 & 4 \\
+\midrule
+\multicolumn{10}{c}{\textbf{Protocol Verification}} \\
+\midrule
+Syndrome extraction bugs (circuit) & 0 & 0 & 2 & 2 & 0 & 0 & 0 & 0 & 0 \\
+Control flow bugs (path) & 7 & 0 & 0 & 0 & 0 & 0 & 2 & 6 & 1 \\
+Flag bugs (circuit) & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+\midrule
+\multicolumn{10}{l}{\textit{Stim}} \\
+Stim Runtime (s) & 0.607 & 0.085 & 0.088 & 0.087 & 0.088 & 0.203 & 0.163 & 0.548 & 0.159 \\
+Stim Peak Mem (MB) & 219.5 & 228.2 & 197.8 & 194.9 & 206.4 & 220.3 & 193.1 & 218.6 & 200.1 \\
+\midrule
+\multicolumn{10}{l}{\textit{SAT Solver}} \\
+Peak Memory (MB) & 92.1 & 92.4 & 93.0 & 92.4 & 92.4 & 92.1 & 100.2 & 92.2 & 34332.1 \\
+Total SAT Calls & 31 & 5 & 5 & 5 & 5 & 16 & 11 & 39 & 6 \\
+Total SAT Time (s) & 0.177 & 0.108 & 0.090 & 0.050 & 0.104 & 0.121 & 0.094 & 0.266 & 16109.1 \\
+Total CPU Time (s) & 9.2 & 3.9 & 3.9 & 3.9 & 4.0 & 4.9 & 5.9 & 14.3 & 25958.3 \\
+\#Vars & 45--615 & 188--615 & 183--625 & 184--627 & 184--623 & 45--615 & 147--763 & 45--793 & 6480--5506178 \\
+\#Clauses & 352--4551 & 2053--4563 & 2049--4623 & 2049--4623 & 2049--4623 & 352--4553 & 1198--5717 & 340--6317 & 53375--146548287 \\
+\midrule
+\multicolumn{10}{c}{\textbf{FTEC}} \\
+\midrule
+FTEC (path) & 0 & 0 & 1 & 1 & 1 & 0 & 1 & 0 & 0 \\
+Peak Mem (MB) & 85.4 & 88.0 & 90.0 & 90.0 & 71.0 & 87.0 & 87.8 & 87.6 & 144.3 \\
+SAT Calls & 13 & 2 & 2 & 2 & 2 & 5 & 4 & 19 & 4 \\
+Total SAT Time (s) & 0.145 & 0.065 & 0.027 & 0.057 & 0.058 & 0.079 & 0.052 & 0.207 & 2104.4 \\
+Total CPU Time (s) & 5.2 & 3.1 & 3.3 & 3.4 & 3.0 & 3.9 & 4.7 & 7.5 & 2131.4 \\
+\#Vars & 278--626 & 366--626 & 374--624 & 376--624 & 461--776 & 348--626 & 397--774 & 274--803 & 2373--8973 \\
+\#Clauses & 2010--4576 & 2670--4588 & 2714--4620 & 2724--4620 & 3444--5798 & 2458--4578 & 2828--5742 & 1974--6033 & 20085--66716 \\
+\bottomrule
+\end{tabular}%
+}
+
+\vspace*{1.5em} % Adds a nice visual break between the two tables
+
+% ==================== PART 2 ====================
+\scalebox{0.85}{% Exactly the same scaling factor as Part 1
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l ccccccc}
+\toprule
+ \multicolumn{8}{c}{\textbf{Protocol}} \\
+\midrule
+Code & $[[19,1,5]]$ & $[[17,1,5]]$ & $[[17,1,5]]$ & $[[17,1,5]]$ & $[[17,1,5]]$ & $[[19,1,5]]$ & $[[25,1,5]]$ \\
+Optimization & $[1,1,1,\dots]^{T}$ & $[2,2,2,1,1]^{T}$ & $[1,1,1,1,1,\dots]^{T}$ & Par. flag & Seq. & Par. flag & Seq. \\
+Protocol & [LL25]  & [LL25]  & [LL25]  & [Du24]  & [CB18]  & [Du24]  & [CB18]  \\
+Total circuits & 2 & 2 & 2 & 2 & 2 & 2 & 2 \\
+Total paths & 4 & 4 & 4 & 21 & 21 & 21 & 21 \\
+\midrule
+\multicolumn{8}{c}{\textbf{Protocol Verification}} \\
+\midrule
+Syndrome extraction bugs (circuit) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+Control flow bugs (path) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+Flag bugs (circuit) & 0 & 0 & 0 & 1 & 0 & 1 & 0 \\
+\midrule
+\multicolumn{8}{l}{\textit{Stim}} \\
+Stim Runtime (s) & 0.170 & 0.258 & 0.168 & 0.144 & 0.148 & 0.154 & 0.186 \\
+Stim Peak Mem (MB) & 236.0 & 227.7 & 220.7 & 197.1 & 228.9 & 195.0 & 217.0 \\
+\midrule
+\multicolumn{8}{l}{\textit{SAT Solver}} \\
+Peak Memory (MB) & 34329.7 & 8124.2 & 8125.4 & 18004.0 & 18004.1 & 73989.4 & 162.1 \\
+Total SAT Calls & 6 & 6 & 6 & 18 & 18 & 18 & 18 \\
+Total SAT Time (s) & 24662.3 & 1782.1 & 2516.2 & 17395.9 & 8891.3 & 50040.3 & 3146.30 \\
+Total CPU Time (s) & 34350.9 & 3803.5 & 4721.9 & 18638.7 & 10177.3 & 55473.0 & 3323.1 \\
+\#Vars & 6409--5506171 & 5393--1377250 & 5321--1377246 & 4918--1377144 & 5039--1377172 & 5925--5506042 & 4952--21105 \\
+\#Clauses & 53020--146548217 & 48159--27335500 & 47631--27335447 & 43363--27334792 & 46654--27335250 & 49992--146547428 & 45073--153479 \\
+\midrule
+\multicolumn{8}{c}{\textbf{FTEC}} \\
+\midrule
+FTEC(path) & 0 & 0 & 0 & 3 & 0 & 0 & 0 \\
+Peak Mem (MB) & 155.6 & 111.8 & 114.6 & 306.3 & 164.1 & 321.4 & 172.8 \\
+SAT Calls & 4 & 4 & 4 & 21 & 21 & 21 & 21 \\
+Total SAT Time (s) & 2312.0 & 1243.5 & 1562.3 & 123486.4 & 86124.3 & 151274.4 & 40477.4 \\
+Total CPU Time (s) & 2344.7 & 1265.1 & 1583.4 & 123713.2 & 86424.3 & 151579.6 & 40816.1 \\
+\#Vars & 2362--8868 & 2051--7749 & 2041--7648 & 5466--11582 & 5494--11755 & 6586--14266 & 5372--11398 \\
+\#Clauses & 19960--66195 & 14410--57111 & 14304--56636 & 48370--122417 & 50906--120417 & 45341--119101 & 49264--123632 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Experimental results of the protocol verification and FTEC verification (Top: Part 1, Bottom: Part 2). Total CPU Time differs from Total SAT Time by including symbolic execution and DIMACS export .}
+\label{tab:combined-results}
+
+\end{table}

@@ -1,0 +1,344 @@
+{
+  "break": [
+    {
+      "tag": "LAI17_111_base",
+      "coset_archived": {
+        "status": "unsat",
+        "runtime_s": 2412.884756,
+        "dimacs_vars": 27335447,
+        "source": "archived_coset"
+      },
+      "smt_forall": {
+        "status": "unsat",
+        "solve_s": 4.403183121001348
+      },
+      "dual_commute": {
+        "status": "unsat",
+        "export_s": 4.558676626998931,
+        "kissat_s": 0.6590745029971004,
+        "total_s": 5.2177511299960315,
+        "vars": 1653,
+        "clauses": 12680
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI17_222_base",
+      "coset_archived": {
+        "status": "unsat",
+        "runtime_s": 1684.573989,
+        "dimacs_vars": 27335500,
+        "source": "archived_coset"
+      },
+      "smt_forall": {
+        "status": "unsat",
+        "solve_s": 4.376327880017925
+      },
+      "dual_commute": {
+        "status": "unsat",
+        "export_s": 4.522617706970777,
+        "kissat_s": 1.0133242629817687,
+        "total_s": 5.535941969952546,
+        "vars": 1662,
+        "clauses": 12606
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI19_111_base",
+      "coset_archived": {
+        "status": "unsat",
+        "runtime_s": 24367.793169,
+        "dimacs_vars": 146548217,
+        "source": "archived_coset"
+      },
+      "smt_forall": {
+        "status": "unsat",
+        "solve_s": 7.483280921005644
+      },
+      "dual_commute": {
+        "status": "unsat",
+        "export_s": 6.438943256041966,
+        "kissat_s": 1.133391602023039,
+        "total_s": 7.572334858065005,
+        "vars": 2017,
+        "clauses": 16832
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI19_222_base",
+      "coset_archived": {
+        "status": "sat",
+        "runtime_s": 15816.468805,
+        "dimacs_vars": 146548287,
+        "source": "archived_coset"
+      },
+      "smt_forall": {
+        "status": "sat",
+        "solve_s": 0.3490906319930218
+      },
+      "dual_commute": {
+        "status": "sat",
+        "export_s": 6.488807267975062,
+        "kissat_s": 0.36098657199181616,
+        "total_s": 6.849793839966878,
+        "vars": 2013,
+        "clauses": 16886
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI17_111_init",
+      "coset_archived": {
+        "status": "sat",
+        "runtime_s": 1720.0,
+        "source": "prior_kissat_redo"
+      },
+      "smt_forall": {
+        "status": "sat",
+        "solve_s": 0.2772032819921151
+      },
+      "dual_commute": {
+        "status": "sat",
+        "export_s": 4.831139206013177,
+        "kissat_s": 0.2831938429735601,
+        "total_s": 5.114333048986737,
+        "vars": 3548,
+        "clauses": 49884
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI17_222_init",
+      "coset_archived": {
+        "status": "sat",
+        "runtime_s": 1622.0,
+        "source": "prior_kissat_redo"
+      },
+      "smt_forall": {
+        "status": "sat",
+        "solve_s": 0.1254969320143573
+      },
+      "dual_commute": {
+        "status": "sat",
+        "export_s": 4.814777466992382,
+        "kissat_s": 0.1851756870164536,
+        "total_s": 4.9999531540088356,
+        "vars": 3527,
+        "clauses": 50079
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI19_111_init",
+      "coset_archived": null,
+      "smt_forall": {
+        "status": "sat",
+        "solve_s": 0.296237010974437
+      },
+      "dual_commute": {
+        "status": "sat",
+        "export_s": 6.8733791499980725,
+        "kissat_s": 0.25684036302845925,
+        "total_s": 7.130219513026532,
+        "vars": 4306,
+        "clauses": 68372
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI19_222_init",
+      "coset_archived": null,
+      "smt_forall": {
+        "status": "sat",
+        "solve_s": 0.3022354710265063
+      },
+      "dual_commute": {
+        "status": "sat",
+        "export_s": 6.788677253003698,
+        "kissat_s": 0.2212515539722517,
+        "total_s": 7.0099288069759496,
+        "vars": 4273,
+        "clauses": 68365
+      },
+      "status_match": true
+    }
+  ],
+  "flag": [
+    {
+      "tag": "LAI17_111",
+      "coset_archived": {
+        "status": "pass",
+        "total_s": 1045.762872,
+        "sat_s": 41.535478,
+        "source": "[[17,1,5]]_[1,1,1,1,1,...]_T_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": null,
+      "dual_commute": {
+        "status": "pass",
+        "wall_s": 0.516129253024701,
+        "sat_s": 0.04969714296748862,
+        "runtime_s": 0.5111363180330954,
+        "vars": 941
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI17_222",
+      "coset_archived": {
+        "status": "pass",
+        "total_s": 1057.53135,
+        "sat_s": 48.920616,
+        "source": "[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": null,
+      "dual_commute": {
+        "status": "pass",
+        "wall_s": 0.4690670800046064,
+        "sat_s": 0.05023048195289448,
+        "runtime_s": 0.4642808469943702,
+        "vars": 925
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI19_111",
+      "coset_archived": {
+        "status": "pass",
+        "total_s": 5017.432536,
+        "sat_s": 207.911148,
+        "source": "[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": {
+        "status": "pass",
+        "total_s": 0.196902,
+        "sat_s": 0.102,
+        "source": "[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config_flag_raised_metrics_SMT_old.txt"
+      },
+      "dual_commute": {
+        "status": "pass",
+        "wall_s": 0.580516220012214,
+        "sat_s": 0.07450320897623897,
+        "runtime_s": 0.5759411699837074,
+        "vars": 1100
+      },
+      "status_match": true
+    },
+    {
+      "tag": "LAI19_222",
+      "coset_archived": {
+        "status": "pass",
+        "total_s": 5155.050823,
+        "sat_s": 194.542566,
+        "source": "[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": {
+        "status": "pass",
+        "total_s": 0.217431,
+        "sat_s": 0.116,
+        "source": "[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config_flag_raised_metrics_SMT_old.txt"
+      },
+      "dual_commute": {
+        "status": "pass",
+        "wall_s": 0.6148479399853386,
+        "sat_s": 0.07644825900206342,
+        "runtime_s": 0.6094493689597584,
+        "vars": 1105
+      },
+      "status_match": true
+    },
+    {
+      "tag": "Chris17",
+      "coset_archived": {
+        "status": "pass",
+        "total_s": 2367.292841,
+        "sat_s": 1281.514026,
+        "source": "[[17,1,5]]_chris_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": {
+        "status": "pass",
+        "total_s": 4.940881,
+        "sat_s": 4.846,
+        "source": "[[17,1,5]]_chris_config_flag_raised_metrics_SMT_old.txt"
+      },
+      "dual_commute": {
+        "status": "pass",
+        "wall_s": 12.842872394016013,
+        "sat_s": 7.154714506003074,
+        "runtime_s": 12.83755725400988,
+        "vars": 1655
+      },
+      "status_match": true
+    },
+    {
+      "tag": "ChaoDu17",
+      "coset_archived": {
+        "status": "fail",
+        "total_s": 1385.926599,
+        "sat_s": 299.7826,
+        "source": "chao_du_[[17,1,5]]_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": {
+        "status": "fail",
+        "total_s": 0.243269,
+        "sat_s": 0.118,
+        "source": "chao_du_[[17,1,5]]_config_flag_raised_metrics_SMT_old.txt"
+      },
+      "dual_commute": {
+        "status": "fail",
+        "wall_s": 6.01506154902745,
+        "sat_s": 0.3191350970300846,
+        "runtime_s": 6.010068043018691,
+        "vars": 1737
+      },
+      "status_match": true
+    },
+    {
+      "tag": "ChaoDu19",
+      "coset_archived": {
+        "status": "fail",
+        "total_s": 5940.328839,
+        "sat_s": 687.930588,
+        "source": "chao_du_[[19,1,5]]_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": {
+        "status": "fail",
+        "total_s": 0.263681,
+        "sat_s": 0.062,
+        "source": "chao_du_[[19,1,5]]_config_flag_raised_metrics_SMT_old.txt"
+      },
+      "dual_commute": {
+        "status": "fail",
+        "wall_s": 8.505311050976161,
+        "sat_s": 0.30087405000813305,
+        "runtime_s": 8.499224268016405,
+        "vars": 2115
+      },
+      "status_match": true
+    },
+    {
+      "tag": "Chris25",
+      "coset_archived": {
+        "status": "pass",
+        "total_s": 36.543498,
+        "sat_s": 36.447,
+        "source": "[[25,1,5]]_chris_protocol_config_flag_raised_metrics.txt"
+      },
+      "smt_old_archived": {
+        "status": "pass",
+        "total_s": 36.543498,
+        "sat_s": 36.447,
+        "source": "[[25,1,5]]_chris_protocol_config_flag_raised_metrics_SMT_old.txt"
+      },
+      "dual_commute": {
+        "status": "pass",
+        "wall_s": 15.518922014976852,
+        "sat_s": 6.013269905000925,
+        "runtime_s": 15.513017794990446,
+        "vars": 1073
+      },
+      "status_match": true
+    }
+  ]
+}

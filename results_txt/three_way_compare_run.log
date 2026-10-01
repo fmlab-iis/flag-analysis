@@ -1,0 +1,56 @@
+[break] LAI17_111_base
+  coset=unsat@2412.884756 smt=unsat@4.403 dual=unsat@5.218 match=True
+[break] LAI17_222_base
+  coset=unsat@1684.573989 smt=unsat@4.376 dual=unsat@5.536 match=True
+[break] LAI19_111_base
+  coset=unsat@24367.793169 smt=unsat@7.483 dual=unsat@7.572 match=True
+[break] LAI19_222_base
+  coset=sat@15816.468805 smt=sat@0.349 dual=sat@6.850 match=True
+[break] LAI17_111_init
+  coset=sat@1720.0 smt=sat@0.277 dual=sat@5.114 match=True
+[break] LAI17_222_init
+  coset=sat@1622.0 smt=sat@0.125 dual=sat@5.000 match=True
+[break] LAI19_111_init
+  coset=None@None smt=sat@0.296 dual=sat@7.130 match=True
+[break] LAI19_222_init
+  coset=None@None smt=sat@0.302 dual=sat@7.010 match=True
+[flag] LAI17_111
+  coset=pass@1045.762872 smt_old=None@None dual=pass@0.511 match=True
+[flag] LAI17_222
+  coset=pass@1057.53135 smt_old=None@None dual=pass@0.464 match=True
+[flag] LAI19_111
+  coset=pass@5017.432536 smt_old=pass@0.196902 dual=pass@0.576 match=True
+[flag] LAI19_222
+  coset=pass@5155.050823 smt_old=pass@0.217431 dual=pass@0.609 match=True
+[flag] Chris17
+  coset=pass@2367.292841 smt_old=pass@4.940881 dual=pass@12.838 match=True
+[flag] ChaoDu17
+  coset=fail@1385.926599 smt_old=fail@0.243269 dual=fail@6.010 match=True
+[flag] ChaoDu19
+  coset=fail@5940.328839 smt_old=fail@0.263681 dual=fail@8.499 match=True
+[flag] Chris25
+  coset=pass@36.543498 smt_old=pass@36.543498 dual=pass@15.513 match=True
+
+=== BREAK: coset(archived) | SMT ForAll | dual commute ===
+tag                    c      s      d      ok     coset_s    smt_s   dual_s
+LAI17_111_base         unsat  unsat  unsat  Y       2412.9    4.403    5.218
+LAI17_222_base         unsat  unsat  unsat  Y       1684.6    4.376    5.536
+LAI19_111_base         unsat  unsat  unsat  Y      24367.8    7.483    7.572
+LAI19_222_base         sat    sat    sat    Y      15816.5    0.349    6.850
+LAI17_111_init         sat    sat    sat    Y       1720.0    0.277    5.114
+LAI17_222_init         sat    sat    sat    Y       1622.0    0.125    5.000
+LAI19_111_init         None   sat    sat    Y          nan    0.296    7.130
+LAI19_222_init         None   sat    sat    Y          nan    0.302    7.010
+
+=== FLAG: coset(archived) | SMT_old(archived) | dual commute ===
+tag          c     smt   d     ok     coset_s    smt_s   dual_s
+LAI17_111    pass  None  pass  Y       1045.8      nan    0.511
+LAI17_222    pass  None  pass  Y       1057.5      nan    0.464
+LAI19_111    pass  pass  pass  Y       5017.4    0.197    0.576
+LAI19_222    pass  pass  pass  Y       5155.1    0.217    0.609
+Chris17      pass  pass  pass  Y       2367.3    4.941   12.838
+ChaoDu17     fail  fail  fail  Y       1385.9    0.243    6.010
+ChaoDu19     fail  fail  fail  Y       5940.3    0.264    8.499
+Chris25      pass  pass  pass  Y         36.5   36.543   15.513
+
+wrote /home/bionicle8699/flag_verification/flag-analysis/results_txt/three_way_compare.json

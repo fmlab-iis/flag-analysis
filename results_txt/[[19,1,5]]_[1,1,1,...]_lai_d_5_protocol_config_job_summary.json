@@ -4,7 +4,7 @@
   "t": 2,
   "wall_time_seconds": null,
   "path_count": 3,
-  "total_solver_runtime_s": 794.6233295779675,
+  "total_solver_runtime_s": 24454.39514696892,
   "total_sat_query_count": 3,
   "sat_path_count": 0,
   "min_dimacs_vars": 6409,
@@ -12,12 +12,12 @@
   "min_clauses": 53020,
   "max_clauses": 146548217,
   "fail_path_count": 0,
-  "unsat_path_count": 2,
+  "unsat_path_count": 3,
   "sat_path_count_result": 0,
-  "unknown_path_count": 1,
-  "exported_paths": 3,
+  "unknown_path_count": 0,
+  "exported_paths": 0,
   "pred_syn_fail_count": 0,
-  "pred_syn_path_count": 2,
+  "pred_syn_path_count": 0,
   "break_fail_count": 0,
-  "break_path_count": 1
+  "break_path_count": 0
 }

@@ -90,6 +90,7 @@ def parse_one_path(
     total: int,
     manifest: Dict[str, Any],
     cms_retries: int,
+    timeout_s: Optional[float] = None,
 ) -> Dict[str, Any]:
     path_info = next(
         (p for p in manifest.get("paths", []) if p.get("path_tag") == path_tag),
@@ -97,8 +98,27 @@ def parse_one_path(
     )
     path_index = path_info.get("path_index", job_id - 1)
 
+    cms_extra_args = None
+    solve_timeout_s = timeout_s
+    if timeout_s is not None:
+        # Kissat rejects floats like --time=2000.0; always pass whole seconds.
+        timeout_int = max(1, int(round(float(timeout_s))))
+        solver_name = os.environ.get("DIMACS_SOLVER_BIN", "")
+        # Kissat uses --time=N; CryptoMiniSat uses --maxtime N.
+        if "kissat" in solver_name:
+            cms_extra_args = [f"--time={timeout_int}"]
+        else:
+            cms_extra_args = ["--maxtime", str(timeout_int)]
+        # Extra wall slack so the solver can hit its own limit and exit cleanly
+        # (CNF load + flush) instead of being killed by subprocess timeout.
+        solve_timeout_s = float(timeout_int) + 120.0
+
     status, counterexample, stats = uniqueness_solve_from_export(
-        cnf_dir, path_tag, cms_retries=cms_retries,
+        cnf_dir,
+        path_tag,
+        cms_retries=cms_retries,
+        timeout_s=solve_timeout_s,
+        cms_extra_args=cms_extra_args,
     )
 
     row = {
@@ -268,6 +288,12 @@ def main() -> int:
     parser.add_argument("--job-id", type=int, default=1)
     parser.add_argument("--total", type=int, default=1)
     parser.add_argument("--cms-retries", type=int, default=8)
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=None,
+        help="Per-attempt SAT solver timeout in seconds (default: no limit)",
+    )
     parser.add_argument("--metrics-dir", default="results_txt")
     args = parser.parse_args()
 
@@ -283,6 +309,7 @@ def main() -> int:
         manifest = _load_manifest(cnf_dir)
         parse_one_path(
             cnf_dir, args.path_tag, args.job_id, args.total, manifest, args.cms_retries,
+            timeout_s=args.timeout,
         )
         return 0
 

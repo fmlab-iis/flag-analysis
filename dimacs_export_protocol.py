@@ -10,7 +10,9 @@ from typing import Any, Dict, List, Optional, Tuple
 from z3 import And, BoolVal, PbLe
 
 from flag_analysis import (
+    break_acts_from_path,
     break_weight_export_dimacs,
+    break_weight_export_dimacs_dual,
     control_flow_export_dimacs,
     data_only_groups_from_state_dict,
     detect_qubit_groups,
@@ -27,6 +29,7 @@ from proof_protocol import (
     classify_full_path,
     condition_to_z3,
     parse_lut_instr,
+    prepare_type0_path,
 )
 
 
@@ -89,6 +92,67 @@ def build_path_constraint(
         witness_mode=verify_mode,
         num_fault_vars=num_fault_vars,
         num_fault_sites=num_fault_sites,
+    )
+
+
+def _stab_encoding_from_config(config: Dict[str, Any]) -> str:
+    """Return 'dual' (default) or 'coset' from config / STAB_ENCODING env."""
+    import os
+
+    raw = config.get("stab_encoding")
+    if raw is None:
+        raw = os.environ.get("STAB_ENCODING") or "dual"
+    enc = str(raw).strip().lower()
+    if enc == "coset":
+        return "coset"
+    return "dual"
+
+
+def _export_type0_break_dimacs(
+    full_path: List[dict],
+    config: Dict,
+    init_state,
+    t: int,
+    out_dir: Path,
+    path_tag: str,
+    protocol=None,
+) -> Optional[Dict[str, Any]]:
+    """Replay Type-0 path if initial_data_error is enabled, then export break CNF.
+
+    Returns None when the path has no budget acts to verify.
+    """
+    break_path = prepare_type0_path(
+        full_path, config, init_state, protocol=protocol,
+    )
+    data_acts, gate_fault_acts = break_acts_from_path(break_path)
+    faults = data_acts + gate_fault_acts
+    if not faults:
+        return None
+    compare_to_gate = bool(data_acts)
+    all_condition = [s["condition"] for s in break_path if s["condition"] is not None]
+    vars_list = [
+        v for step in break_path for info in step["site_info"]
+        for v in info["vars"].values()
+    ]
+    at_most_t_faults = [PbLe([(f, 1) for f in faults], t)]
+    export_fn = (
+        break_weight_export_dimacs_dual
+        if _stab_encoding_from_config(config) == "dual"
+        else break_weight_export_dimacs
+    )
+    return export_fn(
+        vars_list,
+        at_most_t_faults,
+        all_condition,
+        break_path[-1]["state"]["data"],
+        config["stab_txt_path"],
+        t,
+        out_dir,
+        path_tag,
+        gsel_prefix=f"{path_tag}_gsel",
+        log_txt_path=config.get("log_txt_path"),
+        gate_fault_acts=gate_fault_acts if compare_to_gate else None,
+        compare_residual_to_gate_faults=compare_to_gate,
     )
 
 
@@ -412,8 +476,12 @@ def export_path_constraints(
             path_type, last_instr = classify_full_path(full_path)
 
             if path_type == 0:
-                faults = [info["act"] for step in full_path for info in step["site_info"]]
-                if not faults:
+                path_tag = f"path_{path_idx:03d}"
+                export_stats = _export_type0_break_dimacs(
+                    full_path, config, init_state, t, out_dir, path_tag,
+                    protocol=protocol,
+                )
+                if export_stats is None:
                     path_query_stats.append({
                         "path_index": path_idx,
                         "path_type": path_type,
@@ -427,24 +495,6 @@ def export_path_constraints(
                     })
                     return
 
-                all_condition = [s["condition"] for s in full_path if s["condition"] is not None]
-                vars_list = [
-                    v for step in full_path for info in step["site_info"]
-                    for v in info["vars"].values()
-                ]
-                at_most_t_faults = [PbLe([(f, 1) for f in faults], t)]
-                path_tag = f"path_{path_idx:03d}"
-                export_stats = break_weight_export_dimacs(
-                    vars_list,
-                    at_most_t_faults,
-                    all_condition,
-                    full_path[-1]["state"]["data"],
-                    config["stab_txt_path"],
-                    t,
-                    out_dir,
-                    path_tag,
-                    gsel_prefix=f"{path_tag}_gsel",
-                )
                 path_query_stats.append({
                     "path_index": path_idx,
                     "path_type": path_type,
@@ -801,7 +851,12 @@ def _resolve_control_flow_cnf_dir(config: Dict[str, Any], cnf_dir: Optional[str]
         return Path(cnf_dir).resolve()
     cfg_path = config.get("__config_path__")
     stem = Path(cfg_path).stem if cfg_path else "export"
-    return (Path("cnf_out_control_flow") / stem).resolve()
+    root = (
+        "cnf_out_control_flow_dual"
+        if _stab_encoding_from_config(config) == "dual"
+        else "cnf_out_control_flow"
+    )
+    return (Path(root) / stem).resolve()
 
 
 def export_control_flow_path_constraints(
@@ -889,13 +944,12 @@ def export_control_flow_path_constraints(
                 })
                 return
 
-            faults = [info["act"] for step in full_path for info in step["site_info"]]
-            if not faults:
+            if config.get("type0_only") and path_type != 0:
                 path_query_stats.append({
                     "path_index": path_idx,
                     "path_type": path_type,
                     "last_instr": last_instr,
-                    "status": "not_verified",
+                    "status": "skipped",
                     "gate_count": path_gate_count,
                     "solver_runtime_seconds": 0.0,
                     "peak_solver_rss_bytes": 0,
@@ -918,32 +972,48 @@ def export_control_flow_path_constraints(
                 })
                 return
 
-            all_condition = [s["condition"] for s in full_path if s["condition"] is not None]
-            vars_list = [
-                v for step in full_path for info in step["site_info"]
-                for v in info["vars"].values()
-            ]
-            at_most_t_faults = [PbLe([(f, 1) for f in faults], t)]
             path_tag = f"path_{path_idx:03d}"
 
             if path_type == 0:
-                export_stats = break_weight_export_dimacs(
-                    vars_list,
-                    at_most_t_faults,
-                    all_condition,
-                    full_path[-1]["state"]["data"],
-                    config["stab_txt_path"],
-                    t,
-                    out_dir,
-                    path_tag,
-                    gsel_prefix=f"{path_tag}_gsel",
+                export_stats = _export_type0_break_dimacs(
+                    full_path, config, init_state, t, out_dir, path_tag,
+                    protocol=protocol,
                 )
+                if export_stats is None:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "not_verified",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
                 if not quiet:
                     print(
                         f"Exported control-flow path {path_idx}: type 0 (break weight) -> "
                         f"{path_tag}.cnf ({export_stats['total_clauses']} clauses)"
                     )
             else:
+                faults = [info["act"] for step in full_path for info in step["site_info"]]
+                if not faults:
+                    path_query_stats.append({
+                        "path_index": path_idx,
+                        "path_type": path_type,
+                        "last_instr": last_instr,
+                        "status": "not_verified",
+                        "gate_count": path_gate_count,
+                        "solver_runtime_seconds": 0.0,
+                        "peak_solver_rss_bytes": 0,
+                        "total_clauses": 0,
+                        "sat_query_count": 0,
+                    })
+                    return
+
+                all_condition = [s["condition"] for s in full_path if s["condition"] is not None]
                 lut_instr = find_lut_instr_in_path(full_path)
                 if not lut_instr:
                     path_query_stats.append({

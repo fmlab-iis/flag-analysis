@@ -4,20 +4,20 @@ Max faults per path (t): 1
 Total number of paths: 2
 Per-path SAT metrics:
   path_idx | type | last_instr              | status | gate_count | runtime_s | peak_rss_mb | fault_vars | dimacs_vars | total_clauses | sat_query_count
-        0 |    0 | Break (other)           | unsat   |         36 |  0.018065 |      64.164 |        144 |         648 |          6317 |               1
-        1 |    1 | raw_syndrome (raw)      | unsat   |         60 |  0.116963 |      54.598 |        240 |         923 |          6919 |               1
+        0 |    0 | Break (other)           | unsat   |         36 |  0.026207 |      79.449 |        158 |         701 |          8046 |               1
+        1 |    1 | raw_syndrome (raw)      | unsat   |         60 |  0.071802 |      92.000 |        240 |         923 |          6919 |               1
 Job aggregate (across solved paths):
-  Solver time (sum of paths): 0.135029 s
+  Solver time (sum of paths): 0.098009 s
   SAT solver calls (sum sat_query_count): 2
   Paths with SAT result: 0/2
-  DIMACS variables (min / max): 648 / 923
-  Clauses (min / max): 6317 / 6919
-Total runtime (sum of all paths): 0.135029 s
+  DIMACS variables (min / max): 701 / 923
+  Clauses (min / max): 6919 / 8046
+Total runtime (sum of all paths): 0.098009 s
 Failed paths (SAT): 0/2
 Total SAT paths: 0/2
 Break-weight SAT (fail): 0/1
 pred_syn fail (type 1): 0/1
 Max fault variables (across paths): 240
 Max DIMACS variables (across paths): 923
-Max peak RSS (across paths): 64.164 MB
+Max peak RSS (across paths): 92.000 MB
 ================================================================================

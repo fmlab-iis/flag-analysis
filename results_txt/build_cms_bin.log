@@ -1,0 +1,10 @@
+[ 63%] Built target cadical
+[ 64%] Built target cadiback
+[ 96%] Built target cryptominisat5
+[ 97%] Linking CXX executable ../cryptominisat5
+/usr/bin/ld: ../lib/libcryptominisat5.so.5.14: undefined reference to `CadiBack::doit(std::vector<int, std::allocator<int> > const&, int, std::vector<int, std::allocator<int> >&, std::vector<int, std::allocator<int> >&, std::vector<int, std::allocator<int> >&, std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >&, long, bool*)'
+collect2: error: ld returned 1 exit status
+gmake[3]: *** [cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/build.make:133: cryptominisat5] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:307: cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/all] Error 2
+gmake[1]: *** [CMakeFiles/Makefile2:314: cmsat5-src/CMakeFiles/cryptominisat5-bin.dir/rule] Error 2
+gmake: *** [Makefile:248: cryptominisat5-bin] Error 2

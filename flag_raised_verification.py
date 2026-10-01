@@ -167,6 +167,7 @@ def _run_one_flag_circuit(
     *,
     t: int,
     w: int | None,
+    log_txt_path: str | None = None,
 ) -> Tuple[bool, List[int], Dict[str, Any]]:
     qc = load_qasm(str(qasm_path))
     num_gates = len(qc.data)
@@ -179,6 +180,7 @@ def _run_one_flag_circuit(
         t=t,
         w=w,
         return_stats=True,
+        log_txt_path=log_txt_path,
     )
     return ok, fault_sites, sat_stats
 
@@ -256,6 +258,7 @@ def run_flag_raised_verification(
                 str(stab_path),
                 t=t,
                 w=w,
+                log_txt_path=config.get("log_txt_path"),
             )
         except Exception as exc:
             row.update(

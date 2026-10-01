@@ -5,11 +5,11 @@ Property: faults may occur at any gate (at most w sites); if error weight > w th
 Solver: Z3 export + cryptominisat5 (SYNDROME_SAT_SOLVER_BIN)
 Per-circuit metrics:
   circuit_key           | status  | fault_sites | runtime_s | peak_rss_mb | sat_query_count | sat_time_s | dimacs_vars | total_clauses | reason
-  flag_syndrome         | pass    | all (136)   | 1096.847572 |    8119.254 |               1 |  50.662536 |      918214 |      12588917 | 
-Total runtime: 1096.847572 s
-Max peak RSS (across circuits): 8119.254 MB
+  flag_syndrome         | pass    | all (138)   | 1057.531350 |    8124.215 |               1 |  48.920616 |      918214 |      12588917 | 
+Total runtime: 1057.531350 s
+Max peak RSS (across circuits): 8124.215 MB
   SAT solver calls (sum sat_query_count): 1
-  SAT solver time (sum): 50.662536 s
+  SAT solver time (sum): 48.920616 s
   DIMACS variables (min / max): 918214 / 918214
   Clauses (min / max): 12588917 / 12588917
 Failed circuits: 0/1

@@ -1,0 +1,72 @@
+[11:59:08] ==== Dual d=5 timing bench start ====
+[11:59:08] BREAK START LAI17_111_base initdata=0 -> cnf_out_control_flow_dual/[[17,1,5]]_[1,1,1,1,1,...]_T_config
+[11:59:14] BREAK DONE  LAI17_111_base export_s=4.996000 kissat_s=0.600000 status=unsat vars=1210 clauses=9315 pauli=1276 maxrss_kb=4096 export_rc=0
+
+[11:59:14] BREAK START LAI17_222_base initdata=0 -> cnf_out_control_flow_dual/[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config
+[11:59:20] BREAK DONE  LAI17_222_base export_s=4.926000 kissat_s=0.710000 status=unsat vars=1207 clauses=9352 pauli=1276 maxrss_kb=4096 export_rc=0
+
+[11:59:20] BREAK START LAI19_111_base initdata=0 -> cnf_out_control_flow_dual/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config
+[11:59:29] BREAK DONE  LAI19_111_base export_s=7.447000 kissat_s=1.040000 status=unsat vars=1481 clauses=12990 pauli=1597 maxrss_kb=6144 export_rc=0
+
+[11:59:29] BREAK START LAI19_222_base initdata=0 -> cnf_out_control_flow_dual/[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config
+[11:59:37] BREAK DONE  LAI19_222_base export_s=7.638000 kissat_s=0.320000 status=sat vars=1455 clauses=13001 pauli=1597 maxrss_kb=4096 export_rc=0
+
+[11:59:37] BREAK START LAI17_111_init initdata=1 -> cnf_out_control_flow_dual_initdata/[[17,1,5]]_[1,1,1,1,1,...]_T_config
+[11:59:43] BREAK DONE  LAI17_111_init export_s=5.486000 kissat_s=0.190000 status=sat vars=2873 clauses=45366 pauli=1329 maxrss_kb=6144 export_rc=0
+
+[11:59:43] BREAK START LAI17_222_init initdata=1 -> cnf_out_control_flow_dual_initdata/[[17,1,5]]_[2,2,2,1,1]_T_lai_5_protocol_config
+[11:59:49] BREAK DONE  LAI17_222_init export_s=5.361000 kissat_s=0.160000 status=sat vars=2872 clauses=45411 pauli=1329 maxrss_kb=6144 export_rc=0
+
+[11:59:49] BREAK START LAI19_111_init initdata=1 -> cnf_out_control_flow_dual_initdata/[[19,1,5]]_[1,1,1,...]_lai_d_5_protocol_config
+[11:59:57] BREAK DONE  LAI19_111_init export_s=7.996000 kissat_s=0.200000 status=sat vars=3488 clauses=63048 pauli=1656 maxrss_kb=10240 export_rc=0
+
+[11:59:57] BREAK START LAI19_222_init initdata=1 -> cnf_out_control_flow_dual_initdata/[[19,1,5]]_[2,2,2,1,1,1]_T_lai_d_5_protocol_config
+[12:00:06] BREAK DONE  LAI19_222_init export_s=7.998000 kissat_s=0.230000 status=sat vars=3522 clauses=63170 pauli=1656 maxrss_kb=10240 export_rc=0
+
+[12:00:06] FLAG  START Chris25 t=2 w=2
+[12:00:24] FLAG  DONE  Chris25 wall_s=17.569 metrics_total=17.569 sat_s=0 peak_mb=0 failed=? rc=0 file=none
+
+[12:00:24] FLAG  START Chris17 t=2 w=2
+[12:00:32] FLAG  DONE  Chris17 wall_s=8.120 metrics_total=8.120 sat_s=0 peak_mb=0 failed=? rc=0 file=none
+
+[12:00:32] FLAG  START ChaoDu19 t=2 w=2
+[12:00:41] FLAG  DONE  ChaoDu19 wall_s=8.862 metrics_total=8.862 sat_s=0 peak_mb=0 failed=? rc=1 file=none
+
+[12:00:41] FLAG  START ChaoDu17 t=2 w=2
+[12:00:47] FLAG  DONE  ChaoDu17 wall_s=5.968 metrics_total=5.968 sat_s=0 peak_mb=0 failed=? rc=1 file=none
+
+[12:00:47] FLAG  START LAI19_222_flag t=2 w=1
+[12:00:49] FLAG  DONE  LAI19_222_flag wall_s=1.923 metrics_total=1.923 sat_s=0 peak_mb=0 failed=? rc=0 file=none
+
+[12:00:49] FLAG  START LAI19_111_flag t=2 w=1
+[12:00:51] FLAG  DONE  LAI19_111_flag wall_s=1.862 metrics_total=1.862 sat_s=0 peak_mb=0 failed=? rc=0 file=none
+
+[12:00:51] FLAG  START LAI17_111_flag t=2 w=1
+[12:00:53] FLAG  DONE  LAI17_111_flag wall_s=1.709 metrics_total=1.709 sat_s=0 peak_mb=0 failed=? rc=0 file=none
+
+[12:00:53] FLAG  START LAI17_222_flag t=2 w=1
+[12:00:55] FLAG  DONE  LAI17_222_flag wall_s=1.810 metrics_total=1.810 sat_s=0 peak_mb=0 failed=? rc=0 file=none
+
+[12:00:55] ==== Dual d=5 timing bench done -> results_txt/dual_d5_timing_bench.json ====
+
+=== BREAK dual ===
+tag                          status     export_s   kissat_s       vars      clauses
+LAI17_111_base               unsat         4.996      0.600       1210         9315
+LAI17_222_base               unsat         4.926      0.710       1207         9352
+LAI19_111_base               unsat         7.447      1.040       1481        12990
+LAI19_222_base               sat           7.638      0.320       1455        13001
+LAI17_111_init               sat           5.486      0.190       2873        45366
+LAI17_222_init               sat           5.361      0.160       2872        45411
+LAI19_111_init               sat           7.996      0.200       3488        63048
+LAI19_222_init               sat           7.998      0.230       3522        63170
+
+=== FLAG dual ===
+tag                          status       wall_s      sat_s    peak_mb   failed       vars
+Chris25                      None         17.569      0.000        0.0 None              0
+Chris17                      None          8.120      0.000        0.0 None              0
+ChaoDu19                     None          8.862      0.000        0.0 None              0
+ChaoDu17                     None          5.968      0.000        0.0 None              0
+LAI19_222_flag               None          1.923      0.000        0.0 None              0
+LAI19_111_flag               None          1.862      0.000        0.0 None              0
+LAI17_111_flag               None          1.709      0.000        0.0 None              0
+LAI17_222_flag               None          1.810      0.000        0.0 None              0
